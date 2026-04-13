@@ -4,11 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#1B5E20">
-<meta name="description" content="MAPA-GR — Análise da graduação em Física (Licenciatura + Bacharelado) no Brasil a partir dos indicadores SINAES/INEP.">
+<meta name="description" content="MAPA-GR — Análise da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de ~47.000 cursos em 9 grandes áreas.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
-<title>MAPA-GR — Análise da Graduação em Física</title>
+<title>MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)</title>
 <script src="chart.umd.min.js"></script>
 <style>
 :root {
@@ -17,7 +17,6 @@
     --verde: #27AE60; --laranja: #F39C12; --vermelho: #E74C3C;
     --bg: #F5F7FA; --card: #FFFFFF; --borda: #E0E4E8;
     --txt: #2C3E50; --txt2: #7F8C8D;
-    --c1: #E74C3C; --c2: #F39C12; --c3: #F1C40F; --c4: #3498DB; --c5: #27AE60;
     --unb: #E91E63;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -30,52 +29,63 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color:
 .header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
 .header-icon { width: 44px; height: 44px; border-radius: 8px; flex-shrink: 0;
     background: #fff; object-fit: contain; box-shadow: 0 2px 6px rgba(0,0,0,.4); }
-.header h1 { font-size: 22px; font-weight: 700; letter-spacing: 1px; }
+.header h1 { font-size: 20px; font-weight: 700; letter-spacing: 1px; }
 .header h1 span { color: var(--accent); }
 .header .meta { text-align: right; font-size: 12px; opacity: .85; line-height: 1.5; }
 
-.container { display: flex; min-height: calc(100vh - 56px); }
-.sidebar { width: 320px; min-width: 320px; background: var(--card); border-right: 1px solid var(--borda);
-    padding: 16px; overflow-y: auto; max-height: calc(100vh - 56px); }
-.main { flex: 1; padding: 20px; overflow-y: auto; max-height: calc(100vh - 56px); }
+/* TABS */
+.tabs-bar { background: var(--azul3); padding: 0; display: flex; overflow-x: auto;
+    box-shadow: inset 0 -2px 0 rgba(0,0,0,.2); scrollbar-width: thin; }
+.tabs-bar::-webkit-scrollbar { height: 4px; }
+.tabs-bar::-webkit-scrollbar-thumb { background: var(--accent); }
+.tab { flex-shrink: 0; padding: 10px 18px; color: #aaa; cursor: pointer; font-size: 13px;
+    font-weight: 600; text-transform: uppercase; letter-spacing: .4px; transition: all .2s;
+    border-bottom: 3px solid transparent; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.tab:hover { color: #fff; background: rgba(255,255,255,.05); }
+.tab.active { color: #fff; border-bottom-color: var(--accent); background: rgba(233,30,99,.1); }
+.tab .count { font-size: 10px; opacity: .7; font-weight: 400; }
 
-.filter-group { margin-bottom: 16px; }
-.filter-group h3 { font-size: 13px; text-transform: uppercase; color: var(--txt2);
-    margin-bottom: 8px; letter-spacing: .5px; border-bottom: 2px solid var(--accent); padding-bottom: 4px; }
-.filter-group label { display: block; padding: 3px 0; font-size: 13px; cursor: pointer; }
+.container { display: flex; min-height: calc(100vh - 104px); }
+.sidebar { width: 300px; min-width: 300px; background: var(--card); border-right: 1px solid var(--borda);
+    padding: 14px; overflow-y: auto; max-height: calc(100vh - 104px); }
+.main { flex: 1; padding: 18px; overflow-y: auto; max-height: calc(100vh - 104px); }
+
+.filter-group { margin-bottom: 14px; }
+.filter-group h3 { font-size: 12px; text-transform: uppercase; color: var(--txt2);
+    margin-bottom: 6px; letter-spacing: .5px; border-bottom: 2px solid var(--accent); padding-bottom: 3px; }
+.filter-group label { display: block; padding: 2px 0; font-size: 12px; cursor: pointer; }
 .filter-group label:hover { background: #f0f2f5; }
 .filter-group input[type="checkbox"] { margin-right: 6px; accent-color: var(--accent); }
-.filter-group select { width: 100%; padding: 6px; border: 1px solid var(--borda); border-radius: 4px; font-size: 13px; }
+.filter-group select { width: 100%; padding: 5px; border: 1px solid var(--borda); border-radius: 4px; font-size: 12px; }
 
-.ies-container { max-height: 260px; overflow-y: auto; border: 1px solid var(--borda);
-    border-radius: 4px; padding: 6px; background: #FAFBFC; }
-
-.btn { display: block; width: 100%; padding: 10px; margin-top: 8px; border: none; border-radius: 6px;
-    font-size: 14px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.btn { display: block; width: 100%; padding: 9px; margin-top: 6px; border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
 .btn-primary { background: var(--accent); color: #fff; }
-.btn-primary:hover { background: #C2185B; transform: translateY(-1px); box-shadow: 0 2px 8px rgba(233,30,99,.4); }
+.btn-primary:hover { background: #C2185B; transform: translateY(-1px); }
 .btn-secondary { background: var(--azul); color: #fff; }
 .btn-secondary:hover { background: var(--azul3); }
 .btn-export { background: var(--verde); color: #fff; }
 .btn-export:hover { background: #1E8449; }
-.btn-sm { display: inline-block; width: auto; padding: 5px 12px; font-size: 12px; margin: 2px; }
 
+/* CARD */
 .card { background: var(--card); border-radius: 6px; box-shadow: 0 1px 4px rgba(0,0,0,.08);
-    padding: 12px; margin-bottom: 10px; }
-.card h2 { font-size: 13px; color: var(--azul); margin-bottom: 8px; border-bottom: 2px solid var(--c4); padding-bottom: 4px; }
-.card h2.unb { border-color: var(--unb); }
+    padding: 14px; margin-bottom: 12px; }
+.card h2 { font-size: 14px; color: var(--azul); margin-bottom: 8px; border-bottom: 2px solid #3498DB; padding-bottom: 4px; }
+.card h2.unb { border-color: var(--unb); color: var(--unb); }
 
+/* STATS */
 .stats-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
-.stat-box { flex: 1; min-width: 90px; background: #F8F9FA; border-radius: 4px; padding: 6px 4px; text-align: center;
-    border-left: 3px solid var(--c4); }
+.stat-box { flex: 1; min-width: 88px; background: #F8F9FA; border-radius: 4px; padding: 6px 4px; text-align: center;
+    border-left: 3px solid #3498DB; }
 .stat-box.unb { border-left-color: var(--unb); background: #FCE4EC; }
 .stat-box .value { font-size: 16px; font-weight: 700; color: var(--azul); }
 .stat-box.unb .value { color: var(--unb); }
 .stat-box .label { font-size: 9px; color: var(--txt2); text-transform: uppercase; line-height: 1.2; }
 
+/* TABLE */
 .tbl-wrap { overflow-x: auto; }
 table { width: 100%; border-collapse: collapse; font-size: 11px; }
-th { background: var(--azul); color: #fff; padding: 4px 6px; text-align: center; font-weight: 600; font-size: 10px; cursor: pointer; }
+th { background: var(--azul); color: #fff; padding: 5px 6px; text-align: center; font-weight: 600; font-size: 10px; cursor: pointer; }
 th:hover { background: var(--azul3); }
 td { padding: 3px 5px; text-align: center; border-bottom: 1px solid var(--borda); }
 tr:nth-child(even) { background: #F8F9FA; }
@@ -83,32 +93,36 @@ tr.row-unb { background: #FCE4EC !important; font-weight: 700; }
 tr.row-unb td { color: var(--unb); }
 tr:hover { background: #EEF2F7; }
 
-/* CPC faixas em cores */
+/* CPC faixas */
 .cpc-1 { background: #FFCDD2; color: #B71C1C; font-weight: 700; }
 .cpc-2 { background: #FFE0B2; color: #E65100; font-weight: 700; }
 .cpc-3 { background: #FFF9C4; color: #F57F17; font-weight: 700; }
 .cpc-4 { background: #BBDEFB; color: #0D47A1; font-weight: 700; }
 .cpc-5 { background: #C8E6C9; color: #1B5E20; font-weight: 700; }
 
-.chart-container { position: relative; height: 400px; margin: 12px 0; }
-.chart-row { display: flex; gap: 16px; flex-wrap: wrap; }
-.chart-half { flex: 1; min-width: 400px; }
+/* CHART */
+.chart-container { position: relative; height: 380px; margin: 10px 0; }
+.chart-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.chart-half { flex: 1; min-width: 380px; }
 
-.report-box { background: #1A1A2E; color: #E0E0E0; padding: 16px; border-radius: 6px;
-    font-family: 'Consolas', 'Courier New', monospace; font-size: 12px;
-    white-space: pre-wrap; max-height: 500px; overflow-y: auto; line-height: 1.6; }
+/* REPORT */
+.report-box { background: #1A1A2E; color: #E0E0E0; padding: 14px; border-radius: 6px;
+    font-family: 'Consolas', 'Courier New', monospace; font-size: 11px;
+    white-space: pre-wrap; max-height: 480px; overflow-y: auto; line-height: 1.6; }
 
-.loading { text-align: center; padding: 60px; }
+/* LOADING */
+.loading { text-align: center; padding: 40px; }
 .loading .spinner { width: 48px; height: 48px; border: 4px solid var(--borda);
-    border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 14px; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
+/* STATUS */
 .status-bar { background: var(--azul3); color: #aaa; padding: 4px 24px; font-size: 11px;
     display: flex; justify-content: space-between; }
 
 /* RESPONSIVE */
 .menu-toggle { display: none; background: none; border: none; color: #fff; font-size: 26px;
-    cursor: pointer; padding: 4px 10px; margin-right: 8px; }
+    cursor: pointer; padding: 4px 10px; margin-right: 6px; }
 .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
     background: rgba(0,0,0,.5); z-index: 90; }
 .sidebar-overlay.show { display: block; }
@@ -116,7 +130,7 @@ tr:hover { background: #EEF2F7; }
 @media (max-width: 900px) {
     .container { flex-direction: column; }
     .sidebar { width: 100%; min-width: auto; max-height: none; }
-    .main { max-height: none; padding: 12px; }
+    .main { max-height: none; padding: 10px; }
     .chart-half { min-width: 100%; }
 }
 
@@ -124,28 +138,28 @@ tr:hover { background: #EEF2F7; }
     .header { padding: 10px 14px; }
     .header-left { gap: 8px; }
     .header-icon { width: 36px; height: 36px; }
-    .header h1 { font-size: 15px; line-height: 1.2; }
-    .header h1 span { display: block; font-size: 18px; margin-bottom: 2px; }
+    .header h1 { font-size: 14px; line-height: 1.2; }
+    .header h1 span { display: block; font-size: 16px; margin-bottom: 2px; }
     .header .meta { font-size: 10px; }
     .menu-toggle { display: inline-block; }
-    .container { flex-direction: column; min-height: calc(100vh - 64px); }
+    .tabs-bar { padding: 0 4px; }
+    .tab { padding: 8px 12px; font-size: 11px; }
+    .tab .count { display: none; }
+    .container { flex-direction: column; min-height: calc(100vh - 110px); }
     .sidebar { position: fixed; top: 64px; left: -100%; width: 86%; max-width: 320px;
         height: calc(100vh - 64px); max-height: none; z-index: 100; transition: left .3s;
         box-shadow: 2px 0 12px rgba(0,0,0,.25); }
     .sidebar.open { left: 0; }
     .main { padding: 10px; max-height: none; }
-    .stats-row { gap: 4px; }
     .stat-box { min-width: 70px; padding: 5px 3px; }
     .stat-box .value { font-size: 14px; }
-    .card { padding: 8px; margin-bottom: 8px; border-radius: 4px; }
-    .card h2 { font-size: 12px; }
+    .card { padding: 10px; margin-bottom: 8px; }
+    .card h2 { font-size: 13px; }
     .chart-container { height: 260px; margin: 8px 0; }
-    .chart-half { min-width: 100%; }
-    .chart-row { gap: 8px; }
     table { font-size: 10px; }
     th, td { padding: 3px 4px; }
-    .btn { padding: 9px; font-size: 13px; }
-    .report-box { font-size: 10px; padding: 10px; max-height: 360px; }
+    .btn { padding: 8px; font-size: 12px; }
+    .report-box { font-size: 10px; padding: 10px; max-height: 340px; }
     .status-bar { padding: 4px 10px; font-size: 9px; flex-wrap: wrap; gap: 4px; }
 }
 
@@ -153,6 +167,9 @@ tr:hover { background: #EEF2F7; }
     padding: 12px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,.3);
     opacity: 0; transition: opacity .3s; z-index: 999; }
 .toast.show { opacity: 1; }
+
+.partial-badge { display: inline-block; background: var(--laranja); color: #fff; font-size: 9px;
+    padding: 2px 6px; border-radius: 3px; margin-left: 6px; text-transform: uppercase; letter-spacing: .5px; }
 </style>
 </head>
 <body>
@@ -161,13 +178,17 @@ tr:hover { background: #EEF2F7; }
     <div class="header-left">
         <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">☰</button>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1><span>MAPA-GR</span> — Análise da Graduação em Física (INEP/SINAES)</h1>
+        <h1><span>MAPA-GR</span> — Análise da Graduação Brasileira (INEP/SINAES)</h1>
     </div>
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v1.0</div>
+        <div id="headerVersion">v2.0</div>
     </div>
+</div>
+
+<div class="tabs-bar" id="tabsBar">
+    <!-- Populated from metadata.json -->
 </div>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -175,15 +196,20 @@ tr:hover { background: #EEF2F7; }
 <div class="container">
     <div class="sidebar" id="sidebar">
         <div class="filter-group">
-            <h3>Ciclo ENADE</h3>
-            <label><input type="checkbox" id="y2017" value="2017" checked> 2017 (Lic + Bach)</label>
-            <label><input type="checkbox" id="y2021" value="2021" checked> 2021 (só Lic)</label>
+            <h3>Área (multiselecionar)</h3>
+            <div id="areaFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
         <div class="filter-group">
-            <h3>Grau acadêmico</h3>
-            <label><input type="checkbox" id="gLic" value="Licenciatura" checked> Licenciatura</label>
-            <label><input type="checkbox" id="gBac" value="Bacharelado" checked> Bacharelado</label>
+            <h3>Ciclo</h3>
+            <div id="cycleFilter"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Grau</h3>
+            <label><input type="checkbox" class="grau-chk" value="Licenciatura" checked> Licenciatura</label>
+            <label><input type="checkbox" class="grau-chk" value="Bacharelado" checked> Bacharelado</label>
+            <label><input type="checkbox" class="grau-chk" value="Outro" checked> Tecnólogo/Outro</label>
         </div>
 
         <div class="filter-group">
@@ -193,22 +219,22 @@ tr:hover { background: #EEF2F7; }
         </div>
 
         <div class="filter-group">
-            <h3>Categoria administrativa</h3>
+            <h3>Categoria</h3>
             <label><input type="checkbox" class="cat-chk" value="Pública Federal" checked> Pública Federal</label>
             <label><input type="checkbox" class="cat-chk" value="Pública Estadual" checked> Pública Estadual</label>
             <label><input type="checkbox" class="cat-chk" value="Pública Municipal" checked> Pública Municipal</label>
-            <label><input type="checkbox" class="cat-chk" value="Privada sem fins lucrativos" checked> Privada s/ fins</label>
-            <label><input type="checkbox" class="cat-chk" value="Privada com fins lucrativos" checked> Privada c/ fins</label>
+            <label><input type="checkbox" class="cat-chk" value="Privada sem fins lucrativos" checked> Priv. s/ fins</label>
+            <label><input type="checkbox" class="cat-chk" value="Privada com fins lucrativos" checked> Priv. c/ fins</label>
             <label><input type="checkbox" class="cat-chk" value="Especial" checked> Especial</label>
         </div>
 
         <div class="filter-group">
-            <h3>Faixa CPC</h3>
-            <label><input type="checkbox" class="pf-chk" value="1"> CPC 1</label>
-            <label><input type="checkbox" class="pf-chk" value="2"> CPC 2</label>
-            <label><input type="checkbox" class="pf-chk" value="3" checked> CPC 3</label>
-            <label><input type="checkbox" class="pf-chk" value="4" checked> CPC 4</label>
-            <label><input type="checkbox" class="pf-chk" value="5" checked> CPC 5</label>
+            <h3>Faixa CPC/ENADE</h3>
+            <label><input type="checkbox" class="pf-chk" value="1"> 1</label>
+            <label><input type="checkbox" class="pf-chk" value="2"> 2</label>
+            <label><input type="checkbox" class="pf-chk" value="3" checked> 3</label>
+            <label><input type="checkbox" class="pf-chk" value="4" checked> 4</label>
+            <label><input type="checkbox" class="pf-chk" value="5" checked> 5</label>
         </div>
 
         <div class="filter-group">
@@ -225,12 +251,12 @@ tr:hover { background: #EEF2F7; }
             <select id="selMetrica">
                 <option value="pc" selected>CPC contínuo</option>
                 <option value="e">ENADE contínuo</option>
-                <option value="ip">IDD padronizada</option>
+                <option value="ip">IDD (contínuo/padronizado)</option>
                 <option value="dr">% Doutores (padronizada)</option>
                 <option value="ms">% Mestres (padronizada)</option>
-                <option value="rg">Regime de trabalho (padronizada)</option>
-                <option value="nf">Infraestrutura (padronizada)</option>
-                <option value="op">Org. Didático-Pedagógica (padronizada)</option>
+                <option value="rg">Regime de trabalho (pad)</option>
+                <option value="nf">Infraestrutura (pad)</option>
+                <option value="op">Org. Didático-Ped. (pad)</option>
             </select>
         </div>
 
@@ -238,14 +264,13 @@ tr:hover { background: #EEF2F7; }
         <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
         <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
         <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
-        <button class="btn btn-export" onclick="exportarPNGs()">Exportar PNGs</button>
         <button class="btn btn-secondary" onclick="abrirHelp()">Help</button>
     </div>
 
     <div class="main" id="main">
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Carregando dados do INEP...</p>
+            <p id="loadingMsg">Carregando metadata...</p>
         </div>
         <div id="results" style="display:none;"></div>
     </div>
@@ -253,14 +278,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v1.0 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.0 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<script id="dadosEmbutidos" type="application/json">null</script>
 <script>
-const VERSION = '1.0';
+const VERSION = '2.0';
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
     'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
@@ -270,12 +294,14 @@ const UF_REGIAO = {
 };
 const CPC_COLORS = { 1:'#E74C3C', 2:'#F39C12', 3:'#F1C40F', 4:'#3498DB', 5:'#27AE60' };
 const METRIC_LABELS = {
-    pc:'CPC contínuo', e:'ENADE contínuo', ip:'IDD padronizada',
-    dr:'% Doutores (pad)', ms:'% Mestres (pad)', rg:'Regime trabalho (pad)',
+    pc:'CPC contínuo', e:'ENADE contínuo', ip:'IDD (pad/cont)',
+    dr:'% Doutores (pad)', ms:'% Mestres (pad)', rg:'Regime trab. (pad)',
     nf:'Infraestrutura (pad)', op:'Org. Didático-Ped. (pad)'
 };
 
-let DATA = null;
+let META = null;
+let CACHE = {};  // { grande_area: dataset }
+let CURRENT = null;
 let _charts = {};
 let _sortCol = null;
 let _sortDir = 1;
@@ -287,42 +313,99 @@ function toast(msg) {
     setTimeout(() => t.classList.remove('show'), 2500);
 }
 
-function loadData() {
-    const embed = document.getElementById('dadosEmbutidos').textContent;
+// === LOADING ===
+async function loadMetadata() {
     try {
-        const parsed = JSON.parse(embed);
-        if (parsed && parsed.cursos) {
-            DATA = parsed;
-            onDataLoaded();
-            return;
-        }
-    } catch (e) {}
-    fetch('dados_inep.json')
-        .then(r => r.json())
-        .then(d => { DATA = d; onDataLoaded(); })
-        .catch(err => {
-            document.getElementById('loading').innerHTML = '<p style="color:red;">Erro ao carregar dados_inep.json: ' + err.message + '</p>';
-        });
+        const r = await fetch('dados/metadata.json');
+        META = await r.json();
+        renderTabs();
+        // Load default tab (exatas)
+        await switchTab('exatas');
+    } catch (e) {
+        document.getElementById('loadingMsg').innerHTML =
+            `<span style="color:#E74C3C;">Erro ao carregar metadata.json: ${e.message}</span>`;
+    }
 }
 
-function onDataLoaded() {
-    document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
-    document.getElementById('headerVersion').textContent = 'v' + VERSION;
-    setStatus(`${DATA.cursos.length} cursos carregados de ${DATA.metadata.n_ies} IES`);
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('results').style.display = 'block';
-    analisar();
+async function loadArea(slug) {
+    if (CACHE[slug]) return CACHE[slug];
+    const meta = META.grandes_areas[slug];
+    if (!meta) throw new Error(`Área desconhecida: ${slug}`);
+    setStatus(`Carregando ${meta.label}...`);
+    const r = await fetch(meta.arquivo);
+    const data = await r.json();
+    // Enrich with region
+    data.cursos.forEach(c => { c._r = UF_REGIAO[c.u] || '?'; });
+    CACHE[slug] = data;
+    return data;
 }
 
-loadData();
+function renderTabs() {
+    const bar = document.getElementById('tabsBar');
+    bar.innerHTML = '';
+    const order = ['exatas','biologicas','engenharias','saude','agrarias','sociais','humanas','letras','tecnologos'];
+    order.forEach(slug => {
+        const m = META.grandes_areas[slug];
+        if (!m) return;
+        const el = document.createElement('div');
+        el.className = 'tab';
+        el.id = `tab-${slug}`;
+        el.innerHTML = `${m.icon} ${m.label.replace(/Ciências /,'')} <span class="count">(${m.n_cursos.toLocaleString('pt-BR')})</span>`;
+        el.addEventListener('click', () => switchTab(slug));
+        bar.appendChild(el);
+    });
+}
 
+async function switchTab(slug) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const tabEl = document.getElementById(`tab-${slug}`);
+    if (tabEl) tabEl.classList.add('active');
+
+    document.getElementById('loading').style.display = 'block';
+    document.getElementById('loadingMsg').textContent = `Carregando ${META.grandes_areas[slug].label}...`;
+    document.getElementById('results').style.display = 'none';
+
+    try {
+        CURRENT = await loadArea(slug);
+        updateSidebarFilters();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        analisar();
+        // Prefetch other tabs in background
+        setTimeout(prefetchOthers, 800);
+    } catch (e) {
+        document.getElementById('loadingMsg').innerHTML =
+            `<span style="color:#E74C3C;">Erro: ${e.message}</span>`;
+    }
+}
+
+function prefetchOthers() {
+    const order = ['exatas','biologicas','engenharias','saude','agrarias','sociais','humanas','letras','tecnologos'];
+    order.forEach((slug, i) => {
+        if (CACHE[slug]) return;
+        setTimeout(() => { loadArea(slug).catch(()=>{}); }, i * 400);
+    });
+}
+
+function updateSidebarFilters() {
+    // Area filter (checkboxes based on CURRENT.areas)
+    const areaDiv = document.getElementById('areaFilter');
+    areaDiv.innerHTML = CURRENT.areas.map(a =>
+        `<label style="font-size:11px;"><input type="checkbox" class="area-chk" value="${a.replace(/"/g,'&quot;')}" checked> ${a}</label>`
+    ).join('');
+
+    // Cycle filter
+    const cycleDiv = document.getElementById('cycleFilter');
+    cycleDiv.innerHTML = CURRENT.ciclos.map(y =>
+        `<label><input type="checkbox" class="cycle-chk" value="${y}" checked> ${y}</label>`
+    ).join('');
+}
+
+// === FILTERING ===
 function getFilters() {
-    const anos = [];
-    if (document.getElementById('y2017').checked) anos.push(2017);
-    if (document.getElementById('y2021').checked) anos.push(2021);
-    const graus = [];
-    if (document.getElementById('gLic').checked) graus.push('Licenciatura');
-    if (document.getElementById('gBac').checked) graus.push('Bacharelado');
+    const areas = [...document.querySelectorAll('.area-chk:checked')].map(e => e.value);
+    const ciclos = [...document.querySelectorAll('.cycle-chk:checked')].map(e => +e.value);
+    const graus = [...document.querySelectorAll('.grau-chk:checked')].map(e => e.value);
     const modais = [];
     if (document.getElementById('mPres').checked) modais.push('Presencial');
     if (document.getElementById('mEad').checked) modais.push('EAD');
@@ -330,31 +413,42 @@ function getFilters() {
     const pfs = [...document.querySelectorAll('.pf-chk:checked')].map(e => +e.value);
     const regs = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
     const metrica = document.getElementById('selMetrica').value;
-    return { anos, graus, modais, cats, pfs, regs, metrica };
+    return { areas, ciclos, graus, modais, cats, pfs, regs, metrica };
 }
 
 function normModal(m) {
     if (!m) return '';
-    return m.toLowerCase().includes('distân') || m.toLowerCase().includes('dista') ? 'EAD' : 'Presencial';
+    const low = m.toLowerCase();
+    return (low.includes('dist') || low.includes('eadé') || low === 'ead') ? 'EAD' : 'Presencial';
+}
+function normGrau(g) {
+    if (!g) return 'Outro';
+    const low = g.toLowerCase();
+    if (low.includes('lic')) return 'Licenciatura';
+    if (low.includes('bach')) return 'Bacharelado';
+    return 'Outro';
 }
 
 function filterCursos(f) {
-    return DATA.cursos.filter(c => {
-        if (!f.anos.includes(c.y)) return false;
-        if (!f.graus.includes(c.g)) return false;
+    if (!CURRENT) return [];
+    return CURRENT.cursos.filter(c => {
+        if (f.areas.length && !f.areas.includes(c.ar)) return false;
+        if (!f.ciclos.includes(c.y)) return false;
+        const grau = normGrau(c.g || '');
+        if (!f.graus.includes(grau)) return false;
         if (!f.modais.includes(normModal(c.m))) return false;
         if (!f.cats.includes(c.ct)) return false;
-        if (c.pf != null && !f.pfs.includes(c.pf)) return false;
-        if (c.pf == null) return false;
-        const r = UF_REGIAO[c.u];
-        if (!f.regs.includes(r)) return false;
+        if (c.pf == null || !f.pfs.includes(c.pf)) return false;
+        if (!f.regs.includes(c._r)) return false;
         return true;
     });
 }
 
 function mean(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
 
+// === RENDERING ===
 function analisar() {
+    if (!CURRENT) return;
     const f = getFilters();
     const cursos = filterCursos(f);
     const main = document.getElementById('results');
@@ -367,8 +461,6 @@ function analisar() {
 
     const metrica = f.metrica;
     const metricaLabel = METRIC_LABELS[metrica];
-
-    // Stats
     const vals = cursos.map(c => c[metrica]).filter(v => v != null);
     const avg = mean(vals);
     const fs = {};
@@ -376,117 +468,112 @@ function analisar() {
     const ufs = new Set(cursos.map(c => c.u));
     const ies = new Set(cursos.map(c => c.sg));
 
-    let html = `<div class="card"><h2>Visão geral</h2><div class="stats-row">
-        <div class="stat-box"><div class="value">${cursos.length}</div><div class="label">Cursos</div></div>
-        <div class="stat-box"><div class="value">${ies.size}</div><div class="label">IES</div></div>
-        <div class="stat-box"><div class="value">${ufs.size}</div><div class="label">UFs</div></div>
-        <div class="stat-box"><div class="value">${avg.toFixed(2)}</div><div class="label">${metricaLabel} (média)</div></div>
-        <div class="stat-box" style="border-left-color:#C8E6C9;"><div class="value">${fs[5]||0}</div><div class="label">CPC 5</div></div>
-        <div class="stat-box" style="border-left-color:#BBDEFB;"><div class="value">${fs[4]||0}</div><div class="label">CPC 4</div></div>
-        <div class="stat-box" style="border-left-color:#FFF9C4;"><div class="value">${fs[3]||0}</div><div class="label">CPC 3</div></div>
-        <div class="stat-box" style="border-left-color:#FFE0B2;"><div class="value">${fs[2]||0}</div><div class="label">CPC 2</div></div>
-        <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">CPC 1</div></div>
-    </div></div>`;
+    // Check partial data
+    const partialCount = cursos.filter(c => c._partial).length;
+    const partialBadge = partialCount > 0 ? `<span class="partial-badge">${partialCount} sem CPC composto</span>` : '';
+
+    let html = `<div class="card"><h2>${CURRENT.icon} ${CURRENT.label} ${partialBadge}</h2>
+        <div class="stats-row">
+            <div class="stat-box"><div class="value">${cursos.length}</div><div class="label">Cursos filtrados</div></div>
+            <div class="stat-box"><div class="value">${ies.size}</div><div class="label">IES</div></div>
+            <div class="stat-box"><div class="value">${ufs.size}</div><div class="label">UFs</div></div>
+            <div class="stat-box"><div class="value">${avg.toFixed(2)}</div><div class="label">${metricaLabel} (média)</div></div>
+            <div class="stat-box" style="border-left-color:#C8E6C9;"><div class="value">${fs[5]||0}</div><div class="label">Faixa 5</div></div>
+            <div class="stat-box" style="border-left-color:#BBDEFB;"><div class="value">${fs[4]||0}</div><div class="label">Faixa 4</div></div>
+            <div class="stat-box" style="border-left-color:#FFF9C4;"><div class="value">${fs[3]||0}</div><div class="label">Faixa 3</div></div>
+            <div class="stat-box" style="border-left-color:#FFE0B2;"><div class="value">${fs[2]||0}</div><div class="label">Faixa 2</div></div>
+            <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Faixa 1</div></div>
+        </div></div>`;
+
+    if (partialCount > 0) {
+        html += `<div class="card" style="background:#FFF3E0;border-left:4px solid #FF9800;">
+            <p style="font-size:12px;margin:0;"><b>Aviso metodológico:</b> ${partialCount} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> como proxy, e indicadores como % Doutores, Infraestrutura e Regime de Trabalho não estão disponíveis.</p>
+        </div>`;
+    }
 
     // UnB
-    const unbCursos = cursos.filter(c => c.sg === 'UNB' || c.sg === 'UnB');
+    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === 'UNB' || (c.sg||'').toUpperCase() === 'UNB');
     if (unbCursos.length) {
-        html += `<div class="card"><h2 class="unb">★ Universidade de Brasília</h2><div class="stats-row">`;
+        html += `<div class="card"><h2 class="unb">★ Universidade de Brasília (${unbCursos.length} curso${unbCursos.length>1?'s':''})</h2><div class="stats-row">`;
         unbCursos.forEach(c => {
-            const cpcBadge = c.pf != null ? `<span class="cpc-${c.pf}" style="padding:2px 6px;border-radius:4px;">CPC ${c.pf}</span>` : 'SC';
-            html += `<div class="stat-box unb" style="min-width:180px;"><div class="value">${cpcBadge}</div><div class="label">${c.g} ${c.y} — ${c.mu}</div></div>`;
+            const pfBadge = c.pf != null ? `<span class="cpc-${c.pf}" style="padding:2px 6px;border-radius:4px;">${c.pf}</span>` : 'SC';
+            html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${c.ar}<br>${c.y} — ${c.mu}</div></div>`;
         });
         html += `</div></div>`;
     }
 
-    // Tabela ranking
+    // Ranking table
     const sorted = [...cursos].sort((a,b) => (b[metrica]||-999) - (a[metrica]||-999));
-    html += `<div class="card"><h2>Ranking de cursos (${cursos.length}) — ordenado por ${metricaLabel}</h2>
-        <p style="font-size:11px;color:#7F8C8D;margin-bottom:8px;">Clique no cabeçalho para reordenar.</p>
+    const showLimit = Math.min(sorted.length, 500);
+    html += `<div class="card"><h2>Ranking (${cursos.length}, mostrando top ${showLimit}) — por ${metricaLabel}</h2>
+        <p style="font-size:11px;color:#7F8C8D;margin-bottom:6px;">Clique no cabeçalho para reordenar.</p>
         <div class="tbl-wrap"><table id="tabelaCursos"><thead><tr>
-            <th data-col="sg">Sigla</th>
-            <th data-col="u">UF</th>
-            <th data-col="y">Ano</th>
-            <th data-col="g">Grau</th>
-            <th data-col="m">Modal</th>
-            <th data-col="mu">Município</th>
-            <th data-col="pf">CPC</th>
-            <th data-col="pc">CPC cont</th>
-            <th data-col="e">ENADE</th>
-            <th data-col="ip">IDD</th>
-            <th data-col="dr">%Dr</th>
-            <th data-col="nf">Infra</th>
-            <th data-col="np">N.part</th>
+            <th>Sigla</th><th>UF</th><th>Ano</th><th>G</th><th>M</th>
+            <th>Área / Município</th>
+            <th>Faixa</th><th>CPC cont</th><th>ENADE</th><th>IDD</th><th>%Dr</th><th>Infra</th>
         </tr></thead><tbody>`;
-    sorted.forEach(c => {
-        const rowClass = (c.sg === 'UNB' || c.sg === 'UnB') ? 'row-unb' : '';
+    sorted.slice(0, showLimit).forEach(c => {
+        const rowClass = (c.sg||'').toUpperCase() === 'UNB' ? 'row-unb' : '';
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        const grau = normGrau(c.g);
         const modal = normModal(c.m);
         html += `<tr class="${rowClass}">
             <td><b>${c.sg || '—'}</b></td>
             <td>${c.u || '—'}</td>
             <td>${c.y}</td>
-            <td>${c.g[0]}</td>
+            <td>${grau[0]}</td>
             <td>${modal[0]}</td>
-            <td style="text-align:left;">${c.mu || '—'}</td>
+            <td style="text-align:left;font-size:10px;">${c.ar.replace(/\(LICENCIATURA\)/,'(L)').replace(/\(BACHARELADO\)/,'(B)')}<br><span style="color:#999;">${c.mu || '—'}</span></td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
             <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
             <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
             <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
-            <td>${c.np != null ? c.np : '—'}</td>
         </tr>`;
     });
     html += `</tbody></table></div></div>`;
 
-    // Gráficos
-    html += `<div class="card"><h2>Distribuição por faixa CPC</h2>
-        <div class="chart-container"><canvas id="chartFaixas"></canvas></div></div>`;
-
-    html += `<div class="card"><h2>Top IES por ${metricaLabel} (média)</h2>
-        <div class="chart-container"><canvas id="chartIES"></canvas></div></div>`;
+    // Charts
+    html += `<div class="chart-row">
+        <div class="chart-half"><div class="card"><h2>Distribuição por Faixa</h2>
+            <div class="chart-container"><canvas id="chartFaixas"></canvas></div></div></div>
+        <div class="chart-half"><div class="card"><h2>Top 15 IES — ${metricaLabel}</h2>
+            <div class="chart-container"><canvas id="chartIES"></canvas></div></div></div>
+    </div>`;
 
     html += `<div class="card"><h2>Cursos por UF</h2>
         <div class="chart-container"><canvas id="chartUF"></canvas></div></div>`;
 
-    if (f.anos.length === 2) {
-        html += `<div class="card"><h2>Evolução 2017 → 2021 (Licenciatura) — ${metricaLabel}</h2>
-            <div class="chart-container"><canvas id="chartEvol"></canvas></div>
-            <p style="font-size:11px;color:#7F8C8D;">Compara médias nacionais dos dois ciclos ENADE de Licenciatura em Física.</p></div>`;
+    if (f.ciclos.length > 1) {
+        html += `<div class="card"><h2>Evolução temporal — ${metricaLabel}</h2>
+            <div class="chart-container" style="height:280px;"><canvas id="chartEvol"></canvas></div></div>`;
     }
 
-    // Relatório textual
     html += `<div class="card"><h2>Relatório textual</h2><div class="report-box" id="reportBox"></div></div>`;
 
     main.innerHTML = html;
-
-    // Render charts after DOM
     setTimeout(() => {
         renderCharts(cursos, f);
         bindSortable();
         buildReport(cursos, f);
     }, 30);
-    setStatus(`${cursos.length} cursos mostrados`);
+    setStatus(`${cursos.length} cursos mostrados em ${CURRENT.label}`);
 }
 
 function bindSortable() {
-    document.querySelectorAll('#tabelaCursos th').forEach(th => {
+    document.querySelectorAll('#tabelaCursos th').forEach((th, colIdx) => {
         th.addEventListener('click', () => {
-            const col = th.dataset.col;
-            if (!col) return;
-            if (_sortCol === col) _sortDir = -_sortDir;
-            else { _sortCol = col; _sortDir = -1; }
             const tbody = th.closest('table').querySelector('tbody');
             const rows = [...tbody.querySelectorAll('tr')];
+            const dir = (_sortCol === colIdx) ? -_sortDir : -1;
+            _sortCol = colIdx; _sortDir = dir;
             rows.sort((a, b) => {
-                const ai = [...a.cells].map(c => c.textContent);
-                const bi = [...b.cells].map(c => c.textContent);
-                const colIdx = [...th.parentElement.children].indexOf(th);
-                let va = ai[colIdx]; let vb = bi[colIdx];
+                let va = a.cells[colIdx].textContent.trim();
+                let vb = b.cells[colIdx].textContent.trim();
                 const na = parseFloat(va); const nb = parseFloat(vb);
-                if (!isNaN(na) && !isNaN(nb)) return (na - nb) * _sortDir;
-                return va.localeCompare(vb) * _sortDir;
+                if (!isNaN(na) && !isNaN(nb)) return (na - nb) * dir;
+                return va.localeCompare(vb) * dir;
             });
             rows.forEach(r => tbody.appendChild(r));
         });
@@ -501,104 +588,87 @@ function destroyCharts() {
 function renderCharts(cursos, f) {
     destroyCharts();
 
-    // 1. Distribuicao por faixa CPC
+    // 1. Faixas
     const faixas = [1,2,3,4,5];
     const dataFaixa = faixas.map(fx => cursos.filter(c => c.pf === fx).length);
     _charts.faixas = new Chart(document.getElementById('chartFaixas'), {
         type: 'bar',
         data: {
-            labels: faixas.map(fx => `CPC ${fx}`),
-            datasets: [{
-                label: 'Nº de cursos',
-                data: dataFaixa,
-                backgroundColor: faixas.map(fx => CPC_COLORS[fx]),
-            }]
-        },
-        options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y} cursos` } } },
-            scales: { y: { beginAtZero: true, title: { display: true, text: 'Nº de cursos' } } }
-        }
-    });
-
-    // 2. Top IES por metrica media
-    const metrica = f.metrica;
-    const iesMap = {};
-    cursos.forEach(c => {
-        if (c[metrica] == null) return;
-        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set(), is_unb: (c.sg === 'UNB' || c.sg === 'UnB') };
-        iesMap[c.sg].vals.push(c[metrica]);
-        iesMap[c.sg].ufs.add(c.u);
-    });
-    const iesList = Object.entries(iesMap).map(([sg, info]) => ({
-        sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
-    })).sort((a,b) => b.avg - a.avg).slice(0, 20);
-    const topColors = iesList.map(p => p.is_unb ? '#E91E63' : '#3498DB');
-
-    _charts.ies = new Chart(document.getElementById('chartIES'), {
-        type: 'bar',
-        data: {
-            labels: iesList.map(p => p.is_unb ? `★ ${p.sg}` : p.sg),
-            datasets: [{
-                label: METRIC_LABELS[metrica],
-                data: iesList.map(p => p.avg),
-                backgroundColor: topColors,
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false },
-                tooltip: { callbacks: { label: (ctx) => {
-                    const p = iesList[ctx.dataIndex];
-                    return [`${METRIC_LABELS[metrica]}: ${p.avg.toFixed(3)}`, `Cursos: ${p.n}`, `UFs: ${p.ufs.join(', ')}`];
-                }}}
-            },
-            scales: { x: { beginAtZero: true } }
-        }
-    });
-
-    // 3. Cursos por UF (barras)
-    const ufMap = {};
-    cursos.forEach(c => { ufMap[c.u] = (ufMap[c.u]||0) + 1; });
-    const ufEntries = Object.entries(ufMap).sort((a,b) => b[1]-a[1]);
-
-    _charts.uf = new Chart(document.getElementById('chartUF'), {
-        type: 'bar',
-        data: {
-            labels: ufEntries.map(e => e[0]),
-            datasets: [{
-                label: 'Nº de cursos',
-                data: ufEntries.map(e => e[1]),
-                backgroundColor: ufEntries.map(e => {
-                    const r = UF_REGIAO[e[0]];
-                    return { N:'#27AE60', NE:'#F39C12', CO:'#9B59B6', SE:'#3498DB', S:'#E74C3C' }[r] || '#95A5A6';
-                })
-            }]
+            labels: faixas.map(fx => `Faixa ${fx}`),
+            datasets: [{ data: dataFaixa, backgroundColor: faixas.map(fx => CPC_COLORS[fx]) }]
         },
         options: { responsive: true, maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: { y: { beginAtZero: true, title: { display: true, text: 'Nº de cursos' } } } }
     });
 
-    // 4. Evolucao 2017 -> 2021 (Licenciatura)
-    if (document.getElementById('chartEvol')) {
-        const lic17 = cursos.filter(c => c.y === 2017 && c.g === 'Licenciatura').map(c => c[metrica]).filter(v => v != null);
-        const lic21 = cursos.filter(c => c.y === 2021 && c.g === 'Licenciatura').map(c => c[metrica]).filter(v => v != null);
+    // 2. Top IES
+    const metrica = f.metrica;
+    const iesMap = {};
+    cursos.forEach(c => {
+        if (c[metrica] == null) return;
+        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set(), is_unb: (c.sg||'').toUpperCase() === 'UNB' };
+        iesMap[c.sg].vals.push(c[metrica]);
+        iesMap[c.sg].ufs.add(c.u);
+    });
+    const iesList = Object.entries(iesMap).map(([sg, info]) => ({
+        sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
+    })).filter(p => p.n >= 1).sort((a,b) => b.avg - a.avg).slice(0, 15);
+
+    _charts.ies = new Chart(document.getElementById('chartIES'), {
+        type: 'bar',
+        data: {
+            labels: iesList.map(p => p.is_unb ? `★ ${p.sg}` : p.sg),
+            datasets: [{ data: iesList.map(p => p.avg),
+                backgroundColor: iesList.map(p => p.is_unb ? '#E91E63' : '#3498DB') }]
+        },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false },
+                tooltip: { callbacks: { label: (ctx) => {
+                    const p = iesList[ctx.dataIndex];
+                    return [`${METRIC_LABELS[metrica]}: ${p.avg.toFixed(3)}`, `Cursos: ${p.n}`, `UFs: ${p.ufs.join(', ')}`];
+                }}}
+            },
+            scales: { x: { beginAtZero: true } } }
+    });
+
+    // 3. Cursos por UF
+    const ufMap = {};
+    cursos.forEach(c => { ufMap[c.u] = (ufMap[c.u]||0) + 1; });
+    const ufEntries = Object.entries(ufMap).sort((a,b) => b[1]-a[1]);
+    _charts.uf = new Chart(document.getElementById('chartUF'), {
+        type: 'bar',
+        data: {
+            labels: ufEntries.map(e => e[0]),
+            datasets: [{ data: ufEntries.map(e => e[1]),
+                backgroundColor: ufEntries.map(e => ({ N:'#27AE60', NE:'#F39C12', CO:'#9B59B6', SE:'#3498DB', S:'#E74C3C' }[UF_REGIAO[e[0]]] || '#95A5A6')) }]
+        },
+        options: { responsive: true, maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, title: { display: true, text: 'Nº de cursos' } } } }
+    });
+
+    // 4. Evolução temporal
+    if (f.ciclos.length > 1 && document.getElementById('chartEvol')) {
+        const metrica = f.metrica;
+        const byYear = {};
+        cursos.forEach(c => {
+            if (c[metrica] == null) return;
+            if (!byYear[c.y]) byYear[c.y] = [];
+            byYear[c.y].push(c[metrica]);
+        });
+        const years = Object.keys(byYear).sort();
         _charts.evol = new Chart(document.getElementById('chartEvol'), {
             type: 'line',
             data: {
-                labels: ['2017', '2021'],
-                datasets: [{
-                    label: `${METRIC_LABELS[metrica]} — média nacional (Licenciatura)`,
-                    data: [mean(lic17), mean(lic21)],
+                labels: years,
+                datasets: [{ label: `${METRIC_LABELS[metrica]} — média`,
+                    data: years.map(y => mean(byYear[y])),
                     borderColor: '#1B5E20', backgroundColor: 'rgba(27,94,32,0.2)',
-                    tension: 0.1, fill: true, pointRadius: 6
-                }]
+                    tension: 0.1, fill: true, pointRadius: 6 }]
             },
             options: { responsive: true, maintainAspectRatio: false,
-                plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y.toFixed(3)} (n=${ctx.dataIndex===0?lic17.length:lic21.length})` } } },
+                plugins: { tooltip: { callbacks: { label: (ctx) => `${ctx.parsed.y.toFixed(3)} (n=${byYear[years[ctx.dataIndex]].length})` } } },
                 scales: { y: { beginAtZero: false } } }
         });
     }
@@ -609,80 +679,50 @@ function buildReport(cursos, f) {
     const lines = [];
     const p = (s) => lines.push(s);
     p('═══════════════════════════════════════════════════════════');
-    p(`  MAPA-GR — Relatório de Análise`);
+    p(`  MAPA-GR v${VERSION} — ${CURRENT.icon} ${CURRENT.label}`);
     p(`  ${new Date().toLocaleString('pt-BR')}`);
     p('═══════════════════════════════════════════════════════════');
     p('');
-    p(`FILTROS APLICADOS:`);
-    p(`  Ciclos: ${f.anos.join(', ')}`);
-    p(`  Graus: ${f.graus.join(', ')}`);
-    p(`  Modalidades: ${f.modais.join(', ')}`);
-    p(`  Categorias: ${f.cats.length}/6 selecionadas`);
-    p(`  Faixas CPC: ${f.pfs.join(', ')}`);
-    p(`  Regiões: ${f.regs.join(', ')}`);
+    p(`Filtros:`);
+    p(`  Ciclos: ${f.ciclos.join(', ')}`);
     p(`  Métrica: ${metricaLabel}`);
+    p(`  Áreas: ${f.areas.length}/${CURRENT.areas.length} selecionadas`);
     p('');
-    p(`RESULTADOS:`);
-    p(`  Total de cursos: ${cursos.length}`);
-    const ies = new Set(cursos.map(c => c.sg));
-    p(`  IES distintas: ${ies.size}`);
-    p(`  UFs: ${new Set(cursos.map(c=>c.u)).size}`);
+    p(`Resultados:`);
+    p(`  Cursos: ${cursos.length}`);
+    p(`  IES distintas: ${new Set(cursos.map(c => c.sg)).size}`);
+    p(`  UFs: ${new Set(cursos.map(c => c.u)).size}`);
     const vals = cursos.map(c => c[f.metrica]).filter(v => v != null);
     if (vals.length) {
         p(`  ${metricaLabel} — média: ${mean(vals).toFixed(3)}`);
-        p(`  ${metricaLabel} — máximo: ${Math.max(...vals).toFixed(3)}`);
-        p(`  ${metricaLabel} — mínimo: ${Math.min(...vals).toFixed(3)}`);
+        p(`  ${metricaLabel} — máx/mín: ${Math.max(...vals).toFixed(3)} / ${Math.min(...vals).toFixed(3)}`);
     }
     p('');
-
-    // Distribuicao CPC
-    p('DISTRIBUIÇÃO POR FAIXA CPC:');
+    p('Distribuição por faixa:');
     for (let fx = 5; fx >= 1; fx--) {
         const n = cursos.filter(c => c.pf === fx).length;
-        const pct = cursos.length ? (n*100/cursos.length).toFixed(1) : '0.0';
+        const pct = cursos.length ? (n*100/cursos.length).toFixed(1) : '0';
         const bar = '█'.repeat(Math.round(n*30/Math.max(1,cursos.length)));
-        p(`  CPC ${fx}: ${String(n).padStart(4)} (${pct.padStart(5)}%) ${bar}`);
+        p(`  Faixa ${fx}: ${String(n).padStart(5)} (${pct.padStart(5)}%) ${bar}`);
     }
     p('');
 
-    // UnB highlight
-    const unbCursos = cursos.filter(c => c.sg === 'UNB' || c.sg === 'UnB');
+    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === 'UNB');
     if (unbCursos.length) {
-        p('★ UNIVERSIDADE DE BRASÍLIA:');
+        p('★ UnB:');
         unbCursos.forEach(c => {
-            p(`  ${c.g} ${c.y} — ${c.mu}/${c.u}`);
-            p(`    CPC faixa: ${c.pf || 'SC'} | CPC cont: ${c.pc != null ? c.pc.toFixed(3) : '—'}`);
-            p(`    ENADE: ${c.e != null ? c.e.toFixed(3) : '—'} | IDD pad: ${c.ip != null ? c.ip.toFixed(3) : '—'}`);
-            p(`    %Doutores: ${c.dr != null ? c.dr.toFixed(3) : '—'} | Infra: ${c.nf != null ? c.nf.toFixed(3) : '—'}`);
+            p(`  ${c.ar} ${c.y} — ${c.mu}/${c.u}`);
+            p(`    Faixa: ${c.pf||'?'} | CPC: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
+            p(`    IDD: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | Infra: ${c.nf!=null?c.nf.toFixed(3):'—'}`);
         });
         p('');
     }
 
-    // Top 15 cursos
-    p('TOP 15 CURSOS POR ' + metricaLabel.toUpperCase() + ':');
-    const sorted = [...cursos].filter(c => c[f.metrica] != null)
-        .sort((a,b) => b[f.metrica] - a[f.metrica]);
+    p('Top 15 cursos por ' + metricaLabel + ':');
+    const sorted = [...cursos].filter(c => c[f.metrica] != null).sort((a,b) => b[f.metrica] - a[f.metrica]);
     sorted.slice(0, 15).forEach((c, i) => {
-        const mark = (c.sg === 'UNB' || c.sg === 'UnB') ? '★ ' : '  ';
-        p(`  ${mark}${String(i+1).padStart(2)}. ${c.sg.padEnd(10)} ${c.u} ${c.y} ${c.g[0]} | ${f.metrica}=${c[f.metrica].toFixed(3)} | CPC ${c.pf || '?'} | ${c.mu}`);
-    });
-    p('');
-
-    // Top 10 IES
-    p('TOP 10 IES POR ' + metricaLabel.toUpperCase() + ' (MÉDIA):');
-    const iesMap = {};
-    cursos.forEach(c => {
-        if (c[f.metrica] == null) return;
-        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set() };
-        iesMap[c.sg].vals.push(c[f.metrica]);
-        iesMap[c.sg].ufs.add(c.u);
-    });
-    const iesArr = Object.entries(iesMap).map(([sg,i]) => ({
-        sg, avg: mean(i.vals), n: i.vals.length, ufs: [...i.ufs]
-    })).sort((a,b) => b.avg - a.avg);
-    iesArr.slice(0, 10).forEach((p2, i) => {
-        const mark = (p2.sg === 'UNB' || p2.sg === 'UnB') ? '★ ' : '  ';
-        p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(10)} | ${f.metrica}=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
+        const mark = (c.sg||'').toUpperCase() === 'UNB' ? '★ ' : '  ';
+        p(`  ${mark}${String(i+1).padStart(2)}. ${c.sg.padEnd(12)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | ${c.ar.substr(0,40)}`);
     });
     p('');
     p(`Prof. David L. Azevedo | MAPA-GR v${VERSION}`);
@@ -702,40 +742,30 @@ function exportCSV() {
     const f = getFilters();
     const cursos = filterCursos(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
-    const header = ['ano','sigla','ies','uf','municipio','grau','modalidade','categoria','cpc_faixa','cpc_cont','enade_cont','idd_pad','odp_pad','infra_pad','opf_pad','mestres_pad','doutores_pad','regime_pad','n_inscritos','n_participantes'];
+    const header = ['grande_area','ano','sigla','ies','uf','municipio','area','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
     const rows = cursos.map(c => [
-        c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`, c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
-        c.g, normModal(c.m), c.ct, c.pf||'', c.pc||'', c.e||'', c.ip||'', c.op||'', c.nf||'', c.of||'',
-        c.ms||'', c.dr||'', c.rg||'', c.ni||'', c.np||''
+        CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`, c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
+        `"${c.ar.replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
+        c.pf||'', c.pc||'', c.e||'', c.ip||'', c.ms||'', c.dr||'', c.rg||'', c.nf||'',
+        c.ni||'', c.np||''
     ].join(';'));
     let csv = '# MAPA-GR v' + VERSION + ' — ' + new Date().toLocaleString('pt-BR') + '\n';
     csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';
+    csv += '# Grande Área: ' + CURRENT.label + '\n';
     csv += header.join(';') + '\n' + rows.join('\n');
     const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'mapa-gr-export-' + new Date().toISOString().replace(/[-:T]/g,'').slice(0,14) + '.csv';
+    a.download = `mapa-gr-${CURRENT.grande_area}-` + new Date().toISOString().replace(/[-:T]/g,'').slice(0,14) + '.csv';
     a.click();
-    toast(`${cursos.length} cursos exportados em CSV`);
+    toast(`${cursos.length} cursos exportados`);
 }
 
-function exportarPNGs() {
-    const canvases = document.querySelectorAll('#results canvas');
-    if (!canvases.length) { toast('Nenhum gráfico para exportar'); return; }
-    canvases.forEach((cv, i) => {
-        cv.toBlob((blob) => {
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `mapa-gr-grafico-${i+1}-` + new Date().toISOString().replace(/[-:T]/g,'').slice(0,14) + '.png';
-            a.click();
-        }, 'image/png');
-    });
-    toast(`${canvases.length} gráficos exportados`);
-}
+function abrirHelp() { window.open('help-doc.html', '_blank'); }
 
-function abrirHelp() {
-    window.open('help-doc.html', '_blank');
-}
+// Init
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
+loadMetadata();
 </script>
 
 <script>

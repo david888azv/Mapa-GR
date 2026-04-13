@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR — Documentação e Fontes de Dados</title>
+<title>MAPA-GR v2.0 — Documentação e Fontes de Dados</title>
 <style>
 :root { --azul:#1B5E20; --azul2:#2E7D32; --azul3:#0D3818; --accent:#E91E63;
     --verde:#27AE60; --bg:#F5F7FA; --card:#FFF; --borda:#E0E4E8; --txt:#2C3E50; --txt2:#7F8C8D; }
@@ -24,7 +24,7 @@ nav a:hover,nav a.active{color:#fff;background:var(--accent);}
 .card h3{font-size:15px;color:var(--accent);margin:16px 0 8px;}
 table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
 th{background:var(--azul);color:#fff;padding:8px 10px;text-align:left;font-weight:600;}
-td{padding:6px 10px;border-bottom:1px solid var(--borda);}
+td{padding:6px 10px;border-bottom:1px solid var(--borda);vertical-align:top;}
 tr:nth-child(even){background:#F8F9FA;}
 code{background:#E8EDF2;padding:2px 6px;border-radius:3px;font-size:12px;font-family:'Consolas','Courier New',monospace;}
 .info-box{border-left:4px solid #4CAF50;background:#E8F5E9;padding:12px;border-radius:4px;margin:12px 0;font-size:13px;}
@@ -38,18 +38,19 @@ a{color:#1565C0;}
 <body>
 
 <div class="header">
-    <h1><em>MAPA-GR</em> — Documentação</h1>
+    <h1><em>MAPA-GR</em> — Documentação v2.0</h1>
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
-        <div>v1.0</div>
+        <div>v2.0 — Abril 2026</div>
     </div>
 </div>
 
 <nav>
     <a onclick="showSection('sec-sobre')" class="active" id="nav-sobre">Sobre</a>
+    <a onclick="showSection('sec-areas')" id="nav-areas">Grandes Áreas</a>
     <a onclick="showSection('sec-uso')" id="nav-uso">Como Usar</a>
     <a onclick="showSection('sec-indicadores')" id="nav-indicadores">Indicadores SINAES</a>
-    <a onclick="showSection('sec-fontes')" id="nav-fontes">Fontes de Dados e URLs</a>
+    <a onclick="showSection('sec-fontes')" id="nav-fontes">Fontes de Dados</a>
     <a onclick="showSection('sec-versoes')" id="nav-versoes">Versões</a>
 </nav>
 
@@ -58,72 +59,89 @@ a{color:#1565C0;}
 <!-- SOBRE -->
 <div class="section active" id="sec-sobre">
 <div class="card">
-    <h2>Sobre o MAPA-GR</h2>
-    <p><strong>MAPA-GR</strong> — <em>Monitoramento e Análise da Formação Acadêmica na Graduação</em> — é um sistema interativo para acompanhamento e análise dos cursos de graduação em <strong>Física</strong> no Brasil, utilizando os indicadores de qualidade publicados pelo INEP/MEC.</p>
+    <h2>Sobre o MAPA-GR v2.0</h2>
+    <p><strong>MAPA-GR</strong> — <em>Monitoramento e Análise da Formação Acadêmica na Graduação</em> — é um sistema interativo para acompanhamento dos cursos de graduação no Brasil, usando os indicadores de qualidade publicados pelo INEP/MEC (SINAES).</p>
 
-    <p style="margin-top:12px;">Esta v1.0 cobre <strong>Licenciatura</strong> e <strong>Bacharelado em Física</strong> nos ciclos ENADE de <strong>2017</strong> (274 cursos) e <strong>2021</strong> (244 cursos, só Licenciatura), totalizando <strong>518 cursos</strong> de <strong>159 IES</strong> em <strong>27 UFs</strong>. O Bacharelado em Física apenas aparece no ciclo 2017, pois os ciclos posteriores consolidaram a avaliação em outras áreas.</p>
+    <p style="margin-top:12px;">A versão 2.0 expande massivamente o escopo: enquanto a v1.0 cobria apenas Física (518 cursos), a v2.0 cobre <strong>47.094 cursos</strong> organizados em <strong>9 grandes áreas</strong>. O usuário navega entre as áreas via abas no topo da tela, e cada aba carrega seus próprios dados sob demanda (lazy-loading).</p>
 
     <h3>Autor</h3>
     <table>
         <tr><td><strong>Desenvolvedor</strong></td><td>Prof. David L. Azevedo</td></tr>
         <tr><td><strong>Instituição</strong></td><td>Universidade de Brasília (UnB)</td></tr>
         <tr><td><strong>E-mail</strong></td><td><a href="mailto:david888azv@unb.br">david888azv@unb.br</a></td></tr>
-        <tr><td><strong>Versão atual</strong></td><td>v1.0 (Abril 2026)</td></tr>
-        <tr><td><strong>Projeto irmão</strong></td><td><a href="https://david888azv.github.io/Mapa-PG/" target="_blank">MAPA-PG</a> — versão para pós-graduação</td></tr>
+        <tr><td><strong>Versão</strong></td><td>v2.0 (Abril 2026)</td></tr>
+        <tr><td><strong>Projeto irmão</strong></td><td><a href="https://david888azv.github.io/Mapa-PG/" target="_blank">MAPA-PG</a> (pós-graduação)</td></tr>
     </table>
 
     <div class="info-box" style="text-align:justify;">
-        <strong>Dados públicos:</strong> Todos os dados utilizados neste sistema foram obtidos do <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">Portal de Dados Abertos do INEP</a>, como parte da iniciativa do Governo Federal de transparência e acesso à informação pública (Lei de Acesso à Informação — Lei n. 12.527/2011). Os dados são públicos e de livre acesso. Os links para download de cada arquivo encontram-se na aba <strong>Fontes de Dados e URLs</strong>.
+        <strong>Dados públicos:</strong> Todos os dados foram obtidos do <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">Portal de Dados Abertos do INEP</a>, como parte da iniciativa do Governo Federal de transparência e acesso à informação pública (Lei n. 12.527/2011). Dados livres e gratuitos.
     </div>
 </div>
+</div>
 
+<!-- GRANDES AREAS -->
+<div class="section" id="sec-areas">
 <div class="card">
-    <h2>Diferença entre MAPA-PG e MAPA-GR</h2>
+    <h2>As 9 Grandes Áreas</h2>
+    <p>As áreas de avaliação do INEP (~67 nomes distintos) foram mapeadas para 9 grandes áreas compatíveis com a classificação CAPES/CNPq. Cada aba no topo da tela corresponde a uma grande área.</p>
+
     <table>
-        <tr><th>Aspecto</th><th>MAPA-PG (Pós-graduação)</th><th>MAPA-GR (Graduação)</th></tr>
-        <tr><td>Nível</td><td>Stricto sensu (Mestrado/Doutorado)</td><td>Graduação (Licenciatura/Bacharelado)</td></tr>
-        <tr><td>Órgão avaliador</td><td>CAPES/MEC</td><td>INEP/MEC (SINAES)</td></tr>
-        <tr><td>Escala de nota</td><td>1 a 7 (nota CAPES do programa)</td><td>1 a 5 (faixa CPC do curso)</td></tr>
-        <tr><td>Cobertura temporal</td><td>Quadriênios 2013–2024</td><td>Ciclos ENADE 2017 e 2021</td></tr>
-        <tr><td>Unidade de análise</td><td>Programa de pós-graduação</td><td>Curso de graduação</td></tr>
-        <tr><td>Principais métricas</td><td>Artigos/docente, fator de impacto, PQ/SPQ</td><td>CPC, ENADE, IDD, % Doutores, Infraestrutura</td></tr>
+        <tr><th>Aba</th><th>Grande Área</th><th>Áreas INEP incluídas</th><th>Ciclos</th></tr>
+        <tr><td>🔬</td><td><strong>Ciências Exatas e da Terra</strong></td><td>Física (Lic/Bach), Matemática (Lic/Bach), Química (Lic/Bach), Ciência da Computação (Lic/Bach), Sistemas de Informação</td><td>2017, 2021</td></tr>
+        <tr><td>🌿</td><td><strong>Ciências Biológicas</strong></td><td>Ciências Biológicas (Lic/Bach), Biomedicina</td><td>2017, 2021, 2023</td></tr>
+        <tr><td>⚙️</td><td><strong>Engenharias</strong></td><td>Engenharia (várias), Arquitetura e Urbanismo</td><td>2017, 2023</td></tr>
+        <tr><td>⚕️</td><td><strong>Ciências da Saúde</strong></td><td>Medicina, Enfermagem, Farmácia, Fisioterapia, Fonoaudiologia, Nutrição, Odontologia, Psicologia, Educação Física (Lic/Bach)</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+        <tr><td>🌾</td><td><strong>Ciências Agrárias</strong></td><td>Agronomia, Zootecnia, Medicina Veterinária</td><td>2023</td></tr>
+        <tr><td>💼</td><td><strong>Ciências Sociais Aplicadas</strong></td><td>Administração, Direito, Ciências Contábeis, Ciências Econômicas, Jornalismo, Publicidade, Serviço Social, Relações Internacionais, Turismo, Design, Secretariado</td><td>2018, 2021, 2022</td></tr>
+        <tr><td>📚</td><td><strong>Ciências Humanas</strong></td><td>Pedagogia, História (Lic/Bach), Geografia (Lic/Bach), Filosofia (Lic/Bach), Ciências Sociais (Lic/Bach), Teologia</td><td>2017, 2018, 2021, 2022</td></tr>
+        <tr><td>🎨</td><td><strong>Linguística, Letras e Artes</strong></td><td>Letras-Português (Lic/Bach), Letras-Português-Espanhol, Letras-Português-Inglês, Letras-Inglês, Música, Artes Visuais</td><td>2017, 2021</td></tr>
+        <tr><td>🛠️</td><td><strong>Cursos Tecnólogos</strong></td><td>Todas as áreas começando com "Tecnologia em..."</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
     </table>
+
+    <h3>Observações sobre o mapeamento</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Medicina Veterinária</strong> — Ciências Agrárias (coerente com CAPES/CNPq).</li>
+        <li><strong>Psicologia</strong> — Ciências da Saúde (coerente com CAPES grande área 4).</li>
+        <li><strong>Educação Física</strong> (Licenciatura e Bacharelado) — Ciências da Saúde.</li>
+        <li><strong>Arquitetura e Urbanismo</strong> — Engenharias (por afinidade de indicadores).</li>
+        <li><strong>Ciências Sociais (Lic/Bach)</strong> — Ciências Humanas. "Ciências Sociais Aplicadas" é o grupo separado com Adm/Dir/Contábeis.</li>
+        <li><strong>Tecnólogos</strong> — cursos de graduação tecnológica separados em sua própria aba.</li>
+    </ul>
 </div>
 </div>
 
 <!-- COMO USAR -->
 <div class="section" id="sec-uso">
 <div class="card">
-    <h2>Como Usar o MAPA-GR</h2>
+    <h2>Como Usar o MAPA-GR v2.0</h2>
 
-    <h3>1. Filtros (Barra Lateral)</h3>
+    <h3>1. Abas no topo</h3>
+    <p>Clique em qualquer aba para carregar os dados daquela grande área. A aba default é <strong>Exatas</strong>. Os dados são baixados sob demanda (~200-600 KB gzipped) e cacheados para uso offline.</p>
+
+    <h3>2. Filtros (Barra Lateral)</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
-        <li><strong>Ciclo ENADE:</strong> Selecione 2017, 2021 ou ambos</li>
-        <li><strong>Grau acadêmico:</strong> Licenciatura e/ou Bacharelado</li>
+        <li><strong>Área:</strong> Multisseleção das áreas específicas dentro da grande área atual</li>
+        <li><strong>Ciclo:</strong> Anos ENADE disponíveis para a grande área</li>
+        <li><strong>Grau:</strong> Licenciatura, Bacharelado, Tecnólogo/Outro</li>
         <li><strong>Modalidade:</strong> Presencial e/ou EAD</li>
-        <li><strong>Categoria administrativa:</strong> Pública Federal/Estadual/Municipal, Privada com/sem fins lucrativos</li>
-        <li><strong>Faixa CPC:</strong> Filtre por faixa 1, 2, 3, 4 ou 5 (default: 3, 4 e 5)</li>
+        <li><strong>Categoria:</strong> Pública Federal/Estadual/Municipal, Privada com/sem fins, Especial</li>
+        <li><strong>Faixa:</strong> 1 a 5 (CPC ou ENADE para ciclos sem CPC composto)</li>
         <li><strong>Região:</strong> Norte, Nordeste, Centro-Oeste, Sudeste, Sul</li>
-        <li><strong>Métrica principal:</strong> Escolha qual indicador é usado para ranking e gráficos (CPC contínuo, ENADE, IDD, % Doutores, Infraestrutura, etc.)</li>
+        <li><strong>Métrica principal:</strong> CPC, ENADE, IDD, % Doutores, % Mestres, Regime, Infraestrutura</li>
     </ul>
 
-    <h3>2. Resultados</h3>
+    <h3>3. Resultados e Exportação</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
-        <li><strong>Visão geral:</strong> Total de cursos, IES, UFs, distribuição por faixa CPC</li>
-        <li><strong>Destaque UnB:</strong> Cursos da Universidade de Brasília em rosa</li>
-        <li><strong>Ranking:</strong> Tabela ordenável por qualquer coluna</li>
-        <li><strong>Gráficos:</strong> Distribuição CPC, Top IES, Cursos por UF, Evolução 2017→2021</li>
-        <li><strong>Relatório textual:</strong> Formatado para cópia</li>
-    </ul>
-
-    <h3>3. Exportação</h3>
-    <ul style="padding-left:20px;font-size:13px;line-height:2;">
-        <li><strong>CSV:</strong> Todos os cursos filtrados com indicadores completos</li>
-        <li><strong>PNG:</strong> Todos os gráficos visíveis como imagens</li>
+        <li><strong>Visão geral:</strong> Totais e distribuição de faixas</li>
+        <li><strong>Destaque UnB:</strong> Cursos da UnB em rosa (quando presentes)</li>
+        <li><strong>Ranking:</strong> Tabela ordenável (até 500 linhas visíveis)</li>
+        <li><strong>Gráficos:</strong> Faixa, Top IES, Cursos por UF, Evolução temporal</li>
+        <li><strong>Relatório textual:</strong> Resumo formatado</li>
+        <li><strong>CSV:</strong> Exportação dos cursos filtrados</li>
     </ul>
 
     <div class="warn-box" style="text-align:justify;">
-        <strong>Limitação temporal:</strong> O ENADE da área de Física segue um ciclo trienal que foi interrompido durante a pandemia de COVID-19. Esta versão do MAPA-GR cobre apenas os dois ciclos com dados disponíveis: 2017 (última versão com Bacharelado em Física) e 2021 (Licenciaturas pós-pandemia). Atualizações futuras serão incluídas quando o INEP publicar novos ciclos.
+        <strong>Ciclo 2018 (Sociais Aplicadas + Humanas):</strong> Para o ciclo ENADE 2018 (Administração, Direito, Contábeis, Psicologia e outras), o INEP <strong>não publicou o CPC composto completo</strong> — apenas o Conceito ENADE e o IDD. Para esses cursos, o MAPA-GR usa a faixa ENADE (1-5) como proxy, e indicadores como % Doutores, Infraestrutura, Regime de Trabalho <strong>não estão disponíveis</strong>. Os cursos afetados aparecem marcados com aviso "sem CPC composto".
     </div>
 </div>
 </div>
@@ -131,24 +149,22 @@ a{color:#1565C0;}
 <!-- INDICADORES -->
 <div class="section" id="sec-indicadores">
 <div class="card">
-    <h2>Indicadores SINAES — O que significam</h2>
-    <p>O SINAES (Sistema Nacional de Avaliação da Educação Superior) é o marco legal que define como o MEC/INEP avalia cursos de graduação e IES. Os principais indicadores são:</p>
+    <h2>Indicadores SINAES</h2>
     <table>
-        <tr><th>Sigla</th><th>Nome completo</th><th>O que mede</th></tr>
-        <tr><td><strong>ENADE</strong></td><td>Exame Nacional de Desempenho de Estudantes</td><td>Nota de 1 a 5 baseada em prova aplicada aos alunos de 1º e último ano da graduação. Para Física, aplicado em ciclo trienal.</td></tr>
-        <tr><td><strong>IDD</strong></td><td>Indicador de Diferença entre Desempenhos</td><td>"Valor agregado" pelo curso: compara o desempenho dos concluintes no ENADE com o desempenho esperado considerando o perfil de entrada (ENEM).</td></tr>
-        <tr><td><strong>CPC</strong></td><td>Conceito Preliminar de Curso</td><td>Indicador final composto: ENADE (20%) + IDD (35%) + corpo docente (30%, % Mestres/Doutores/Regime Integral) + infraestrutura e organização didática (15%). Escala 1–5.</td></tr>
-        <tr><td><strong>IGC</strong></td><td>Índice Geral de Cursos</td><td>Indicador institucional (da IES como um todo): média dos CPCs de todos os cursos da IES, ponderada pelo número de alunos.</td></tr>
-        <tr><td><strong>CC</strong></td><td>Conceito de Curso</td><td>Avaliação in loco por comissão de especialistas (não incluído nesta versão do MAPA-GR).</td></tr>
+        <tr><th>Sigla</th><th>Nome</th><th>Medida</th></tr>
+        <tr><td><strong>ENADE</strong></td><td>Exame Nacional de Desempenho de Estudantes</td><td>Nota 1-5 baseada em prova aplicada aos concluintes. Aplicado em ciclo trienal por área.</td></tr>
+        <tr><td><strong>IDD</strong></td><td>Indicador de Diferença entre Desempenhos</td><td>"Valor agregado" pelo curso: diferença entre desempenho observado e esperado (baseado no ENEM).</td></tr>
+        <tr><td><strong>CPC</strong></td><td>Conceito Preliminar de Curso</td><td>Composto: ENADE (20%) + IDD (35%) + docente (30%: % Mestres, Doutores, Regime) + infraestrutura (15%). Escala 1-5.</td></tr>
+        <tr><td><strong>IGC</strong></td><td>Índice Geral de Cursos</td><td>Indicador institucional, média dos CPCs de todos os cursos da IES.</td></tr>
     </table>
 
-    <h3>Interpretação das faixas CPC</h3>
+    <h3>Interpretação das faixas</h3>
     <table>
         <tr><th>Faixa</th><th>Interpretação</th></tr>
-        <tr><td>CPC 1 ou 2</td><td>Conceito insatisfatório — curso sujeito a medidas regulatórias (redução de vagas, supervisão)</td></tr>
-        <tr><td>CPC 3</td><td>Conceito satisfatório</td></tr>
-        <tr><td>CPC 4 ou 5</td><td>Conceito muito bom / excelente</td></tr>
-        <tr><td>SC</td><td>Sem Conceito — geralmente por participação insuficiente no ENADE (menos de 2 concluintes ou baixo percentual de presença)</td></tr>
+        <tr><td>1 ou 2</td><td>Conceito insatisfatório</td></tr>
+        <tr><td>3</td><td>Conceito satisfatório</td></tr>
+        <tr><td>4 ou 5</td><td>Muito bom / Excelente</td></tr>
+        <tr><td>SC</td><td>Sem Conceito — participação insuficiente no ENADE</td></tr>
     </table>
 </div>
 </div>
@@ -156,72 +172,23 @@ a{color:#1565C0;}
 <!-- FONTES -->
 <div class="section" id="sec-fontes">
 <div class="card">
-    <h2>Fontes de Dados — INEP Dados Abertos</h2>
+    <h2>Fontes de Dados — INEP</h2>
     <div class="info-box">
-        <strong>Portal:</strong> <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos</a><br>
-        <strong>Licença:</strong> Dados abertos governamentais — Lei de Acesso à Informação (Lei n. 12.527/2011)<br>
-        <strong>Órgão:</strong> Instituto Nacional de Estudos e Pesquisas Educacionais Anísio Teixeira (INEP/MEC)
+        <strong>Portal:</strong> <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">gov.br/inep/pt-br/acesso-a-informacao/dados-abertos</a><br>
+        <strong>Licença:</strong> Dados abertos governamentais — Lei n. 12.527/2011<br>
+        <strong>Total:</strong> 47.094 cursos em 9 grandes áreas
     </div>
 </div>
 
 <div class="card">
-    <h2>1. CPC 2017</h2>
+    <h2>Arquivos utilizados (5 ciclos)</h2>
     <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>URL</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx</a></td></tr>
-        <tr><td><strong>Conteúdo</strong></td><td>Conceito Preliminar de Curso 2017 com todas as áreas do ciclo 3 (Licenciaturas + Bacharelados de Ciências)</td></tr>
-        <tr><td><strong>Tamanho</strong></td><td>~3,5 MB | ~10.570 cursos</td></tr>
-        <tr><td><strong>Física no arquivo</strong></td><td>217 Licenciatura + 57 Bacharelado</td></tr>
-    </table>
-</div>
-
-<div class="card">
-    <h2>2. CPC 2021</h2>
-    <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>URL</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx</a></td></tr>
-        <tr><td><strong>Conteúdo</strong></td><td>Conceito Preliminar de Curso 2021 (pós-COVID, só Licenciaturas)</td></tr>
-        <tr><td><strong>Tamanho</strong></td><td>~2,1 MB | ~8.000 cursos</td></tr>
-        <tr><td><strong>Física no arquivo</strong></td><td>244 Licenciatura (sem Bacharelado)</td></tr>
-    </table>
-</div>
-
-<div class="card">
-    <h2>3. IDD 2017 e 2021</h2>
-    <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>URL 2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2018/resultados_IDD_2017.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2018/resultados_IDD_2017.xlsx</a></td></tr>
-        <tr><td><strong>URL 2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/IDD_2021.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/IDD_2021.xlsx</a></td></tr>
-        <tr><td><strong>Conteúdo</strong></td><td>Indicador de Diferença entre Desempenhos — valor agregado pelo curso</td></tr>
-    </table>
-</div>
-
-<div class="card">
-    <h2>4. IGC 2017 e 2021</h2>
-    <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>URL 2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_igc_2017.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_igc_2017.xlsx</a></td></tr>
-        <tr><td><strong>URL 2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/IGC_2021.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/IGC_2021.xlsx</a></td></tr>
-        <tr><td><strong>Conteúdo</strong></td><td>Índice Geral de Cursos (institucional)</td></tr>
-    </table>
-</div>
-
-<div class="card">
-    <h2>5. Conceito ENADE (2017 e 2021)</h2>
-    <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>URL 2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2018/resultados_conceito_enade_2017.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2018/resultados_conceito_enade_2017.xlsx</a></td></tr>
-        <tr><td><strong>URL 2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/conceito_enade_2021.xlsx" target="_blank" style="word-break:break-all;">https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/conceito_enade_2021.xlsx</a></td></tr>
-    </table>
-</div>
-
-<div class="card">
-    <h2>6. Censo da Educação Superior 2024 (a ser incorporado)</h2>
-    <table>
-        <tr><th>Item</th><th>Detalhe</th></tr>
-        <tr><td><strong>Portal</strong></td><td><a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos/microdados/censo-da-educacao-superior" target="_blank">Censo da Educação Superior — Microdados</a></td></tr>
-        <tr><td><strong>Conteúdo</strong></td><td>Microdados de matrícula, docente, IES e curso. Último disponível: Censo 2024 (divulgado em set/2025)</td></tr>
-        <tr><td><strong>Status</strong></td><td>Não incluído na v1.0 — planejado para versão futura do MAPA-GR</td></tr>
+        <tr><th>Ano</th><th>URL</th><th>Cursos</th><th>Cobertura</th></tr>
+        <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">resultado_cpc_2017.xlsx</a></td><td>10.570</td><td>Licenciaturas + Engenharias pré-COVID</td></tr>
+        <tr><td><strong>2018</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2019/resultados_conceito_enade_2018.xlsx" target="_blank" style="word-break:break-all;">resultados_conceito_enade_2018.xlsx</a></td><td>8.821</td><td>Adm, Dir, Contábeis, Psicologia etc. — <strong>sem CPC composto</strong></td></tr>
+        <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx" target="_blank" style="word-break:break-all;">CPC_2021.xlsx</a></td><td>8.000</td><td>Licenciaturas pós-COVID</td></tr>
+        <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2022/cpc_2022.xlsx" target="_blank" style="word-break:break-all;">cpc_2022.xlsx</a></td><td>9.891</td><td>Sociais Aplicadas pós-COVID com CPC completo</td></tr>
+        <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2023/CPC_2023.xlsx" target="_blank" style="word-break:break-all;">CPC_2023.xlsx</a></td><td>9.812</td><td>Engenharias, Saúde, Agrárias</td></tr>
     </table>
 </div>
 </div>
@@ -232,15 +199,16 @@ a{color:#1565C0;}
     <h2>Histórico de Versões</h2>
     <table>
         <tr><th>Versão</th><th>Data</th><th>Alterações</th></tr>
-        <tr><td>v1.0</td><td>2026-04-13</td><td>Versão inicial do MAPA-GR — Monitoramento e Análise da Formação Acadêmica na Graduação em Física. Cobre ciclos ENADE 2017 (Licenciatura + Bacharelado, 274 cursos) e 2021 (Licenciatura, 244 cursos). Filtros por ciclo, grau, modalidade, categoria administrativa, faixa CPC e região. Gráficos de distribuição CPC, top IES, cursos por UF e evolução 2017→2021. Exportação CSV e PNG. Destaque para UnB.</td></tr>
+        <tr><td>v1.0</td><td>2026-04-13</td><td>Versão inicial — Graduação em Física (Licenciatura + Bacharelado), ciclos 2017 e 2021, 518 cursos.</td></tr>
+        <tr><td>v2.0</td><td>2026-04-13</td><td>Expansão para <strong>9 grandes áreas</strong> (Exatas, Biológicas, Engenharias, Saúde, Agrárias, Sociais, Humanas, Letras, Tecnólogos). <strong>47.094 cursos</strong>. 5 ciclos ENADE. Nova interface com abas e <strong>lazy-loading</strong>. Ciclo 2018 incluído com aviso de CPC parcial.</td></tr>
     </table>
 </div>
 </div>
 
-</div><!-- content -->
+</div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v1.0 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.0 | Prof. David L. Azevedo |
     <a href="mailto:david888azv@unb.br">david888azv@unb.br</a> |
     Universidade de Brasília (UnB)
 </div>

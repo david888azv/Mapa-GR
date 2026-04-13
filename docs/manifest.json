@@ -1,7 +1,7 @@
 {
-  "name": "Análise da Graduação em Física",
+  "name": "MAPA-GR — Análise da Graduação Brasileira",
   "short_name": "Mapa-GR",
-  "description": "MAPA-GR — Monitoramento e Análise da Formação Acadêmica na Graduação em Física (SINAES/INEP)",
+  "description": "MAPA-GR v2.0 — Monitoramento e Análise da Formação Acadêmica na Graduação. 47 mil cursos do INEP/SINAES organizados em 9 grandes áreas (Exatas, Biológicas, Engenharias, Saúde, Agrárias, Sociais, Humanas, Letras, Tecnólogos).",
   "lang": "pt-BR",
   "start_url": "./index.html",
   "scope": "./",
