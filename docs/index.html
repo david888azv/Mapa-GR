@@ -196,6 +196,14 @@ tr:hover { background: #EEF2F7; }
 <div class="container">
     <div class="sidebar" id="sidebar">
         <div class="filter-group">
+            <h3>🔍 Buscar por sigla da IES</h3>
+            <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
+            <input type="text" id="searchSigla" placeholder="ex: UNB, UF, IF" disabled
+                style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Busca parcial: "UF" encontra UFMT, UFRJ, etc.</p>
+        </div>
+
+        <div class="filter-group">
             <h3>Área (multiselecionar)</h3>
             <div id="areaFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
@@ -413,7 +421,9 @@ function getFilters() {
     const pfs = [...document.querySelectorAll('.pf-chk:checked')].map(e => +e.value);
     const regs = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
     const metrica = document.getElementById('selMetrica').value;
-    return { areas, ciclos, graus, modais, cats, pfs, regs, metrica };
+    const searchOn = document.getElementById('searchEnabled').checked;
+    const searchTerm = document.getElementById('searchSigla').value.trim().toUpperCase();
+    return { areas, ciclos, graus, modais, cats, pfs, regs, metrica, searchOn, searchTerm };
 }
 
 function normModal(m) {
@@ -432,6 +442,7 @@ function normGrau(g) {
 function filterCursos(f) {
     if (!CURRENT) return [];
     return CURRENT.cursos.filter(c => {
+        if (f.searchOn && f.searchTerm && !(c.sg || '').toUpperCase().includes(f.searchTerm)) return false;
         if (f.areas.length && !f.areas.includes(c.ar)) return false;
         if (!f.ciclos.includes(c.y)) return false;
         const grau = normGrau(c.g || '');
@@ -762,6 +773,23 @@ function exportCSV() {
 }
 
 function abrirHelp() { window.open('help-doc.html', '_blank'); }
+
+// Search by sigla — toggle and debounce
+(function() {
+    const chk = document.getElementById('searchEnabled');
+    const inp = document.getElementById('searchSigla');
+    let timer = null;
+    chk.addEventListener('change', () => {
+        inp.disabled = !chk.checked;
+        if (chk.checked) inp.focus();
+        if (CURRENT) analisar();
+    });
+    inp.addEventListener('input', () => {
+        if (!chk.checked) return;
+        clearTimeout(timer);
+        timer = setTimeout(() => { if (CURRENT) analisar(); }, 300);
+    });
+})();
 
 // Init
 document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
