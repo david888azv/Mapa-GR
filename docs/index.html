@@ -791,9 +791,43 @@ function abrirHelp() { window.open('help-doc.html', '_blank'); }
     });
 })();
 
+// License / disclaimer modal
+function showLicenseModal() {
+    const overlay = document.createElement('div');
+    overlay.id = 'licenseOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:32px;max-width:620px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.4);text-align:center;max-height:90vh;overflow-y:auto;">
+        <h2 style="color:#1B5E20;margin-bottom:4px;font-size:22px;font-weight:800;letter-spacing:1px;">MAPA-GR</h2>
+        <p style="color:#555;font-size:12px;margin-bottom:12px;line-height:1.4;">Monitoramento e Análise da Formação Acadêmica na Graduação</p>
+        <p style="color:#2C3E50;font-size:13px;margin-bottom:4px;">v${VERSION} — Abril 2026</p>
+        <p style="color:#E91E63;font-weight:700;font-size:14px;margin-bottom:16px;">Prof. David L. Azevedo</p>
+        <div style="background:#F5F7FA;border-radius:8px;padding:16px;text-align:left;font-size:13px;color:#555;line-height:1.7;margin-bottom:14px;">
+            <p><strong>Fonte dos dados:</strong> <strong>Portal de Dados Abertos do INEP</strong> (<a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank" style="color:#1565C0;">gov.br/inep/pt-br/acesso-a-informacao/dados-abertos</a>) — dados públicos e de livre acesso (INEP/MEC), Lei de Acesso à Informação (n. 12.527/2011). URLs de download documentadas no arquivo <strong>help-doc.html</strong> (botão <strong>Help</strong> na barra lateral).</p>
+        </div>
+        <div style="background:#FFF8E1;border-radius:8px;padding:14px;text-align:left;font-size:12px;color:#555;line-height:1.7;margin-bottom:16px;border-left:4px solid #FF9800;">
+            <p>Ao utilizar este software, você concorda com os seguintes termos:</p>
+            <ul style="padding-left:18px;margin-top:6px;">
+                <li>Não remover, alterar ou ocultar informações de <strong>autoria</strong> ou créditos do desenvolvedor.</li>
+                <li>Manter a identificação <strong>"Prof. David L. Azevedo"</strong> e <strong>"MAPA-GR"</strong> em todas as cópias e derivados.</li>
+            </ul>
+        </div>
+        <div style="background:#E3F2FD;border-radius:8px;padding:14px;text-align:left;font-size:12px;color:#1565C0;line-height:1.7;margin-bottom:16px;border-left:4px solid #2196F3;">
+            <strong>Soluções sob medida, entre em contato com o desenvolvedor:</strong> <a href="mailto:david888azv@unb.br" style="color:#E91E63;font-weight:700;">david888azv@unb.br</a>
+        </div>
+        <button onclick="acceptLicense()" style="background:#E91E63;color:#fff;border:none;padding:12px 40px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;">Concordo e desejo continuar</button>
+    </div>`;
+    document.body.appendChild(overlay);
+}
+
+function acceptLicense() {
+    const ov = document.getElementById('licenseOverlay');
+    if (ov) ov.remove();
+    loadMetadata();
+}
+
 // Init
 document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
-loadMetadata();
+showLicenseModal();
 </script>
 
 <script>
