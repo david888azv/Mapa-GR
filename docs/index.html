@@ -271,6 +271,7 @@ tr:hover { background: #EEF2F7; }
         <button class="btn btn-primary" id="btnAnalisar" onclick="analisar()">Analisar</button>
         <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
         <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
+        <button class="btn btn-export" onclick="exportReport()">Relatório</button>
         <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
         <button class="btn btn-secondary" onclick="abrirHelp()">Help</button>
     </div>
@@ -561,13 +562,10 @@ function analisar() {
             <div class="chart-container" style="height:280px;"><canvas id="chartEvol"></canvas></div></div>`;
     }
 
-    html += `<div class="card"><h2>Relatório textual</h2><div class="report-box" id="reportBox"></div></div>`;
-
     main.innerHTML = html;
     setTimeout(() => {
         renderCharts(cursos, f);
         bindSortable();
-        buildReport(cursos, f);
     }, 30);
     setStatus(`${cursos.length} cursos mostrados em ${CURRENT.label}`);
 }
@@ -694,19 +692,32 @@ function buildReport(cursos, f) {
     p(`  ${new Date().toLocaleString('pt-BR')}`);
     p('═══════════════════════════════════════════════════════════');
     p('');
-    p(`Filtros:`);
-    p(`  Ciclos: ${f.ciclos.join(', ')}`);
-    p(`  Métrica: ${metricaLabel}`);
+    p(`Filtros aplicados:`);
+    p(`  Aba (grande área): ${CURRENT.label}`);
     p(`  Áreas: ${f.areas.length}/${CURRENT.areas.length} selecionadas`);
+    if (f.areas.length && f.areas.length < CURRENT.areas.length) {
+        f.areas.forEach(a => p(`    • ${a}`));
+    }
+    p(`  Ciclos: ${f.ciclos.join(', ')}`);
+    p(`  Graus: ${f.graus.join(', ')}`);
+    p(`  Modalidades: ${f.modais.join(', ')}`);
+    p(`  Categorias: ${f.cats.length}/6 selecionadas`);
+    p(`  Faixas CPC/ENADE: ${f.pfs.join(', ')}`);
+    p(`  Regiões: ${f.regs.join(', ')}`);
+    p(`  Métrica principal: ${metricaLabel}`);
+    if (f.searchOn && f.searchTerm) {
+        p(`  Busca por sigla: "${f.searchTerm}" (parcial)`);
+    }
     p('');
     p(`Resultados:`);
-    p(`  Cursos: ${cursos.length}`);
+    p(`  Cursos filtrados: ${cursos.length}`);
     p(`  IES distintas: ${new Set(cursos.map(c => c.sg)).size}`);
-    p(`  UFs: ${new Set(cursos.map(c => c.u)).size}`);
+    p(`  UFs cobertas: ${new Set(cursos.map(c => c.u)).size}`);
     const vals = cursos.map(c => c[f.metrica]).filter(v => v != null);
     if (vals.length) {
         p(`  ${metricaLabel} — média: ${mean(vals).toFixed(3)}`);
-        p(`  ${metricaLabel} — máx/mín: ${Math.max(...vals).toFixed(3)} / ${Math.min(...vals).toFixed(3)}`);
+        p(`  ${metricaLabel} — máximo: ${Math.max(...vals).toFixed(3)}`);
+        p(`  ${metricaLabel} — mínimo: ${Math.min(...vals).toFixed(3)}`);
     }
     p('');
     p('Distribuição por faixa:');
@@ -720,26 +731,69 @@ function buildReport(cursos, f) {
 
     const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === 'UNB');
     if (unbCursos.length) {
-        p('★ UnB:');
+        p('★ UNIVERSIDADE DE BRASÍLIA:');
         unbCursos.forEach(c => {
             p(`  ${c.ar} ${c.y} — ${c.mu}/${c.u}`);
-            p(`    Faixa: ${c.pf||'?'} | CPC: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
-            p(`    IDD: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | Infra: ${c.nf!=null?c.nf.toFixed(3):'—'}`);
+            p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
+            p(`    IDD pad: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | %Mst: ${c.ms!=null?c.ms.toFixed(3):'—'}`);
+            p(`    Infra: ${c.nf!=null?c.nf.toFixed(3):'—'} | Org.Ped: ${c.op!=null?c.op.toFixed(3):'—'} | Regime: ${c.rg!=null?c.rg.toFixed(3):'—'}`);
         });
         p('');
     }
 
-    p('Top 15 cursos por ' + metricaLabel + ':');
+    p('Top 20 cursos por ' + metricaLabel + ':');
     const sorted = [...cursos].filter(c => c[f.metrica] != null).sort((a,b) => b[f.metrica] - a[f.metrica]);
-    sorted.slice(0, 15).forEach((c, i) => {
+    sorted.slice(0, 20).forEach((c, i) => {
         const mark = (c.sg||'').toUpperCase() === 'UNB' ? '★ ' : '  ';
-        p(`  ${mark}${String(i+1).padStart(2)}. ${c.sg.padEnd(12)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | ${c.ar.substr(0,40)}`);
+        p(`  ${mark}${String(i+1).padStart(2)}. ${(c.sg||'').padEnd(14)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | Faixa ${c.pf||'?'} | ${c.ar.substr(0,45)}`);
     });
     p('');
-    p(`Prof. David L. Azevedo | MAPA-GR v${VERSION}`);
-    p('Dados: INEP — Indicadores de Qualidade da Educação Superior');
 
-    document.getElementById('reportBox').textContent = lines.join('\n');
+    // Top 10 IES por média
+    p('Top 10 IES por ' + metricaLabel + ' (média):');
+    const iesMap = {};
+    cursos.forEach(c => {
+        if (c[f.metrica] == null) return;
+        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set() };
+        iesMap[c.sg].vals.push(c[f.metrica]);
+        iesMap[c.sg].ufs.add(c.u);
+    });
+    const iesArr = Object.entries(iesMap).map(([sg,info]) => ({
+        sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
+    })).sort((a,b) => b.avg - a.avg);
+    iesArr.slice(0, 10).forEach((p2, i) => {
+        const mark = (p2.sg||'').toUpperCase() === 'UNB' ? '★ ' : '  ';
+        p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(14)} | média=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
+    });
+    p('');
+    p('───────────────────────────────────────────────────────────');
+    p(`Prof. David L. Azevedo | MAPA-GR v${VERSION}`);
+    p('Fonte: INEP — Indicadores de Qualidade da Educação Superior');
+    p('Portal: https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos');
+    p('───────────────────────────────────────────────────────────');
+
+    return lines.join('\n');
+}
+
+function exportReport() {
+    if (!CURRENT) { toast('Nenhuma aba carregada'); return; }
+    const f = getFilters();
+    const cursos = filterCursos(f);
+    if (!cursos.length) { toast('Nenhum curso no filtro atual'); return; }
+    const txt = buildReport(cursos, f);
+    // Filename: report-GR-YYYYMMDD-HHMMSS.txt
+    const d = new Date();
+    const pad = (n) => String(n).padStart(2, '0');
+    const stamp = `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}-${pad(d.getHours())}${pad(d.getMinutes())}${pad(d.getSeconds())}`;
+    const filename = `report-GR-${stamp}.txt`;
+    const blob = new Blob(['\ufeff' + txt], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast(`Relatório salvo: ${filename}`);
 }
 
 function marcarTodos() {
