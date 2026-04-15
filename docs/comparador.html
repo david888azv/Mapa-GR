@@ -49,12 +49,17 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color:
 .select-full:disabled { background: #F0F2F5; color: #999; cursor: not-allowed; }
 
 .uf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px;
-    max-height: 200px; overflow-y: auto; padding: 6px; border: 1px solid var(--borda);
+    max-height: 260px; overflow-y: auto; padding: 8px; border: 1px solid var(--borda);
     border-radius: 4px; background: #FAFBFC; }
-.uf-grid label { display: flex; align-items: center; font-size: 11px; cursor: pointer; padding: 2px; }
-.uf-grid label:hover { background: #f0f2f5; }
+.uf-grid label { display: flex; align-items: center; font-size: 11px; cursor: pointer; padding: 2px 4px; border-radius: 3px; }
+.uf-grid label:hover:not(.disabled) { background: #f0f2f5; }
 .uf-grid input[type="checkbox"] { margin-right: 3px; accent-color: var(--roxo); }
-.uf-grid label.disabled { opacity: .4; cursor: not-allowed; }
+.uf-grid label.disabled { opacity: .35; cursor: not-allowed; }
+.uf-grid label.disabled input { pointer-events: none; }
+.uf-region-label { grid-column: 1 / -1; font-size: 11px; color: var(--roxo3);
+    text-transform: uppercase; margin-top: 8px; font-weight: 800; letter-spacing: .8px;
+    border-bottom: 1px solid #E0E0E0; padding-bottom: 2px; }
+.uf-region-label:first-child { margin-top: 0; }
 
 .uf-count { font-size: 11px; color: var(--txt2); margin-top: 6px; text-align: center; }
 .uf-count strong { color: var(--roxo); }
@@ -218,6 +223,13 @@ let META = null;
 let DATA_CACHE = {};  // { slug: dataset }
 let CURRENT_DATA = null;  // dataset of current grande área
 let CHART_REF = null;
+const EMPTY_HTML = `<div class="empty-state" id="emptyState">
+    <div class="icon">⚔️</div>
+    <h2 style="color:var(--roxo);margin-bottom:8px;">Comparador Especial de Cursos</h2>
+    <p>Compare o <strong>mesmo curso</strong> em até <strong>5 Unidades da Federação</strong> diferentes.</p>
+    <p style="margin-top:12px;font-size:12px;">O app seleciona automaticamente o <strong>melhor curso</strong> (por CPC, ENADE e IDD) de cada UF dentro dos filtros escolhidos.</p>
+    <p style="margin-top:8px;font-size:12px;">Siga os passos 1 → 2 → 3 → 4 na barra lateral e clique em <strong>Comparar</strong>.</p>
+</div>`;
 
 const $ = (id) => document.getElementById(id);
 
@@ -225,6 +237,15 @@ function toast(msg) {
     const t = $('toast');
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+function clearMain() {
+    // Destrói chart se existir
+    if (CHART_REF) {
+        try { CHART_REF.destroy(); } catch(e){}
+        CHART_REF = null;
+    }
+    $('main').innerHTML = EMPTY_HTML;
 }
 
 // ===== Carregar metadata =====
@@ -271,38 +292,43 @@ function populateAreas() {
     sel.disabled = false;
 }
 
-// ===== Popular grid de UFs baseado no curso selecionado =====
+// Todas as 27 UFs agrupadas por região (ordem alfabética)
+const UFS_POR_REGIAO = {
+    'N':  ['AC','AM','AP','PA','RO','RR','TO'],
+    'NE': ['AL','BA','CE','MA','PB','PE','PI','RN','SE'],
+    'CO': ['DF','GO','MS','MT'],
+    'SE': ['ES','MG','RJ','SP'],
+    'S':  ['PR','RS','SC']
+};
+
+// ===== Popular grid de UFs (sempre todas as 27, desabilitando as sem cursos) =====
 function populateUFs() {
     const area = $('areaSelect').value;
     const grid = $('ufGrid');
+    // Sempre limpa tudo
     grid.innerHTML = '';
     if (!area || !CURRENT_DATA) {
         grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
         updateUFCount();
         return;
     }
-    // Quais UFs têm cursos nessa área?
+    // Quais UFs TÊM cursos para a área selecionada?
     const ufsComCursos = new Set(CURRENT_DATA.cursos.filter(c => c.ar === area && c.u).map(c => c.u));
-    const ufsPorRegiao = {};
-    REGION_ORDER.forEach(r => ufsPorRegiao[r] = []);
-    [...ufsComCursos].forEach(u => {
-        const r = UF_REGIAO[u] || '?';
-        if (ufsPorRegiao[r]) ufsPorRegiao[r].push(u);
-    });
-    REGION_ORDER.forEach(r => ufsPorRegiao[r].sort());
 
     let html = '';
     REGION_ORDER.forEach(r => {
-        if (!ufsPorRegiao[r].length) return;
-        html += `<div style="grid-column:1/-1;font-size:9px;color:var(--txt2);text-transform:uppercase;margin-top:4px;font-weight:600;">${REGION_LABELS[r]}</div>`;
-        ufsPorRegiao[r].forEach(u => {
-            html += `<label><input type="checkbox" class="uf-chk" value="${u}">${u}</label>`;
+        html += `<div class="uf-region-label">${REGION_LABELS[r].toUpperCase()}</div>`;
+        UFS_POR_REGIAO[r].forEach(u => {
+            const hasData = ufsComCursos.has(u);
+            const disabled = hasData ? '' : ' disabled';
+            const title = hasData ? '' : ` title="Sem cursos disponíveis para ${area}"`;
+            html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="uf-chk" value="${u}"${disabled}>${u}</label>`;
         });
     });
-    grid.innerHTML = html || '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Nenhuma UF disponível para este curso</span>';
+    grid.innerHTML = html;
 
-    // Attach listeners
-    grid.querySelectorAll('.uf-chk').forEach(cb => {
+    // Attach listeners apenas nos habilitados
+    grid.querySelectorAll('.uf-chk:not([disabled])').forEach(cb => {
         cb.addEventListener('change', onUfChange);
     });
     updateUFCount();
@@ -313,15 +339,16 @@ function onUfChange(e) {
     if (checked.length > MAX_UFS) {
         e.target.checked = false;
         toast(`Máximo ${MAX_UFS} UFs por comparação`);
-        return;
     }
+    // Sempre atualiza o contador e o estado do botão
     updateUFCount();
 }
 
 function updateUFCount() {
     const n = document.querySelectorAll('.uf-chk:checked').length;
     $('ufCount').textContent = n;
-    $('btnCompare').disabled = !($('areaSelect').value && n >= 2);
+    const area = $('areaSelect').value;
+    $('btnCompare').disabled = !(area && n >= 2);
 }
 
 // Conversão valor contínuo → faixa INEP (1-5)
@@ -360,6 +387,9 @@ function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
 
 // ===== Comparar =====
 async function compare() {
+    // Sempre começa limpando a main — nenhum state antigo deve sobreviver
+    clearMain();
+
     const slug = $('grandeArea').value;
     const area = $('areaSelect').value;
     if (!slug || !area) { toast('Selecione grande área e curso'); return; }
@@ -370,16 +400,23 @@ async function compare() {
     const enadeMin = +$('enadeMin').value;
     const iddMin = +$('iddMin').value;
 
+    // picks/missing são LOCAIS — começam vazios em toda chamada
     const picks = [];
     const missing = [];
-    ufs.forEach(uf => {
-        const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
-        if (best) picks.push({ ...best });
-        else missing.push(uf);
-    });
+    try {
+        ufs.forEach(uf => {
+            const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
+            if (best) picks.push({ ...best });
+            else missing.push(uf);
+        });
+    } catch (err) {
+        console.error('Erro em pickBestForUF:', err);
+        toast('Erro ao selecionar cursos: ' + err.message);
+        return;
+    }
 
     if (!picks.length) {
-        toast('Nenhum curso encontrado com os filtros');
+        toast(`Nenhum curso encontrado com os filtros (UFs sem dados: ${missing.join(', ')})`);
         return;
     }
 
@@ -390,7 +427,13 @@ async function compare() {
         (b.ip || 0) - (a.ip || 0)
     );
 
-    renderResults(picks, missing, area, slug, { cpcMin, enadeMin, iddMin });
+    try {
+        renderResults(picks, missing, area, slug, { cpcMin, enadeMin, iddMin });
+    } catch (err) {
+        console.error('Erro em renderResults:', err);
+        toast('Erro ao renderizar: ' + err.message);
+        clearMain();
+    }
 }
 
 function renderResults(picks, missing, area, slug, thresholds) {
@@ -556,21 +599,26 @@ function renderChart(picks, area, sameYear) {
     });
 }
 
-// ===== Reset =====
+// ===== Reset (limpeza manual, sem reload) =====
 function resetAll() {
+    // Limpa chart e results
+    clearMain();
+    // Zera todos os controles
+    CURRENT_DATA = null;
     $('grandeArea').value = '';
     $('areaSelect').innerHTML = '<option value="">— selecione a grande área —</option>';
     $('areaSelect').disabled = true;
     $('ufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
-    $('cpcMin').value = '3'; $('enadeMin').value = '3'; $('iddMin').value = '3';
+    $('cpcMin').value = '3';
+    $('enadeMin').value = '3';
+    $('iddMin').value = '3';
     updateUFCount();
-    $('main').innerHTML = document.querySelector('.empty-state').outerHTML || '';
-    // Restore empty state
-    location.reload();
+    toast('Seleção limpa');
 }
 
 // ===== Wire up =====
 $('grandeArea').addEventListener('change', async (e) => {
+    clearMain();
     const slug = e.target.value;
     if (!slug) { CURRENT_DATA = null; populateAreas(); populateUFs(); return; }
     try {
@@ -581,7 +629,14 @@ $('grandeArea').addEventListener('change', async (e) => {
         toast('Erro ao carregar dados: ' + err.message);
     }
 });
-$('areaSelect').addEventListener('change', () => { populateUFs(); });
+$('areaSelect').addEventListener('change', () => {
+    clearMain();
+    populateUFs();
+});
+// Filtros de faixa também limpam a view anterior
+['cpcMin','enadeMin','iddMin'].forEach(id => {
+    $(id).addEventListener('change', () => { clearMain(); });
+});
 $('btnCompare').addEventListener('click', compare);
 $('btnReset').addEventListener('click', resetAll);
 
