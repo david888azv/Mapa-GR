@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#9B59B6">
+<meta name="description" content="MAPA-GR — Comparador Especial de Cursos por UF. Compare até 5 cursos da mesma área em UFs diferentes.">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<title>MAPA-GR — Comparador Especial de Cursos por UF</title>
+<script src="chart.umd.min.js"></script>
+<style>
+:root {
+    --roxo: #9B59B6; --roxo2: #8E44AD; --roxo3: #5B2C6F;
+    --azul: #1B5E20;
+    --accent: #E91E63;
+    --verde: #27AE60; --laranja: #F39C12; --vermelho: #E74C3C; --azul-m: #3498DB;
+    --bg: #F5F7FA; --card: #FFFFFF; --borda: #E0E4E8;
+    --txt: #2C3E50; --txt2: #7F8C8D;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--txt); line-height: 1.5; }
+
+.header { background: linear-gradient(135deg, var(--roxo), var(--roxo2)); color: #fff;
+    padding: 12px 24px; display: flex; justify-content: space-between; align-items: center;
+    position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 8px rgba(0,0,0,.3); }
+.header-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.header-icon { width: 44px; height: 44px; border-radius: 8px; background: #fff; object-fit: contain;
+    box-shadow: 0 2px 6px rgba(0,0,0,.4); }
+.header h1 { font-size: 18px; font-weight: 700; letter-spacing: .5px; }
+.header h1 span { color: #F48FB1; }
+.header a.back { color: #fff; text-decoration: none; font-size: 13px; padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,.4); border-radius: 4px; transition: .2s; margin-right: 8px; }
+.header a.back:hover { background: rgba(255,255,255,.1); }
+.header .meta { text-align: right; font-size: 11px; opacity: .85; line-height: 1.5; }
+
+.container { display: flex; min-height: calc(100vh - 60px); }
+.sidebar { width: 320px; min-width: 320px; background: var(--card); border-right: 1px solid var(--borda);
+    padding: 16px; overflow-y: auto; max-height: calc(100vh - 60px); }
+.main { flex: 1; padding: 20px; overflow-y: auto; max-height: calc(100vh - 60px); }
+
+.step { margin-bottom: 16px; padding-bottom: 14px; border-bottom: 1px solid var(--borda); }
+.step:last-of-type { border-bottom: none; }
+.step h3 { font-size: 12px; text-transform: uppercase; color: var(--txt2);
+    letter-spacing: .5px; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 2px solid var(--roxo); }
+.step .hint { font-size: 10px; color: var(--txt2); margin-top: 4px; }
+
+.select-full { width: 100%; padding: 7px; border: 1px solid var(--borda); border-radius: 4px;
+    font-size: 13px; background: #fff; }
+.select-full:disabled { background: #F0F2F5; color: #999; cursor: not-allowed; }
+
+.uf-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; margin-top: 6px;
+    max-height: 200px; overflow-y: auto; padding: 6px; border: 1px solid var(--borda);
+    border-radius: 4px; background: #FAFBFC; }
+.uf-grid label { display: flex; align-items: center; font-size: 11px; cursor: pointer; padding: 2px; }
+.uf-grid label:hover { background: #f0f2f5; }
+.uf-grid input[type="checkbox"] { margin-right: 3px; accent-color: var(--roxo); }
+.uf-grid label.disabled { opacity: .4; cursor: not-allowed; }
+
+.uf-count { font-size: 11px; color: var(--txt2); margin-top: 6px; text-align: center; }
+.uf-count strong { color: var(--roxo); }
+
+.thresholds { display: flex; gap: 6px; }
+.thresholds > div { flex: 1; }
+.thresholds label { font-size: 10px; color: var(--txt2); display: block; margin-bottom: 2px; }
+.thresholds select { width: 100%; padding: 4px; font-size: 12px; border: 1px solid var(--borda); border-radius: 3px; }
+
+.btn { display: block; width: 100%; padding: 10px; margin-top: 10px; border: none; border-radius: 6px;
+    font-size: 13px; font-weight: 600; cursor: pointer; transition: all .2s; }
+.btn-main { background: var(--roxo); color: #fff; }
+.btn-main:hover:not(:disabled) { background: var(--roxo2); transform: translateY(-1px); }
+.btn-main:disabled { background: #ccc; cursor: not-allowed; }
+.btn-reset { background: #95A5A6; color: #fff; }
+.btn-reset:hover { background: #7F8C8D; }
+
+.card { background: var(--card); border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,.08);
+    padding: 16px; margin-bottom: 14px; }
+.card h2 { font-size: 15px; color: var(--roxo); margin-bottom: 4px; }
+.card h2 small { display: block; font-size: 12px; color: var(--txt2); font-weight: 400; margin-top: 2px; }
+
+.empty-state { text-align: center; padding: 60px 20px; color: var(--txt2); font-size: 14px; }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+.chart-container { position: relative; height: 420px; margin: 10px 0; }
+
+.warn-box { background: #FFF8E1; border-left: 4px solid var(--laranja); padding: 10px 12px;
+    border-radius: 4px; margin: 10px 0; font-size: 12px; color: var(--txt); }
+
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 11px; }
+th { background: var(--roxo); color: #fff; padding: 6px 6px; text-align: center; font-weight: 600; font-size: 10px; }
+td { padding: 5px 6px; text-align: center; border-bottom: 1px solid var(--borda); }
+tr:nth-child(even) { background: #FAF5FB; }
+tr:first-child td { font-weight: 700; }
+
+.cpc-1 { background: #FFCDD2 !important; color: #B71C1C; }
+.cpc-2 { background: #FFE0B2 !important; color: #E65100; }
+.cpc-3 { background: #FFF9C4 !important; color: #F57F17; }
+.cpc-4 { background: #BBDEFB !important; color: #0D47A1; }
+.cpc-5 { background: #C8E6C9 !important; color: #1B5E20; }
+
+.details-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 10px; }
+.ies-card { padding: 10px 12px; border-radius: 6px; background: #F8F9FA; border-left: 4px solid var(--roxo); }
+.ies-card .rank { font-size: 11px; color: var(--roxo); font-weight: 700; text-transform: uppercase; }
+.ies-card .sigla { font-size: 16px; font-weight: 700; color: var(--txt); }
+.ies-card .nome { font-size: 12px; color: var(--txt); margin-top: 2px; }
+.ies-card .info { font-size: 11px; color: var(--txt2); margin-top: 4px; }
+
+.toast { position: fixed; bottom: 20px; right: 20px; background: var(--roxo); color: #fff;
+    padding: 12px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,.3);
+    opacity: 0; transition: opacity .3s; z-index: 999; }
+.toast.show { opacity: 1; }
+
+@media (max-width: 900px) {
+    .container { flex-direction: column; }
+    .sidebar { width: 100%; min-width: auto; max-height: none; }
+    .main { padding: 12px; }
+    .chart-container { height: 340px; }
+}
+@media (max-width: 768px) {
+    .header { padding: 10px 14px; }
+    .header h1 { font-size: 14px; }
+    .header .meta { font-size: 9px; }
+    .uf-grid { grid-template-columns: repeat(5, 1fr); }
+    .chart-container { height: 300px; }
+    table { font-size: 9px; }
+    th, td { padding: 3px 4px; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <a href="index.html" class="back">← Voltar</a>
+        <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
+        <h1><span>MAPA-GR</span> — Comparador Especial de Cursos por UF</h1>
+    </div>
+    <div class="meta">
+        <div>Prof. David L. Azevedo</div>
+        <div id="hdrDate"></div>
+        <div>v1.0</div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="sidebar">
+        <div class="step">
+            <h3>1. Grande Área</h3>
+            <select id="grandeArea" class="select-full"><option value="">— escolha —</option></select>
+        </div>
+
+        <div class="step">
+            <h3>2. Curso / Área</h3>
+            <select id="areaSelect" class="select-full" disabled><option value="">— selecione a grande área —</option></select>
+            <p class="hint">Apenas um curso por comparação.</p>
+        </div>
+
+        <div class="step">
+            <h3>3. UFs (até 5)</h3>
+            <div id="ufGrid" class="uf-grid">
+                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>
+            </div>
+            <p class="uf-count">Selecionadas: <strong id="ufCount">0</strong>/5</p>
+        </div>
+
+        <div class="step">
+            <h3>4. Faixas mínimas</h3>
+            <div class="thresholds">
+                <div>
+                    <label>CPC ≥</label>
+                    <select id="cpcMin"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
+                </div>
+                <div>
+                    <label>ENADE ≥</label>
+                    <select id="enadeMin"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
+                </div>
+                <div>
+                    <label>IDD ≥</label>
+                    <select id="iddMin"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
+                </div>
+            </div>
+            <p class="hint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
+        </div>
+
+        <button id="btnCompare" class="btn btn-main" disabled>Comparar</button>
+        <button id="btnReset" class="btn btn-reset">Limpar seleção</button>
+    </div>
+
+    <div class="main" id="main">
+        <div class="empty-state" id="emptyState">
+            <div class="icon">⚔️</div>
+            <h2 style="color:var(--roxo);margin-bottom:8px;">Comparador Especial de Cursos</h2>
+            <p>Compare o <strong>mesmo curso</strong> em até <strong>5 Unidades da Federação</strong> diferentes.</p>
+            <p style="margin-top:12px;font-size:12px;">O app seleciona automaticamente o <strong>melhor curso</strong> (por CPC, ENADE e IDD) de cada UF dentro dos filtros escolhidos.</p>
+            <p style="margin-top:8px;font-size:12px;">Siga os passos 1 → 2 → 3 → 4 na barra lateral e clique em <strong>Comparar</strong>.</p>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================================================
+// MAPA-GR Comparador v1.0 — Prof. David L. Azevedo
+// ===================================================
+const MAX_UFS = 5;
+const UF_REGIAO = {
+    'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
+    'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
+    'DF':'CO','GO':'CO','MT':'CO','MS':'CO',
+    'ES':'SE','MG':'SE','RJ':'SE','SP':'SE',
+    'PR':'S','RS':'S','SC':'S'
+};
+const REGION_ORDER = ['N','NE','CO','SE','S'];
+const REGION_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };
+
+let META = null;
+let DATA_CACHE = {};  // { slug: dataset }
+let CURRENT_DATA = null;  // dataset of current grande área
+let CHART_REF = null;
+
+const $ = (id) => document.getElementById(id);
+
+function toast(msg) {
+    const t = $('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== Carregar metadata =====
+async function loadMeta() {
+    try {
+        const r = await fetch('dados/metadata.json');
+        META = await r.json();
+        const sel = $('grandeArea');
+        const order = ['exatas','biologicas','engenharias','saude','agrarias','sociais','humanas','letras','tecnologos'];
+        order.forEach(slug => {
+            const m = META.grandes_areas[slug];
+            if (!m) return;
+            const opt = document.createElement('option');
+            opt.value = slug;
+            opt.textContent = `${m.icon} ${m.label} (${m.n_cursos.toLocaleString('pt-BR')} cursos)`;
+            sel.appendChild(opt);
+        });
+    } catch (e) {
+        toast('Erro ao carregar metadata: ' + e.message);
+    }
+}
+
+// ===== Carregar dados de uma grande área =====
+async function loadArea(slug) {
+    if (DATA_CACHE[slug]) return DATA_CACHE[slug];
+    const meta = META.grandes_areas[slug];
+    const r = await fetch(meta.arquivo);
+    const d = await r.json();
+    DATA_CACHE[slug] = d;
+    return d;
+}
+
+// ===== Popular dropdown de áreas =====
+function populateAreas() {
+    const sel = $('areaSelect');
+    sel.innerHTML = '<option value="">— escolha o curso —</option>';
+    if (!CURRENT_DATA) { sel.disabled = true; return; }
+    const sorted = [...CURRENT_DATA.areas].sort();
+    sorted.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a; opt.textContent = a;
+        sel.appendChild(opt);
+    });
+    sel.disabled = false;
+}
+
+// ===== Popular grid de UFs baseado no curso selecionado =====
+function populateUFs() {
+    const area = $('areaSelect').value;
+    const grid = $('ufGrid');
+    grid.innerHTML = '';
+    if (!area || !CURRENT_DATA) {
+        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        updateUFCount();
+        return;
+    }
+    // Quais UFs têm cursos nessa área?
+    const ufsComCursos = new Set(CURRENT_DATA.cursos.filter(c => c.ar === area && c.u).map(c => c.u));
+    const ufsPorRegiao = {};
+    REGION_ORDER.forEach(r => ufsPorRegiao[r] = []);
+    [...ufsComCursos].forEach(u => {
+        const r = UF_REGIAO[u] || '?';
+        if (ufsPorRegiao[r]) ufsPorRegiao[r].push(u);
+    });
+    REGION_ORDER.forEach(r => ufsPorRegiao[r].sort());
+
+    let html = '';
+    REGION_ORDER.forEach(r => {
+        if (!ufsPorRegiao[r].length) return;
+        html += `<div style="grid-column:1/-1;font-size:9px;color:var(--txt2);text-transform:uppercase;margin-top:4px;font-weight:600;">${REGION_LABELS[r]}</div>`;
+        ufsPorRegiao[r].forEach(u => {
+            html += `<label><input type="checkbox" class="uf-chk" value="${u}">${u}</label>`;
+        });
+    });
+    grid.innerHTML = html || '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Nenhuma UF disponível para este curso</span>';
+
+    // Attach listeners
+    grid.querySelectorAll('.uf-chk').forEach(cb => {
+        cb.addEventListener('change', onUfChange);
+    });
+    updateUFCount();
+}
+
+function onUfChange(e) {
+    const checked = [...document.querySelectorAll('.uf-chk:checked')];
+    if (checked.length > MAX_UFS) {
+        e.target.checked = false;
+        toast(`Máximo ${MAX_UFS} UFs por comparação`);
+        return;
+    }
+    updateUFCount();
+}
+
+function updateUFCount() {
+    const n = document.querySelectorAll('.uf-chk:checked').length;
+    $('ufCount').textContent = n;
+    $('btnCompare').disabled = !($('areaSelect').value && n >= 2);
+}
+
+// Conversão valor contínuo → faixa INEP (1-5)
+function contToFaixa(v) {
+    if (v == null) return null;
+    if (v < 0.945) return 1;
+    if (v < 1.945) return 2;
+    if (v < 2.945) return 3;
+    if (v < 3.945) return 4;
+    return 5;
+}
+
+// ===== Seleção do melhor curso por UF =====
+function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
+    const cand = CURRENT_DATA.cursos.filter(c => {
+        if (c.ar !== area || c.u !== uf) return false;
+        if (c.pf == null || c.pf < cpcMin) return false;
+        // ENADE e IDD: usa faixa derivada do contínuo (só aplica se houver valor)
+        const fe = contToFaixa(c.e);
+        if (fe != null && fe < enadeMin) return false;
+        const fi = contToFaixa(c.ip);
+        if (fi != null && fi < iddMin) return false;
+        return true;
+    });
+    if (!cand.length) return null;
+    // Most recent year, then best CPC cont (tie: ENADE, IDD)
+    const maxY = Math.max(...cand.map(c => c.y || 0));
+    const ofY = cand.filter(c => c.y === maxY);
+    ofY.sort((a, b) =>
+        (b.pc || 0) - (a.pc || 0) ||
+        (b.e || 0) - (a.e || 0) ||
+        (b.ip || 0) - (a.ip || 0)
+    );
+    return ofY[0];
+}
+
+// ===== Comparar =====
+async function compare() {
+    const slug = $('grandeArea').value;
+    const area = $('areaSelect').value;
+    if (!slug || !area) { toast('Selecione grande área e curso'); return; }
+    const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
+    if (ufs.length < 2) { toast('Selecione pelo menos 2 UFs'); return; }
+
+    const cpcMin = +$('cpcMin').value;
+    const enadeMin = +$('enadeMin').value;
+    const iddMin = +$('iddMin').value;
+
+    const picks = [];
+    const missing = [];
+    ufs.forEach(uf => {
+        const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
+        if (best) picks.push({ ...best });
+        else missing.push(uf);
+    });
+
+    if (!picks.length) {
+        toast('Nenhum curso encontrado com os filtros');
+        return;
+    }
+
+    // Sort by CPC desc > ENADE > IDD
+    picks.sort((a, b) =>
+        (b.pc || 0) - (a.pc || 0) ||
+        (b.e || 0) - (a.e || 0) ||
+        (b.ip || 0) - (a.ip || 0)
+    );
+
+    renderResults(picks, missing, area, slug, { cpcMin, enadeMin, iddMin });
+}
+
+function renderResults(picks, missing, area, slug, thresholds) {
+    const gaMeta = META.grandes_areas[slug];
+    const years = [...new Set(picks.map(c => c.y))];
+    const sameYear = years.length === 1;
+
+    let html = `<div class="card">
+        <h2>${gaMeta.icon} ${gaMeta.label}
+            <small>Curso comparado: <strong>${area}</strong></small>
+        </h2>
+        <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
+            ${picks.length} curso${picks.length>1?'s':''} selecionado${picks.length>1?'s':''}
+            · ordenação por CPC → ENADE → IDD ·
+            faixas mínimas: CPC≥${thresholds.cpcMin}, ENADE≥${thresholds.enadeMin}, IDD≥${thresholds.iddMin}
+        </p>`;
+
+    if (missing.length) {
+        html += `<div class="warn-box">⚠️ Nenhum curso encontrado para as UFs: <strong>${missing.join(', ')}</strong> com os filtros atuais. Tente reduzir as faixas mínimas.</div>`;
+    }
+    if (!sameYear) {
+        html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
+    }
+
+    html += `<div class="chart-container"><canvas id="chartCompare"></canvas></div>
+    </div>`;
+
+    // Tabela
+    html += `<div class="card">
+        <h2>Tabela de indicadores
+            <small>Todos os 8 componentes do CPC por curso</small>
+        </h2>
+        <div class="tbl-wrap"><table><thead><tr>
+            <th>#</th><th>UF</th><th>Sigla</th><th>Ano</th>
+            <th>CPC (f)</th><th>CPC cont</th>
+            <th>ENADE</th><th>IDD</th>
+            <th>%Dr</th><th>%Ms</th><th>Regime</th>
+            <th>Infra</th><th>Org.Ped</th>
+        </tr></thead><tbody>`;
+    picks.forEach((c, i) => {
+        const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        html += `<tr>
+            <td><strong>${i+1}º</strong></td>
+            <td><strong>${c.u||'—'}</strong></td>
+            <td><strong>${c.sg||'—'}</strong></td>
+            <td>${c.y||'—'}</td>
+            ${pfCell}
+            <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
+            <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
+            <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
+            <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
+            <td>${c.ms != null ? c.ms.toFixed(2) : '—'}</td>
+            <td>${c.rg != null ? c.rg.toFixed(2) : '—'}</td>
+            <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
+            <td>${c.op != null ? c.op.toFixed(2) : '—'}</td>
+        </tr>`;
+    });
+    html += `</tbody></table></div>
+    <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
+        f = faixa (1-5). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+    </p></div>`;
+
+    // Detalhes IES
+    html += `<div class="card">
+        <h2>Detalhes das Instituições
+            <small>Informações institucionais de cada curso comparado</small>
+        </h2>
+        <div class="details-grid">`;
+    picks.forEach((c, i) => {
+        html += `<div class="ies-card">
+            <div class="rank">${i+1}º lugar</div>
+            <div class="sigla">${c.sg || '—'} <span style="color:var(--txt2);font-size:12px;font-weight:400;">(${c.u})</span></div>
+            <div class="nome">${c.ie || '—'}</div>
+            <div class="info">
+                ${c.mu ? `📍 ${c.mu}/${c.u}<br>` : ''}
+                ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
+                ${c.o ? `📚 ${c.o}<br>` : ''}
+                ${c.m ? `💻 ${c.m}<br>` : ''}
+                Código e-MEC: ${c.cc || 'n/d'}<br>
+                Ano da avaliação: ${c.y || 'n/d'}<br>
+                Ano de fundação: n/d
+            </div>
+        </div>`;
+    });
+    html += `</div></div>`;
+
+    $('emptyState').style.display = 'none';
+    $('main').innerHTML = html;
+
+    // Renderizar gráfico
+    setTimeout(() => renderChart(picks, area, sameYear), 20);
+}
+
+function renderChart(picks, area, sameYear) {
+    if (CHART_REF) { try { CHART_REF.destroy(); } catch(e){} }
+    const ctx = document.getElementById('chartCompare').getContext('2d');
+
+    const labels = picks.map(c => `${c.sg} (${c.u})\n${c.y || '?'}`);
+    const iddData = picks.map(c => c.ip != null ? c.ip : 0);
+    const enadeData = picks.map(c => c.e != null ? c.e : 0);
+    const cpcData = picks.map(c => c.pc != null ? c.pc : 0);
+
+    CHART_REF = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                { label: 'IDD (cont)', backgroundColor: '#E74C3C', data: iddData, borderColor:'#C0392B', borderWidth:1 },
+                { label: 'ENADE (cont)', backgroundColor: '#3498DB', data: enadeData, borderColor:'#2874A6', borderWidth:1 },
+                { label: 'CPC (cont)', backgroundColor: '#27AE60', data: cpcData, borderColor:'#1E8449', borderWidth:1 }
+            ]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'top', labels: { font: { size: 11 } } },
+                tooltip: {
+                    callbacks: {
+                        title: (items) => {
+                            const i = items[0].dataIndex;
+                            const c = picks[i];
+                            return `${c.sg} — ${c.u} (${c.y || '?'})`;
+                        },
+                        label: (ctx) => `  ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(2)}`,
+                        afterBody: (items) => {
+                            const i = items[0].dataIndex;
+                            const c = picks[i];
+                            return [
+                                '',
+                                `IES: ${c.ie || '—'}`,
+                                `Município: ${c.mu || '—'}`,
+                                `Faixa CPC: ${c.pf || '—'}`,
+                                `Categoria: ${c.ct || '—'}`
+                            ];
+                        }
+                    }
+                },
+                title: {
+                    display: true,
+                    text: `Comparativo: ${area}`,
+                    font: { size: 14, weight: 'bold' },
+                    padding: { bottom: 10 }
+                },
+                subtitle: {
+                    display: !sameYear,
+                    text: '⚠ Ciclos ENADE diferentes entre os cursos — veja legenda abaixo do gráfico',
+                    color: '#F39C12',
+                    font: { size: 10, style: 'italic' }
+                }
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                    title: { display: true, text: 'Curso (SIGLA / UF / ano de avaliação)', font: { size: 11 } }
+                },
+                y: {
+                    stacked: true,
+                    beginAtZero: true,
+                    title: { display: true, text: 'Pontuação acumulada (CPC + ENADE + IDD)', font: { size: 11 } }
+                }
+            }
+        }
+    });
+}
+
+// ===== Reset =====
+function resetAll() {
+    $('grandeArea').value = '';
+    $('areaSelect').innerHTML = '<option value="">— selecione a grande área —</option>';
+    $('areaSelect').disabled = true;
+    $('ufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+    $('cpcMin').value = '3'; $('enadeMin').value = '3'; $('iddMin').value = '3';
+    updateUFCount();
+    $('main').innerHTML = document.querySelector('.empty-state').outerHTML || '';
+    // Restore empty state
+    location.reload();
+}
+
+// ===== Wire up =====
+$('grandeArea').addEventListener('change', async (e) => {
+    const slug = e.target.value;
+    if (!slug) { CURRENT_DATA = null; populateAreas(); populateUFs(); return; }
+    try {
+        CURRENT_DATA = await loadArea(slug);
+        populateAreas();
+        populateUFs();
+    } catch (err) {
+        toast('Erro ao carregar dados: ' + err.message);
+    }
+});
+$('areaSelect').addEventListener('change', () => { populateUFs(); });
+$('btnCompare').addEventListener('click', compare);
+$('btnReset').addEventListener('click', resetAll);
+
+$('hdrDate').textContent = new Date().toLocaleDateString('pt-BR');
+loadMeta();
+
+// Service worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+</script>
+</body>
+</html>
