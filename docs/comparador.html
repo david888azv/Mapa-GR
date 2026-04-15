@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#9B59B6">
 <meta name="description" content="MAPA-GR — Comparador Especial de Cursos por UF. Compare até 5 cursos da mesma área em UFs diferentes.">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<title>MAPA-GR — Comparador Especial de Cursos por UF</title>
+<title>MAPA-GR — Comparador Especial / TOP 10</title>
 <script src="chart.umd.min.js"></script>
 <style>
 :root {
@@ -138,7 +138,7 @@ tr:first-child td { font-weight: 700; }
     <div class="header-left">
         <a href="index.html" class="back">← Voltar</a>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1><span>MAPA-GR</span> — Comparador Especial de Cursos por UF</h1>
+        <h1 id="pageTitle"><span>MAPA-GR</span> — Comparador Especial (IFES por UF)</h1>
     </div>
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
@@ -160,7 +160,7 @@ tr:first-child td { font-weight: 700; }
             <p class="hint">Apenas um curso por comparação.</p>
         </div>
 
-        <div class="step">
+        <div class="step" id="stepUfs">
             <h3>3. UFs (até 5)</h3>
             <div id="ufGrid" class="uf-grid">
                 <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>
@@ -168,8 +168,8 @@ tr:first-child td { font-weight: 700; }
             <p class="uf-count">Selecionadas: <strong id="ufCount">0</strong>/5</p>
         </div>
 
-        <div class="step">
-            <h3>4. Faixas mínimas</h3>
+        <div class="step" id="stepThresholds">
+            <h3 id="stepThresholdsTitle">4. Faixas mínimas</h3>
             <div class="thresholds">
                 <div>
                     <label>CPC ≥</label>
@@ -184,7 +184,17 @@ tr:first-child td { font-weight: 700; }
                     <select id="iddMin"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
                 </div>
             </div>
-            <p class="hint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
+            <p class="hint" id="stepThresholdsHint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
+        </div>
+
+        <div id="stepTop10Info" class="step" style="display:none;background:#FFF8E1;border-radius:6px;padding:12px;border-left:4px solid #D4AF37;">
+            <h3 style="color:#D4AF37;border-bottom-color:#D4AF37;">🏆 Modo TOP 10</h3>
+            <p style="font-size:12px;color:var(--txt);line-height:1.6;">
+                O app vai procurar <strong>o melhor curso de cada uma das 27 UFs</strong>, ordenar por <strong>CPC → ENADE → IDD</strong> e mostrar os <strong>10 melhores do país</strong> (um por UF).
+            </p>
+            <p style="font-size:11px;color:var(--txt2);margin-top:6px;">
+                Escolha apenas a grande área e o curso — o resto é automático.
+            </p>
         </div>
 
         <button id="btnCompare" class="btn btn-main" disabled>Comparar</button>
@@ -206,9 +216,12 @@ tr:first-child td { font-weight: 700; }
 
 <script>
 // ===================================================
-// MAPA-GR Comparador v1.0 — Prof. David L. Azevedo
+// MAPA-GR Comparador + TOP 10 — Prof. David L. Azevedo
 // ===================================================
+const urlParams = new URLSearchParams(window.location.search);
+const MODE = urlParams.get('mode') === 'top10' ? 'top10' : 'manual';
 const MAX_UFS = 5;
+const TOP_N = 10;
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
     'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
@@ -223,13 +236,24 @@ let META = null;
 let DATA_CACHE = {};  // { slug: dataset }
 let CURRENT_DATA = null;  // dataset of current grande área
 let CHART_REF = null;
-const EMPTY_HTML = `<div class="empty-state" id="emptyState">
+
+const EMPTY_HTML_MANUAL = `<div class="empty-state" id="emptyState">
     <div class="icon">⚔️</div>
     <h2 style="color:var(--roxo);margin-bottom:8px;">Comparador Especial de Cursos</h2>
     <p>Compare o <strong>mesmo curso</strong> em até <strong>5 Unidades da Federação</strong> diferentes.</p>
     <p style="margin-top:12px;font-size:12px;">O app seleciona automaticamente o <strong>melhor curso</strong> (por CPC, ENADE e IDD) de cada UF dentro dos filtros escolhidos.</p>
     <p style="margin-top:8px;font-size:12px;">Siga os passos 1 → 2 → 3 → 4 na barra lateral e clique em <strong>Comparar</strong>.</p>
 </div>`;
+
+const EMPTY_HTML_TOP10 = `<div class="empty-state" id="emptyState">
+    <div class="icon">🏆</div>
+    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP 10 Nacional — Melhores IFES do país</h2>
+    <p>Veja as <strong>10 melhores Instituições de Ensino Superior</strong> do Brasil para o curso escolhido.</p>
+    <p style="margin-top:12px;font-size:12px;">O app analisa automaticamente <strong>as 27 UFs</strong>, pega o melhor curso de cada uma e ordena por <strong>CPC → ENADE → IDD</strong> — trazendo os 10 melhores do país, uma por UF.</p>
+    <p style="margin-top:8px;font-size:12px;">Escolha apenas a <strong>grande área</strong> e o <strong>curso</strong> na barra lateral. O resto é automático.</p>
+</div>`;
+
+const EMPTY_HTML = MODE === 'top10' ? EMPTY_HTML_TOP10 : EMPTY_HTML_MANUAL;
 
 const $ = (id) => document.getElementById(id);
 
@@ -346,9 +370,15 @@ function onUfChange(e) {
 
 function updateUFCount() {
     const n = document.querySelectorAll('.uf-chk:checked').length;
-    $('ufCount').textContent = n;
+    const cnt = $('ufCount');
+    if (cnt) cnt.textContent = n;
     const area = $('areaSelect').value;
-    $('btnCompare').disabled = !(area && n >= 2);
+    if (MODE === 'top10') {
+        // Modo TOP 10: só precisa de grande área + curso
+        $('btnCompare').disabled = !area;
+    } else {
+        $('btnCompare').disabled = !(area && n >= 2);
+    }
 }
 
 // Conversão valor contínuo → faixa INEP (1-5)
@@ -385,6 +415,9 @@ function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
     return ofY[0];
 }
 
+// ===== Lista completa das 27 UFs (para modo TOP 10) =====
+const TODAS_UFS = Object.keys(UF_REGIAO);
+
 // ===== Comparar =====
 async function compare() {
     // Sempre começa limpando a main — nenhum state antigo deve sobreviver
@@ -393,12 +426,21 @@ async function compare() {
     const slug = $('grandeArea').value;
     const area = $('areaSelect').value;
     if (!slug || !area) { toast('Selecione grande área e curso'); return; }
-    const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
-    if (ufs.length < 2) { toast('Selecione pelo menos 2 UFs'); return; }
 
-    const cpcMin = +$('cpcMin').value;
-    const enadeMin = +$('enadeMin').value;
-    const iddMin = +$('iddMin').value;
+    let ufs;
+    let cpcMin, enadeMin, iddMin;
+
+    if (MODE === 'top10') {
+        // TOP 10: considera todas as 27 UFs sem filtro de faixa (só ordena)
+        ufs = [...TODAS_UFS];
+        cpcMin = 1; enadeMin = 1; iddMin = 1;
+    } else {
+        ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
+        if (ufs.length < 2) { toast('Selecione pelo menos 2 UFs'); return; }
+        cpcMin = +$('cpcMin').value;
+        enadeMin = +$('enadeMin').value;
+        iddMin = +$('iddMin').value;
+    }
 
     // picks/missing são LOCAIS — começam vazios em toda chamada
     const picks = [];
@@ -416,7 +458,9 @@ async function compare() {
     }
 
     if (!picks.length) {
-        toast(`Nenhum curso encontrado com os filtros (UFs sem dados: ${missing.join(', ')})`);
+        toast(MODE === 'top10'
+            ? `Nenhum curso encontrado para "${area}" em nenhuma UF`
+            : `Nenhum curso encontrado com os filtros (UFs sem dados: ${missing.join(', ')})`);
         return;
     }
 
@@ -427,8 +471,11 @@ async function compare() {
         (b.ip || 0) - (a.ip || 0)
     );
 
+    // TOP 10: limita aos 10 melhores
+    const finalPicks = MODE === 'top10' ? picks.slice(0, TOP_N) : picks;
+
     try {
-        renderResults(picks, missing, area, slug, { cpcMin, enadeMin, iddMin });
+        renderResults(finalPicks, missing, area, slug, { cpcMin, enadeMin, iddMin });
     } catch (err) {
         console.error('Erro em renderResults:', err);
         toast('Erro ao renderizar: ' + err.message);
@@ -440,19 +487,25 @@ function renderResults(picks, missing, area, slug, thresholds) {
     const gaMeta = META.grandes_areas[slug];
     const years = [...new Set(picks.map(c => c.y))];
     const sameYear = years.length === 1;
+    const isTop10 = MODE === 'top10';
+
+    let titleIcon = isTop10 ? '🏆' : gaMeta.icon;
+    let titleText = isTop10 ? `TOP ${picks.length} Nacional — ${gaMeta.label}` : gaMeta.label;
 
     let html = `<div class="card">
-        <h2>${gaMeta.icon} ${gaMeta.label}
-            <small>Curso comparado: <strong>${area}</strong></small>
+        <h2>${titleIcon} ${titleText}
+            <small>Curso: <strong>${area}</strong></small>
         </h2>
         <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
-            ${picks.length} curso${picks.length>1?'s':''} selecionado${picks.length>1?'s':''}
-            · ordenação por CPC → ENADE → IDD ·
-            faixas mínimas: CPC≥${thresholds.cpcMin}, ENADE≥${thresholds.enadeMin}, IDD≥${thresholds.iddMin}
+            ${picks.length} curso${picks.length>1?'s':''} · ordenação por CPC → ENADE → IDD
+            ${isTop10 ? ' · um por UF, varredura nacional das 27 unidades da federação' : ` · faixas mínimas: CPC≥${thresholds.cpcMin}, ENADE≥${thresholds.enadeMin}, IDD≥${thresholds.iddMin}`}
         </p>`;
 
-    if (missing.length) {
+    if (!isTop10 && missing.length) {
         html += `<div class="warn-box">⚠️ Nenhum curso encontrado para as UFs: <strong>${missing.join(', ')}</strong> com os filtros atuais. Tente reduzir as faixas mínimas.</div>`;
+    }
+    if (isTop10 && missing.length > 17) {
+        html += `<div class="warn-box">ℹ️ ${27 - missing.length} UFs tinham cursos disponíveis (de 27 totais). Outras UFs não oferecem esse curso.</div>`;
     }
     if (!sameYear) {
         html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
@@ -640,6 +693,28 @@ $('areaSelect').addEventListener('change', () => {
 $('btnCompare').addEventListener('click', compare);
 $('btnReset').addEventListener('click', resetAll);
 
+// ===== Aplicar modo (manual vs top10) na inicialização =====
+function applyMode() {
+    if (MODE === 'top10') {
+        // Header
+        document.title = 'MAPA-GR — TOP 10 Melhores IFES';
+        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP 10 Nacional (Melhores IFES)';
+        // Muda cor do header para dourado
+        document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
+        // Esconde UF grid e thresholds
+        $('stepUfs').style.display = 'none';
+        $('stepThresholds').style.display = 'none';
+        $('stepTop10Info').style.display = 'block';
+        // Atualiza botão
+        $('btnCompare').textContent = '🏆 Gerar TOP 10';
+        // Atualiza tema do botão
+        $('btnCompare').style.background = '#D4AF37';
+    } else {
+        $('btnCompare').textContent = 'Comparar';
+    }
+}
+
+applyMode();
 $('hdrDate').textContent = new Date().toLocaleDateString('pt-BR');
 loadMeta();
 
