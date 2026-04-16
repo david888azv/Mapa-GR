@@ -1,0 +1,1161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAPA-GR — Estatísticas da Graduação Brasileira</title>
+<script src="chart.umd.min.js"></script>
+<style>
+:root {
+    --azul:#1B5E20; --azul2:#2E7D32; --azul3:#0D3818;
+    --accent:#E91E63; --accent2:#F48FB1;
+    --verde:#27AE60; --laranja:#F39C12; --vermelho:#E74C3C;
+    --bg:#F5F7FA; --card:#FFFFFF; --borda:#E0E4E8;
+    --txt:#2C3E50; --txt2:#7F8C8D;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);}
+
+.header{background:linear-gradient(135deg,#E65100,#FF5722);color:#fff;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+.header-icon{width:44px;height:44px;border-radius:8px;flex-shrink:0;
+    background:#fff;object-fit:contain;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.header h1{font-size:20px;font-weight:700;letter-spacing:1px;}
+.header h1 span{color:#FFF9C4;}
+.header .meta{text-align:right;font-size:12px;opacity:.85;line-height:1.5;}
+
+.container{display:flex;min-height:calc(100vh - 90px);}
+.sidebar{width:300px;min-width:300px;background:var(--card);border-right:1px solid var(--borda);
+    padding:14px;overflow-y:auto;max-height:calc(100vh - 90px);}
+.main{flex:1;padding:18px;overflow-y:auto;max-height:calc(100vh - 90px);}
+
+.filter-group{margin-bottom:14px;}
+.filter-group h3{font-size:12px;text-transform:uppercase;color:var(--txt2);
+    margin-bottom:6px;letter-spacing:.5px;border-bottom:2px solid var(--accent);padding-bottom:3px;}
+.filter-group label{display:block;padding:2px 0;font-size:12px;cursor:pointer;}
+.filter-group label:hover{background:#f0f2f5;}
+.filter-group input[type="checkbox"]{margin-right:6px;accent-color:var(--accent);}
+.filter-group select{width:100%;padding:5px;border:1px solid var(--borda);border-radius:4px;font-size:12px;}
+
+.btn{display:block;width:100%;padding:9px;margin-top:6px;border:none;border-radius:6px;
+    font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--accent);color:#fff;}
+.btn-primary:hover{background:#C2185B;transform:translateY(-1px);}
+.btn-secondary{background:var(--azul);color:#fff;}
+.btn-secondary:hover{background:var(--azul3);}
+.btn-export{background:var(--verde);color:#fff;}
+.btn-export:hover{background:#1E8449;}
+
+.card{background:var(--card);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);
+    padding:14px;margin-bottom:12px;}
+.card h2{font-size:14px;color:#E65100;margin-bottom:8px;border-bottom:2px solid #FF5722;padding-bottom:4px;}
+
+.stats-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.stat-box{flex:1;min-width:100px;background:#FFF3E0;border-radius:4px;padding:8px 6px;text-align:center;
+    border-left:3px solid #FF5722;}
+.stat-box .value{font-size:18px;font-weight:700;color:#E65100;}
+.stat-box .label{font-size:9px;color:var(--txt2);text-transform:uppercase;line-height:1.2;margin-top:2px;}
+
+.chart-container{position:relative;height:380px;margin:10px 0;}
+.chart-row{display:flex;gap:14px;flex-wrap:wrap;}
+.chart-half{flex:1;min-width:380px;}
+
+.tabs-section{display:flex;gap:0;margin-bottom:14px;border-bottom:2px solid var(--borda);}
+.tab-sec{padding:8px 18px;cursor:pointer;font-size:13px;font-weight:600;color:var(--txt2);
+    border-bottom:3px solid transparent;transition:.2s;}
+.tab-sec:hover{color:var(--txt);background:#f8f8f8;}
+.tab-sec.active{color:#E65100;border-bottom-color:#FF5722;}
+
+.section-panel{display:none;}
+.section-panel.active{display:block;}
+
+.loading{text-align:center;padding:40px;}
+.loading .spinner{width:48px;height:48px;border:4px solid var(--borda);
+    border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--verde);color:#fff;
+    padding:12px 20px;border-radius:8px;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.3);
+    opacity:0;transition:opacity .3s;z-index:999;}
+.toast.show{opacity:1;}
+
+.status-bar{background:#3E2723;color:#aaa;padding:4px 24px;font-size:11px;
+    display:flex;justify-content:space-between;}
+
+table.data-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+table.data-table th{background:#E65100;color:#fff;padding:6px 8px;text-align:left;font-weight:600;font-size:11px;}
+table.data-table td{padding:5px 8px;border-bottom:1px solid var(--borda);}
+table.data-table tr:nth-child(even){background:#FFF8F0;}
+table.data-table tr:hover{background:#FFE0B2;}
+
+.chip-toggle{display:inline-flex;gap:0;border:1px solid var(--borda);border-radius:6px;overflow:hidden;margin:6px 0;}
+.chip-toggle button{border:none;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;
+    background:#f0f0f0;color:var(--txt2);transition:.2s;}
+.chip-toggle button.active{background:#FF5722;color:#fff;}
+.chip-toggle button:hover:not(.active){background:#ddd;}
+
+.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:26px;
+    cursor:pointer;padding:4px 10px;margin-right:6px;}
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,.5);z-index:90;}
+.sidebar-overlay.show{display:block;}
+
+@media(max-width:900px){
+    .container{flex-direction:column;}
+    .sidebar{width:100%;min-width:auto;max-height:none;}
+    .main{max-height:none;padding:10px;}
+    .chart-half{min-width:100%;}
+}
+@media(max-width:768px){
+    .header{padding:10px 14px;}
+    .header-left{gap:8px;}
+    .header-icon{width:36px;height:36px;}
+    .header h1{font-size:14px;line-height:1.2;}
+    .header h1 span{display:block;font-size:16px;margin-bottom:2px;}
+    .header .meta{font-size:10px;}
+    .menu-toggle{display:inline-block;}
+    .container{flex-direction:column;min-height:calc(100vh - 110px);}
+    .sidebar{position:fixed;top:64px;left:-100%;width:86%;max-width:320px;
+        height:calc(100vh - 64px);max-height:none;z-index:100;transition:left .3s;
+        box-shadow:2px 0 12px rgba(0,0,0,.25);}
+    .sidebar.open{left:0;}
+    .main{padding:10px;max-height:none;}
+    .stat-box{min-width:75px;padding:5px 3px;}
+    .stat-box .value{font-size:14px;}
+    .card{padding:10px;margin-bottom:8px;}
+    .chart-container{height:260px;margin:8px 0;}
+    .tabs-section{overflow-x:auto;}
+    .tab-sec{padding:6px 10px;font-size:11px;white-space:nowrap;}
+    .btn{padding:8px;font-size:12px;}
+    .status-bar{padding:4px 10px;font-size:9px;flex-wrap:wrap;gap:4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">&#9776;</button>
+        <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
+        <h1><span>MAPA-GR</span> &#8212; Estat&#237;sticas da Gradua&#231;&#227;o Brasileira</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+        <div class="meta">
+            <div>Prof. David L. Azevedo</div>
+            <div id="headerDate"></div>
+        </div>
+        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+            style="background:#FFF;color:#E65100;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
+            onmouseover="this.style.background='#FFF9C4'" onmouseout="this.style.background='#FFF'">
+            &#8592; Voltar
+        </button>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="container">
+    <div class="sidebar" id="sidebar">
+        <div class="filter-group">
+            <h3>&#128202; Filtros de Estat&#237;sticas</h3>
+            <p style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Selecione os filtros e clique <strong>Atualizar</strong> para gerar os gr&#225;ficos.</p>
+        </div>
+
+        <div class="filter-group">
+            <h3>Grande &#193;rea</h3>
+            <div id="areaFilter" style="max-height:200px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Ciclo ENADE</h3>
+            <div id="cycleFilter"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Regi&#227;o</h3>
+            <label><input type="checkbox" class="reg-chk" value="N" checked> Norte</label>
+            <label><input type="checkbox" class="reg-chk" value="NE" checked> Nordeste</label>
+            <label><input type="checkbox" class="reg-chk" value="CO" checked> Centro-Oeste</label>
+            <label><input type="checkbox" class="reg-chk" value="SE" checked> Sudeste</label>
+            <label><input type="checkbox" class="reg-chk" value="S" checked> Sul</label>
+        </div>
+
+        <div class="filter-group">
+            <h3>UF (Estado)</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
+                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+            </div>
+            <div id="ufFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>&#128269; Buscar por sigla da IES</h3>
+            <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
+            <input type="text" id="searchSigla" placeholder="ex: UNB, UFRJ, USP" disabled
+                style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Busca parcial: "UF" encontra UFMT, UFRJ, etc.</p>
+        </div>
+
+        <button class="btn btn-primary" onclick="atualizar()">Atualizar Estat&#237;sticas</button>
+        <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
+        <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
+
+        <div style="margin-top:16px;border-top:2px solid var(--borda);padding-top:12px;">
+            <div class="filter-group">
+                <h3>&#128230; Exportar</h3>
+            </div>
+            <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
+            <button class="btn btn-export" onclick="exportReport()">Relat&#243;rio TXT</button>
+        </div>
+
+        <button class="btn" onclick="window.open('index.html','_blank')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Painel Principal</button>
+        <button class="btn" onclick="window.open('help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documenta&#231;&#227;o</button>
+    </div>
+
+    <div class="main" id="main">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p id="loadingMsg">Carregando todos os datasets...</p>
+        </div>
+        <div id="results" style="display:none;"></div>
+    </div>
+</div>
+
+<div class="status-bar">
+    <span id="statusLeft">Carregando...</span>
+    <span id="statusRight">MAPA-GR &#8212; Estat&#237;sticas | Prof. David L. Azevedo</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const VERSION = '2.0';
+const UF_REGIAO = {
+    'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
+    'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
+    'DF':'CO','GO':'CO','MT':'CO','MS':'CO',
+    'ES':'SE','MG':'SE','RJ':'SE','SP':'SE',
+    'PR':'S','RS':'S','SC':'S'
+};
+const REGIAO_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };
+const REGIAO_CORES = { N:'#27AE60', NE:'#F39C12', CO:'#9B59B6', SE:'#3498DB', S:'#E74C3C' };
+const AREA_CORES = [
+    '#1B5E20','#2196F3','#FF5722','#9C27B0','#FF9800',
+    '#00BCD4','#795548','#E91E63','#607D8B'
+];
+const AREA_ORDER = ['exatas','biologicas','engenharias','saude','agrarias','sociais','humanas','letras','tecnologos'];
+
+let META = null;
+let ALL_DATA = {};   // { slug: dataset }
+let ALL_CURSOS = []; // flattened
+let _charts = {};
+
+function setStatus(msg) { document.getElementById('statusLeft').textContent = msg; }
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// === LOAD ALL DATA ===
+async function loadAll() {
+    try {
+        const r = await fetch('dados/metadata.json');
+        META = await r.json();
+        setStatus('Carregando datasets...');
+
+        const promises = AREA_ORDER.map(async (slug) => {
+            const meta = META.grandes_areas[slug];
+            const resp = await fetch(meta.arquivo);
+            const data = await resp.json();
+            data.cursos.forEach(c => {
+                c._r = UF_REGIAO[c.u] || '?';
+                c._ga = slug;
+                c._gaLabel = meta.label;
+            });
+            ALL_DATA[slug] = data;
+        });
+
+        await Promise.all(promises);
+
+        // Flatten
+        ALL_CURSOS = [];
+        AREA_ORDER.forEach(slug => {
+            ALL_CURSOS = ALL_CURSOS.concat(ALL_DATA[slug].cursos);
+        });
+
+        buildSidebarFilters();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        atualizar();
+        setStatus('Todos os datasets carregados');
+    } catch(e) {
+        document.getElementById('loadingMsg').innerHTML =
+            '<span style="color:#E74C3C;">Erro: ' + e.message + '</span>';
+    }
+}
+
+function buildSidebarFilters() {
+    // Areas
+    const areaDiv = document.getElementById('areaFilter');
+    areaDiv.innerHTML = AREA_ORDER.map(slug => {
+        const m = META.grandes_areas[slug];
+        return '<label style="font-size:11px;"><input type="checkbox" class="area-chk" value="' + slug + '" checked> ' + m.icon + ' ' + m.label + '</label>';
+    }).join('');
+
+    // Cycles - collect from all areas
+    const allCycles = new Set();
+    AREA_ORDER.forEach(slug => {
+        const m = META.grandes_areas[slug];
+        if (m.ciclos) m.ciclos.forEach(y => allCycles.add(y));
+    });
+    const cycleDiv = document.getElementById('cycleFilter');
+    cycleDiv.innerHTML = [...allCycles].sort().map(y =>
+        '<label><input type="checkbox" class="cycle-chk" value="' + y + '" checked> ' + y + '</label>'
+    ).join('');
+
+    // UFs
+    const allUfs = [...new Set(ALL_CURSOS.map(c => c.u).filter(u => u))].sort();
+    const byRegion = { N:[], NE:[], CO:[], SE:[], S:[] };
+    allUfs.forEach(u => { const r = UF_REGIAO[u]; if (byRegion[r]) byRegion[r].push(u); });
+    const ufDiv = document.getElementById('ufFilter');
+    let ufHtml = '';
+    ['N','NE','CO','SE','S'].forEach(r => {
+        if (!byRegion[r].length) return;
+        ufHtml += '<div style="font-size:9px;color:var(--txt2);text-transform:uppercase;margin-top:4px;">' + REGIAO_LABELS[r] + '</div>';
+        ufHtml += '<div style="display:flex;flex-wrap:wrap;gap:4px 8px;">';
+        byRegion[r].forEach(u => {
+            ufHtml += '<label style="font-size:11px;display:inline-flex;align-items:center;"><input type="checkbox" class="uf-chk" value="' + u + '" checked style="margin-right:2px;">' + u + '</label>';
+        });
+        ufHtml += '</div>';
+    });
+    ufDiv.innerHTML = ufHtml;
+}
+
+function ufAll(checked) {
+    document.querySelectorAll('.uf-chk').forEach(e => { e.checked = checked; });
+}
+function marcarTodos() {
+    document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = true);
+}
+function desmarcarTodos() {
+    document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = false);
+}
+
+// === FILTERS ===
+function getFilters() {
+    const areas = [...document.querySelectorAll('.area-chk:checked')].map(e => e.value);
+    const ciclos = [...document.querySelectorAll('.cycle-chk:checked')].map(e => +e.value);
+    const regs = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
+    const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
+    const searchOn = document.getElementById('searchEnabled').checked;
+    const searchTerm = document.getElementById('searchSigla').value.trim().toUpperCase();
+    return { areas, ciclos, regs, ufs, searchOn, searchTerm };
+}
+
+function filterCursos(f) {
+    return ALL_CURSOS.filter(c => {
+        if (!f.areas.includes(c._ga)) return false;
+        if (!f.ciclos.includes(c.y)) return false;
+        if (!f.regs.includes(c._r)) return false;
+        if (f.ufs.length && !f.ufs.includes(c.u)) return false;
+        if (f.searchOn && f.searchTerm && !(c.sg || '').toUpperCase().includes(f.searchTerm)) return false;
+        return true;
+    });
+}
+
+// === DESTROY CHARTS ===
+function destroyCharts() {
+    Object.values(_charts).forEach(c => { try { c.destroy(); } catch(e){} });
+    _charts = {};
+}
+
+// === MAIN RENDER ===
+function atualizar() {
+    const f = getFilters();
+    const cursos = filterCursos(f);
+    const main = document.getElementById('results');
+
+    if (cursos.length === 0) {
+        main.innerHTML = '<div class="card"><h2>Nenhum dado encontrado</h2><p>Ajuste os filtros na barra lateral.</p></div>';
+        setStatus('Filtro vazio');
+        return;
+    }
+
+    // Compute stats
+    const totalCursos = cursos.length;
+    const totalIES = new Set(cursos.map(c => c.ci || c.sg)).size;
+    const totalUFs = new Set(cursos.map(c => c.u)).size;
+    const totalNi = cursos.reduce((s, c) => s + (c.ni || 0), 0);
+    const totalNp = cursos.reduce((s, c) => s + (c.np || 0), 0);
+    const taxaParticipacao = totalNi > 0 ? ((totalNp / totalNi) * 100).toFixed(1) : '0';
+
+    let html = '';
+
+    // Summary cards
+    html += '<div class="card"><h2>Vis\u00e3o Geral</h2>';
+    html += '<div class="stats-row">';
+    html += '<div class="stat-box"><div class="value">' + totalCursos.toLocaleString('pt-BR') + '</div><div class="label">Cursos</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalIES.toLocaleString('pt-BR') + '</div><div class="label">IES</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalUFs + '</div><div class="label">UFs</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalNi.toLocaleString('pt-BR') + '</div><div class="label">Inscritos</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalNp.toLocaleString('pt-BR') + '</div><div class="label">Participantes</div></div>';
+    html += '<div class="stat-box"><div class="value">' + taxaParticipacao + '%</div><div class="label">Taxa Participa\u00e7\u00e3o</div></div>';
+    html += '</div></div>';
+
+    // Tab sections
+    html += '<div class="tabs-section" id="tabsSec">';
+    html += '<div class="tab-sec active" data-sec="sec-areas" onclick="switchSection(this)">Por \u00c1rea</div>';
+    html += '<div class="tab-sec" data-sec="sec-regiao" onclick="switchSection(this)">Por Regi\u00e3o / Estado</div>';
+    html += '<div class="tab-sec" data-sec="sec-ciclo" onclick="switchSection(this)">Por Ciclo</div>';
+    html += '<div class="tab-sec" data-sec="sec-ies" onclick="switchSection(this)">Por IES</div>';
+    html += '</div>';
+
+    // === SECTION: POR AREA ===
+    html += '<div class="section-panel active" id="sec-areas">';
+
+    // Chart type toggles
+    html += '<div style="margin-bottom:10px;">';
+    html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Tipo de gr\u00e1fico:</span>';
+    html += '<div class="chip-toggle" id="toggleAreaChart">';
+    html += '<button class="active" onclick="setChartType(\'area\',\'pie\',this)">Pizza</button>';
+    html += '<button onclick="setChartType(\'area\',\'bar\',this)">Barras</button>';
+    html += '<button onclick="setChartType(\'area\',\'doughnut\',this)">Rosca</button>';
+    html += '</div></div>';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Cursos por Grande \u00c1rea</h2>';
+    html += '<div class="chart-container"><canvas id="chartAreaCursos"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Grande \u00c1rea</h2>';
+    html += '<div class="chart-container"><canvas id="chartAreaAlunos"></canvas></div></div></div>';
+    html += '</div>';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Participantes ENADE por Grande \u00c1rea</h2>';
+    html += '<div class="chart-container"><canvas id="chartAreaPart"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Taxa de Participa\u00e7\u00e3o por Grande \u00c1rea (%)</h2>';
+    html += '<div class="chart-container"><canvas id="chartAreaTaxa"></canvas></div></div></div>';
+    html += '</div>';
+
+    // Table
+    html += '<div class="card"><h2>Detalhamento por Grande \u00c1rea</h2>';
+    html += '<table class="data-table"><thead><tr><th>\u00c1rea</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th><th>Taxa Part.</th></tr></thead><tbody id="tbodyArea"></tbody></table>';
+    html += '</div>';
+
+    html += '</div>'; // end sec-areas
+
+    // === SECTION: POR REGIAO / ESTADO ===
+    html += '<div class="section-panel" id="sec-regiao">';
+
+    html += '<div style="margin-bottom:10px;">';
+    html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Tipo de gr\u00e1fico:</span>';
+    html += '<div class="chip-toggle" id="toggleRegChart">';
+    html += '<button class="active" onclick="setChartType(\'reg\',\'pie\',this)">Pizza</button>';
+    html += '<button onclick="setChartType(\'reg\',\'bar\',this)">Barras</button>';
+    html += '<button onclick="setChartType(\'reg\',\'doughnut\',this)">Rosca</button>';
+    html += '</div></div>';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Cursos por Regi\u00e3o</h2>';
+    html += '<div class="chart-container"><canvas id="chartRegCursos"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Regi\u00e3o</h2>';
+    html += '<div class="chart-container"><canvas id="chartRegAlunos"></canvas></div></div></div>';
+    html += '</div>';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Cursos por Estado (UF)</h2>';
+    html += '<div class="chart-container"><canvas id="chartUfCursos"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Estado (UF)</h2>';
+    html += '<div class="chart-container"><canvas id="chartUfAlunos"></canvas></div></div></div>';
+    html += '</div>';
+
+    // Region table
+    html += '<div class="card"><h2>Detalhamento por Regi\u00e3o</h2>';
+    html += '<table class="data-table"><thead><tr><th>Regi\u00e3o</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th></tr></thead><tbody id="tbodyReg"></tbody></table>';
+    html += '</div>';
+
+    // State table
+    html += '<div class="card"><h2>Detalhamento por Estado (UF)</h2>';
+    html += '<table class="data-table"><thead><tr><th>UF</th><th>Regi\u00e3o</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th></tr></thead><tbody id="tbodyUf"></tbody></table>';
+    html += '</div>';
+
+    html += '</div>'; // end sec-regiao
+
+    // === SECTION: POR CICLO ===
+    html += '<div class="section-panel" id="sec-ciclo">';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Cursos por Ciclo ENADE</h2>';
+    html += '<div class="chart-container"><canvas id="chartCicloCursos"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Alunos por Ciclo ENADE</h2>';
+    html += '<div class="chart-container"><canvas id="chartCicloAlunos"></canvas></div></div></div>';
+    html += '</div>';
+
+    html += '<div class="card"><h2>Inscritos vs Participantes por Ciclo</h2>';
+    html += '<div class="chart-container" style="height:320px;"><canvas id="chartCicloComp"></canvas></div></div>';
+
+    html += '<div class="card"><h2>Detalhamento por Ciclo</h2>';
+    html += '<table class="data-table"><thead><tr><th>Ciclo</th><th>Cursos</th><th>IES</th><th>Inscritos</th><th>Participantes</th><th>Taxa Part.</th></tr></thead><tbody id="tbodyCiclo"></tbody></table>';
+    html += '</div>';
+
+    html += '</div>'; // end sec-ciclo
+
+    // === SECTION: POR IES ===
+    html += '<div class="section-panel" id="sec-ies">';
+
+    html += '<div class="card"><h2>Top 30 IES por N\u00famero de Cursos</h2>';
+    html += '<div class="chart-container" style="height:500px;"><canvas id="chartIesCursos"></canvas></div></div>';
+
+    html += '<div class="card"><h2>Top 30 IES por Alunos Inscritos</h2>';
+    html += '<div class="chart-container" style="height:500px;"><canvas id="chartIesAlunos"></canvas></div></div>';
+
+    html += '<div class="card"><h2>Detalhamento por IES (Top 50)</h2>';
+    html += '<table class="data-table"><thead><tr><th>#</th><th>Sigla</th><th>UFs</th><th>Cursos</th><th>Inscritos</th><th>Participantes</th><th>Taxa</th></tr></thead><tbody id="tbodyIes"></tbody></table>';
+    html += '</div>';
+
+    html += '</div>'; // end sec-ies
+
+    main.innerHTML = html;
+
+    setTimeout(function() { renderAllCharts(cursos, f); }, 30);
+    setStatus(totalCursos.toLocaleString('pt-BR') + ' cursos | ' + totalNi.toLocaleString('pt-BR') + ' inscritos');
+}
+
+// === SECTION SWITCHING ===
+function switchSection(el) {
+    document.querySelectorAll('.tab-sec').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(el.dataset.sec).classList.add('active');
+}
+
+// === CHART TYPE TOGGLE ===
+let _chartTypes = { area: 'pie', reg: 'pie' };
+
+function setChartType(group, type, btn) {
+    _chartTypes[group] = type;
+    btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = getFilters();
+    const cursos = filterCursos(f);
+    if (group === 'area') renderAreaCharts(cursos);
+    if (group === 'reg') renderRegCharts(cursos);
+}
+
+// === RENDER ALL ===
+function renderAllCharts(cursos, f) {
+    destroyCharts();
+    renderAreaCharts(cursos);
+    renderRegCharts(cursos);
+    renderCicloCharts(cursos);
+    renderIesCharts(cursos);
+    renderTables(cursos);
+}
+
+// === AREA CHARTS ===
+function renderAreaCharts(cursos) {
+    // Destroy only area charts
+    ['areaCursos','areaAlunos','areaPart','areaTaxa'].forEach(k => {
+        if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; }
+    });
+
+    const type = _chartTypes.area || 'pie';
+    const byArea = {};
+    AREA_ORDER.forEach(slug => { byArea[slug] = { cursos: 0, ni: 0, np: 0 }; });
+    cursos.forEach(c => {
+        if (!byArea[c._ga]) byArea[c._ga] = { cursos: 0, ni: 0, np: 0 };
+        byArea[c._ga].cursos++;
+        byArea[c._ga].ni += (c.ni || 0);
+        byArea[c._ga].np += (c.np || 0);
+    });
+
+    const slugs = AREA_ORDER.filter(s => byArea[s] && byArea[s].cursos > 0);
+    const labels = slugs.map(s => META.grandes_areas[s] ? META.grandes_areas[s].label.replace('Ci\u00eancias ', '') : s);
+    const cores = slugs.map((_, i) => AREA_CORES[i % AREA_CORES.length]);
+    const totalCursos = cursos.length;
+    const totalNi = cursos.reduce((s,c) => s + (c.ni||0), 0);
+
+    var isPie = (type === 'pie' || type === 'doughnut');
+
+    var tooltipCb = {
+        label: function(ctx) {
+            var val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
+            var total = ctx.dataset.data.reduce(function(a,b){ return a+b; }, 0);
+            var pct = total > 0 ? (val * 100 / total).toFixed(1) : '0';
+            return ctx.label + ': ' + val.toLocaleString('pt-BR') + ' (' + pct + '%)';
+        }
+    };
+
+    // Cursos
+    var el1 = document.getElementById('chartAreaCursos');
+    if (el1) {
+        _charts.areaCursos = new Chart(el1, {
+            type: type,
+            data: { labels: labels, datasets: [{ data: slugs.map(s => byArea[s].cursos), backgroundColor: cores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: tooltipCb }, legend: { display: isPie, position: 'right', labels: { font: { size: 10 } } } },
+                scales: isPie ? {} : { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Alunos inscritos
+    var el2 = document.getElementById('chartAreaAlunos');
+    if (el2) {
+        _charts.areaAlunos = new Chart(el2, {
+            type: type,
+            data: { labels: labels, datasets: [{ data: slugs.map(s => byArea[s].ni), backgroundColor: cores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: tooltipCb }, legend: { display: isPie, position: 'right', labels: { font: { size: 10 } } } },
+                scales: isPie ? {} : { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Participantes
+    var el3 = document.getElementById('chartAreaPart');
+    if (el3) {
+        _charts.areaPart = new Chart(el3, {
+            type: type,
+            data: { labels: labels, datasets: [{ data: slugs.map(s => byArea[s].np), backgroundColor: cores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: tooltipCb }, legend: { display: isPie, position: 'right', labels: { font: { size: 10 } } } },
+                scales: isPie ? {} : { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Taxa de participacao
+    var el4 = document.getElementById('chartAreaTaxa');
+    if (el4) {
+        var taxas = slugs.map(s => byArea[s].ni > 0 ? +(byArea[s].np * 100 / byArea[s].ni).toFixed(1) : 0);
+        _charts.areaTaxa = new Chart(el4, {
+            type: 'bar',
+            data: { labels: labels, datasets: [{ data: taxas, backgroundColor: cores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { return ctx.label + ': ' + ctx.raw + '%'; } } }
+                },
+                scales: { y: { beginAtZero: true, max: 100, title: { display: true, text: '%' } } }
+            }
+        });
+    }
+}
+
+// === REGION/STATE CHARTS ===
+function renderRegCharts(cursos) {
+    ['regCursos','regAlunos','ufCursos','ufAlunos'].forEach(k => {
+        if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; }
+    });
+
+    var type = _chartTypes.reg || 'pie';
+    var isPie = (type === 'pie' || type === 'doughnut');
+
+    // By region
+    var byReg = {};
+    ['N','NE','CO','SE','S'].forEach(r => { byReg[r] = { cursos: 0, ni: 0, np: 0, ies: new Set() }; });
+    cursos.forEach(c => {
+        var r = c._r;
+        if (!byReg[r]) return;
+        byReg[r].cursos++;
+        byReg[r].ni += (c.ni || 0);
+        byReg[r].np += (c.np || 0);
+        byReg[r].ies.add(c.ci || c.sg);
+    });
+
+    var regKeys = ['N','NE','CO','SE','S'].filter(r => byReg[r].cursos > 0);
+    var regLabels = regKeys.map(r => REGIAO_LABELS[r]);
+    var regCores = regKeys.map(r => REGIAO_CORES[r]);
+
+    var tooltipCb = {
+        label: function(ctx) {
+            var val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
+            var total = ctx.dataset.data.reduce(function(a,b){ return a+b; }, 0);
+            var pct = total > 0 ? (val * 100 / total).toFixed(1) : '0';
+            return ctx.label + ': ' + val.toLocaleString('pt-BR') + ' (' + pct + '%)';
+        }
+    };
+
+    var elRC = document.getElementById('chartRegCursos');
+    if (elRC) {
+        _charts.regCursos = new Chart(elRC, {
+            type: type,
+            data: { labels: regLabels, datasets: [{ data: regKeys.map(r => byReg[r].cursos), backgroundColor: regCores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: tooltipCb }, legend: { display: isPie, position: 'right' } },
+                scales: isPie ? {} : { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    var elRA = document.getElementById('chartRegAlunos');
+    if (elRA) {
+        _charts.regAlunos = new Chart(elRA, {
+            type: type,
+            data: { labels: regLabels, datasets: [{ data: regKeys.map(r => byReg[r].ni), backgroundColor: regCores }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: tooltipCb }, legend: { display: isPie, position: 'right' } },
+                scales: isPie ? {} : { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // By UF
+    var byUf = {};
+    cursos.forEach(c => {
+        if (!byUf[c.u]) byUf[c.u] = { cursos: 0, ni: 0, np: 0, ies: new Set() };
+        byUf[c.u].cursos++;
+        byUf[c.u].ni += (c.ni || 0);
+        byUf[c.u].np += (c.np || 0);
+        byUf[c.u].ies.add(c.ci || c.sg);
+    });
+    var ufEntries = Object.entries(byUf).sort(function(a,b) { return b[1].cursos - a[1].cursos; });
+
+    var elUC = document.getElementById('chartUfCursos');
+    if (elUC) {
+        _charts.ufCursos = new Chart(elUC, {
+            type: 'bar',
+            data: { labels: ufEntries.map(function(e){ return e[0]; }),
+                datasets: [{ data: ufEntries.map(function(e){ return e[1].cursos; }),
+                    backgroundColor: ufEntries.map(function(e){ return REGIAO_CORES[UF_REGIAO[e[0]]] || '#95A5A6'; }) }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntries[ctx.dataIndex]; return [e[0] + ': ' + e[1].cursos + ' cursos', 'Regi\u00e3o: ' + REGIAO_LABELS[UF_REGIAO[e[0]]]]; } } }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    var ufEntriesNi = Object.entries(byUf).sort(function(a,b) { return b[1].ni - a[1].ni; });
+    var elUA = document.getElementById('chartUfAlunos');
+    if (elUA) {
+        _charts.ufAlunos = new Chart(elUA, {
+            type: 'bar',
+            data: { labels: ufEntriesNi.map(function(e){ return e[0]; }),
+                datasets: [{ data: ufEntriesNi.map(function(e){ return e[1].ni; }),
+                    backgroundColor: ufEntriesNi.map(function(e){ return REGIAO_CORES[UF_REGIAO[e[0]]] || '#95A5A6'; }) }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntriesNi[ctx.dataIndex]; return [e[0] + ': ' + e[1].ni.toLocaleString('pt-BR') + ' inscritos', 'Participantes: ' + e[1].np.toLocaleString('pt-BR')]; } } }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Tables
+    var tbodyReg = document.getElementById('tbodyReg');
+    if (tbodyReg) {
+        var totalC = cursos.length;
+        var totalNi = cursos.reduce(function(s,c){ return s + (c.ni||0); }, 0);
+        var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
+        tbodyReg.innerHTML = regKeys.map(function(r) {
+            var d = byReg[r];
+            return '<tr><td><strong>' + REGIAO_LABELS[r] + '</strong></td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
+        }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td>TOTAL</td><td>' + totalC.toLocaleString('pt-BR') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + totalNp.toLocaleString('pt-BR') + '</td><td>100%</td></tr>';
+    }
+
+    var tbodyUf = document.getElementById('tbodyUf');
+    if (tbodyUf) {
+        var totalC = cursos.length;
+        var totalNi = cursos.reduce(function(s,c){ return s + (c.ni||0); }, 0);
+        var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
+        tbodyUf.innerHTML = ufEntries.map(function(e) {
+            var u = e[0]; var d = e[1];
+            return '<tr><td><strong>' + u + '</strong></td><td>' + REGIAO_LABELS[UF_REGIAO[u]] + '</td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
+        }).join('');
+    }
+}
+
+// === CICLO CHARTS ===
+function renderCicloCharts(cursos) {
+    ['cicloCursos','cicloAlunos','cicloComp'].forEach(function(k) {
+        if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; }
+    });
+
+    var byCiclo = {};
+    cursos.forEach(function(c) {
+        if (!byCiclo[c.y]) byCiclo[c.y] = { cursos: 0, ni: 0, np: 0, ies: new Set() };
+        byCiclo[c.y].cursos++;
+        byCiclo[c.y].ni += (c.ni || 0);
+        byCiclo[c.y].np += (c.np || 0);
+        byCiclo[c.y].ies.add(c.ci || c.sg);
+    });
+
+    var years = Object.keys(byCiclo).sort();
+    var coresCiclo = ['#1B5E20','#2196F3','#FF5722','#9C27B0','#FF9800'];
+
+    var elCC = document.getElementById('chartCicloCursos');
+    if (elCC) {
+        _charts.cicloCursos = new Chart(elCC, {
+            type: 'bar',
+            data: { labels: years, datasets: [{ label: 'Cursos', data: years.map(function(y){ return byCiclo[y].cursos; }), backgroundColor: coresCiclo }] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { var y = years[ctx.dataIndex]; var d = byCiclo[y]; return ['Cursos: ' + d.cursos.toLocaleString('pt-BR'), 'IES: ' + d.ies.size]; } } }
+                },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    var elCA = document.getElementById('chartCicloAlunos');
+    if (elCA) {
+        _charts.cicloAlunos = new Chart(elCA, {
+            type: 'bar',
+            data: { labels: years,
+                datasets: [
+                    { label: 'Inscritos', data: years.map(function(y){ return byCiclo[y].ni; }), backgroundColor: '#2196F3' },
+                    { label: 'Participantes', data: years.map(function(y){ return byCiclo[y].np; }), backgroundColor: '#FF5722' }
+                ] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: true } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Comparison line
+    var elCComp = document.getElementById('chartCicloComp');
+    if (elCComp) {
+        _charts.cicloComp = new Chart(elCComp, {
+            type: 'line',
+            data: { labels: years,
+                datasets: [
+                    { label: 'Inscritos', data: years.map(function(y){ return byCiclo[y].ni; }),
+                        borderColor: '#2196F3', backgroundColor: 'rgba(33,150,243,0.1)', fill: true, tension: 0.2, pointRadius: 6 },
+                    { label: 'Participantes', data: years.map(function(y){ return byCiclo[y].np; }),
+                        borderColor: '#FF5722', backgroundColor: 'rgba(255,87,34,0.1)', fill: true, tension: 0.2, pointRadius: 6 }
+                ] },
+            options: { responsive: true, maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw.toLocaleString('pt-BR'); } } } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Table
+    var tbodyCiclo = document.getElementById('tbodyCiclo');
+    if (tbodyCiclo) {
+        tbodyCiclo.innerHTML = years.map(function(y) {
+            var d = byCiclo[y];
+            var taxa = d.ni > 0 ? (d.np * 100 / d.ni).toFixed(1) + '%' : '-';
+            return '<tr><td><strong>' + y + '</strong></td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + taxa + '</td></tr>';
+        }).join('');
+    }
+}
+
+// === IES CHARTS ===
+function renderIesCharts(cursos) {
+    ['iesCursos','iesAlunos'].forEach(function(k) {
+        if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; }
+    });
+
+    var byIes = {};
+    cursos.forEach(function(c) {
+        var sg = c.sg || '?';
+        if (!byIes[sg]) byIes[sg] = { cursos: 0, ni: 0, np: 0, ufs: new Set() };
+        byIes[sg].cursos++;
+        byIes[sg].ni += (c.ni || 0);
+        byIes[sg].np += (c.np || 0);
+        byIes[sg].ufs.add(c.u);
+    });
+
+    var iesList = Object.entries(byIes).map(function(e) {
+        return { sg: e[0], cursos: e[1].cursos, ni: e[1].ni, np: e[1].np, ufs: [...e[1].ufs] };
+    });
+
+    // Top 30 by cursos
+    var topCursos = iesList.slice().sort(function(a,b){ return b.cursos - a.cursos; }).slice(0, 30);
+    var elIC = document.getElementById('chartIesCursos');
+    if (elIC) {
+        _charts.iesCursos = new Chart(elIC, {
+            type: 'bar',
+            data: { labels: topCursos.map(function(p){ return p.sg; }),
+                datasets: [{ data: topCursos.map(function(p){ return p.cursos; }), backgroundColor: '#FF5722' }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { var p = topCursos[ctx.dataIndex]; return [p.sg + ': ' + p.cursos + ' cursos', 'UFs: ' + p.ufs.join(', '), 'Inscritos: ' + p.ni.toLocaleString('pt-BR')]; } } }
+                },
+                scales: { x: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Top 30 by alunos
+    var topAlunos = iesList.slice().sort(function(a,b){ return b.ni - a.ni; }).slice(0, 30);
+    var elIA = document.getElementById('chartIesAlunos');
+    if (elIA) {
+        _charts.iesAlunos = new Chart(elIA, {
+            type: 'bar',
+            data: { labels: topAlunos.map(function(p){ return p.sg; }),
+                datasets: [{ data: topAlunos.map(function(p){ return p.ni; }), backgroundColor: '#2196F3' }] },
+            options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                plugins: { legend: { display: false },
+                    tooltip: { callbacks: { label: function(ctx) { var p = topAlunos[ctx.dataIndex]; return [p.sg + ': ' + p.ni.toLocaleString('pt-BR') + ' inscritos', 'Participantes: ' + p.np.toLocaleString('pt-BR'), 'Cursos: ' + p.cursos, 'UFs: ' + p.ufs.join(', ')]; } } }
+                },
+                scales: { x: { beginAtZero: true } }
+            }
+        });
+    }
+
+    // Table Top 50
+    var tbodyIes = document.getElementById('tbodyIes');
+    if (tbodyIes) {
+        var top50 = iesList.slice().sort(function(a,b){ return b.cursos - a.cursos; }).slice(0, 50);
+        tbodyIes.innerHTML = top50.map(function(p, i) {
+            var taxa = p.ni > 0 ? (p.np * 100 / p.ni).toFixed(1) + '%' : '-';
+            return '<tr><td>' + (i+1) + '</td><td><strong>' + p.sg + '</strong></td><td>' + p.ufs.join(', ') + '</td><td>' + p.cursos + '</td><td>' + p.ni.toLocaleString('pt-BR') + '</td><td>' + p.np.toLocaleString('pt-BR') + '</td><td>' + taxa + '</td></tr>';
+        }).join('');
+    }
+}
+
+// === TABLES (AREA) ===
+function renderTables(cursos) {
+    var tbodyArea = document.getElementById('tbodyArea');
+    if (!tbodyArea) return;
+
+    var byArea = {};
+    cursos.forEach(function(c) {
+        if (!byArea[c._ga]) byArea[c._ga] = { cursos: 0, ni: 0, np: 0, ies: new Set() };
+        byArea[c._ga].cursos++;
+        byArea[c._ga].ni += (c.ni || 0);
+        byArea[c._ga].np += (c.np || 0);
+        byArea[c._ga].ies.add(c.ci || c.sg);
+    });
+
+    var totalC = cursos.length;
+    var totalNi = cursos.reduce(function(s,c){ return s + (c.ni||0); }, 0);
+    var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
+
+    var slugs = AREA_ORDER.filter(function(s){ return byArea[s] && byArea[s].cursos > 0; });
+    tbodyArea.innerHTML = slugs.map(function(s) {
+        var d = byArea[s];
+        var label = META.grandes_areas[s] ? META.grandes_areas[s].icon + ' ' + META.grandes_areas[s].label : s;
+        var taxa = d.ni > 0 ? (d.np * 100 / d.ni).toFixed(1) + '%' : '-';
+        return '<tr><td style="text-align:left;">' + label + '</td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td><td>' + taxa + '</td></tr>';
+    }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td style="text-align:left;">TOTAL</td><td>' + totalC.toLocaleString('pt-BR') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + totalNp.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-') + '</td></tr>';
+}
+
+// === EXPORT CSV ===
+function exportCSV() {
+    var f = getFilters();
+    var cursos = filterCursos(f);
+    if (!cursos.length) { toast('Nada a exportar'); return; }
+
+    var header = ['grande_area','ano','sigla','ies','uf','regiao','municipio','area','faixa','cpc_cont','enade_cont','idd_pad','n_inscritos','n_participantes'];
+    var rows = cursos.map(function(c) {
+        return [
+            c._gaLabel, c.y, c.sg, '"' + (c.ie||'').replace(/"/g,'""') + '"',
+            c.u, REGIAO_LABELS[c._r] || c._r, '"' + (c.mu||'').replace(/"/g,'""') + '"',
+            '"' + c.ar.replace(/"/g,'""') + '"',
+            c.pf||'', c.pc||'', c.e||'', c.ip||'',
+            c.ni||'', c.np||''
+        ].join(';');
+    });
+
+    var d = new Date();
+    var pad = function(n) { return String(n).padStart(2, '0'); };
+    var stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+
+    var csv = '# MAPA-GR v' + VERSION + ' \u2014 Estat\u00edsticas \u2014 ' + d.toLocaleString('pt-BR') + '\n';
+    csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';
+    csv += header.join(';') + '\n' + rows.join('\n');
+
+    var blob = new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'report-GR-estatisticas-' + stamp + '.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast(cursos.length + ' registros exportados em CSV');
+}
+
+// === EXPORT REPORT TXT ===
+function exportReport() {
+    var f = getFilters();
+    var cursos = filterCursos(f);
+    if (!cursos.length) { toast('Nada a exportar'); return; }
+
+    var lines = [];
+    var p = function(s) { lines.push(s); };
+    var d = new Date();
+    var pad = function(n) { return String(n).padStart(2, '0'); };
+
+    p('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
+    p('  MAPA-GR v' + VERSION + ' \u2014 RELAT\u00d3RIO DE ESTAT\u00cdSTICAS');
+    p('  Gerado em: ' + d.toLocaleString('pt-BR'));
+    p('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
+    p('');
+
+    // Filtros
+    p('FILTROS APLICADOS:');
+    p('  Grandes \u00c1reas: ' + f.areas.length + '/' + AREA_ORDER.length + ' selecionadas');
+    if (f.areas.length < AREA_ORDER.length) {
+        f.areas.forEach(function(s) { p('    \u2022 ' + (META.grandes_areas[s] ? META.grandes_areas[s].label : s)); });
+    }
+    p('  Ciclos: ' + f.ciclos.join(', '));
+    p('  Regi\u00f5es: ' + f.regs.map(function(r){ return REGIAO_LABELS[r]; }).join(', '));
+    p('  UFs: ' + f.ufs.length + '/27' + (f.ufs.length === 27 ? ' (todas)' : ''));
+    if (f.searchOn && f.searchTerm) p('  Busca por sigla: "' + f.searchTerm + '"');
+    p('');
+
+    // Totais
+    var totalNi = cursos.reduce(function(s,c){ return s + (c.ni||0); }, 0);
+    var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
+    var totalIES = new Set(cursos.map(function(c){ return c.ci || c.sg; })).size;
+    var totalUFs = new Set(cursos.map(function(c){ return c.u; })).size;
+
+    p('TOTAIS GERAIS:');
+    p('  Cursos: ' + cursos.length.toLocaleString('pt-BR'));
+    p('  IES distintas: ' + totalIES.toLocaleString('pt-BR'));
+    p('  UFs: ' + totalUFs);
+    p('  Alunos inscritos: ' + totalNi.toLocaleString('pt-BR'));
+    p('  Participantes ENADE: ' + totalNp.toLocaleString('pt-BR'));
+    p('  Taxa de participa\u00e7\u00e3o: ' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-'));
+    p('');
+
+    // Por area
+    p('POR GRANDE \u00c1REA:');
+    p('  ' + padR('\u00c1rea', 35) + padL('Cursos', 10) + padL('%', 8) + padL('Inscritos', 14) + padL('%', 8) + padL('Particip.', 14) + padL('%', 8));
+    p('  ' + '\u2500'.repeat(95));
+    var byArea = {};
+    cursos.forEach(function(c) {
+        if (!byArea[c._ga]) byArea[c._ga] = { cursos: 0, ni: 0, np: 0 };
+        byArea[c._ga].cursos++;
+        byArea[c._ga].ni += (c.ni || 0);
+        byArea[c._ga].np += (c.np || 0);
+    });
+    AREA_ORDER.forEach(function(s) {
+        if (!byArea[s]) return;
+        var da = byArea[s];
+        var label = META.grandes_areas[s] ? META.grandes_areas[s].label : s;
+        p('  ' + padR(label, 35) + padL(da.cursos.toLocaleString('pt-BR'), 10) + padL((da.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(da.ni.toLocaleString('pt-BR'), 14) + padL((totalNi > 0 ? (da.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(da.np.toLocaleString('pt-BR'), 14) + padL((totalNp > 0 ? (da.np*100/totalNp).toFixed(1) : 0) + '%', 8));
+    });
+    p('');
+
+    // Por regiao
+    p('POR REGI\u00c3O:');
+    p('  ' + padR('Regi\u00e3o', 20) + padL('Cursos', 10) + padL('%', 8) + padL('Inscritos', 14) + padL('%', 8) + padL('Particip.', 14));
+    p('  ' + '\u2500'.repeat(75));
+    var byReg = {};
+    cursos.forEach(function(c) {
+        if (!byReg[c._r]) byReg[c._r] = { cursos: 0, ni: 0, np: 0 };
+        byReg[c._r].cursos++;
+        byReg[c._r].ni += (c.ni || 0);
+        byReg[c._r].np += (c.np || 0);
+    });
+    ['N','NE','CO','SE','S'].forEach(function(r) {
+        if (!byReg[r]) return;
+        var dr = byReg[r];
+        p('  ' + padR(REGIAO_LABELS[r], 20) + padL(dr.cursos.toLocaleString('pt-BR'), 10) + padL((dr.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(dr.ni.toLocaleString('pt-BR'), 14) + padL((totalNi > 0 ? (dr.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(dr.np.toLocaleString('pt-BR'), 14));
+    });
+    p('');
+
+    // Por UF (top 10)
+    p('TOP 10 ESTADOS POR CURSOS:');
+    var byUf = {};
+    cursos.forEach(function(c) {
+        if (!byUf[c.u]) byUf[c.u] = { cursos: 0, ni: 0, np: 0 };
+        byUf[c.u].cursos++;
+        byUf[c.u].ni += (c.ni || 0);
+        byUf[c.u].np += (c.np || 0);
+    });
+    var ufArr = Object.entries(byUf).sort(function(a,b){ return b[1].cursos - a[1].cursos; });
+    ufArr.slice(0, 10).forEach(function(e, i) {
+        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(e[0] + ' (' + REGIAO_LABELS[UF_REGIAO[e[0]]] + ')', 22) + padL(e[1].cursos.toLocaleString('pt-BR') + ' cursos', 14) + '  ' + padL(e[1].ni.toLocaleString('pt-BR') + ' inscritos', 18));
+    });
+    p('');
+
+    // Por IES (top 10)
+    p('TOP 10 IES POR CURSOS:');
+    var byIes = {};
+    cursos.forEach(function(c) {
+        var sg = c.sg || '?';
+        if (!byIes[sg]) byIes[sg] = { cursos: 0, ni: 0, np: 0, ufs: new Set() };
+        byIes[sg].cursos++;
+        byIes[sg].ni += (c.ni || 0);
+        byIes[sg].np += (c.np || 0);
+        byIes[sg].ufs.add(c.u);
+    });
+    var iesArr = Object.entries(byIes).map(function(e) {
+        return { sg: e[0], cursos: e[1].cursos, ni: e[1].ni, np: e[1].np, ufs: [...e[1].ufs] };
+    }).sort(function(a,b){ return b.cursos - a.cursos; });
+    iesArr.slice(0, 10).forEach(function(p2, i) {
+        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(p2.sg, 16) + padL(p2.cursos + ' cursos', 12) + '  ' + padL(p2.ni.toLocaleString('pt-BR') + ' inscritos', 18) + '  UFs: ' + p2.ufs.join('/'));
+    });
+    p('');
+
+    // Por ciclo
+    p('POR CICLO ENADE:');
+    var byCiclo = {};
+    cursos.forEach(function(c) {
+        if (!byCiclo[c.y]) byCiclo[c.y] = { cursos: 0, ni: 0, np: 0 };
+        byCiclo[c.y].cursos++;
+        byCiclo[c.y].ni += (c.ni || 0);
+        byCiclo[c.y].np += (c.np || 0);
+    });
+    Object.keys(byCiclo).sort().forEach(function(y) {
+        var dc = byCiclo[y];
+        var taxa = dc.ni > 0 ? (dc.np*100/dc.ni).toFixed(1) + '%' : '-';
+        p('  ' + y + ': ' + dc.cursos.toLocaleString('pt-BR') + ' cursos | ' + dc.ni.toLocaleString('pt-BR') + ' inscritos | ' + dc.np.toLocaleString('pt-BR') + ' participantes | taxa: ' + taxa);
+    });
+    p('');
+
+    p('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+    p('Prof. David L. Azevedo | MAPA-GR v' + VERSION);
+    p('Fonte: INEP \u2014 Indicadores de Qualidade da Educa\u00e7\u00e3o Superior');
+    p('Portal: https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos');
+    p('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
+
+    var txt = lines.join('\n');
+    var stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+    var filename = 'report-GR-estatisticas-' + stamp + '.txt';
+    var blob = new Blob(['\ufeff' + txt], { type: 'text/plain;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    toast('Relat\u00f3rio salvo: ' + filename);
+}
+
+function padR(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
+function padL(s, n) { s = String(s); while (s.length < n) s = ' ' + s; return s; }
+
+// Search by sigla
+(function() {
+    var chk = document.getElementById('searchEnabled');
+    var inp = document.getElementById('searchSigla');
+    chk.addEventListener('change', function() {
+        inp.disabled = !chk.checked;
+        if (chk.checked) inp.focus();
+    });
+})();
+
+// Init
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
+loadAll();
+</script>
+
+<script>
+// Mobile sidebar toggle
+(function() {
+    var sidebar = document.getElementById('sidebar');
+    var overlay = document.getElementById('sidebarOverlay');
+    var toggle = document.getElementById('menuToggle');
+    if (!toggle) return;
+    function open() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+    function close() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+    toggle.addEventListener('click', function() { sidebar.classList.contains('open') ? close() : open(); });
+    overlay.addEventListener('click', close);
+})();
+</script>
+</body>
+</html>

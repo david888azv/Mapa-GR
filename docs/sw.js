@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.2.0';
+const CACHE = 'mapa-gr-v2.3.0';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
@@ -8,6 +8,7 @@ const CORE_ASSETS = [
   './manifest.json',
   './chart.umd.min.js',
   './help-doc.html',
+  './estatisticas.html',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
