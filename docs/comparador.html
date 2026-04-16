@@ -247,7 +247,7 @@ const EMPTY_HTML_MANUAL = `<div class="empty-state" id="emptyState">
 
 const EMPTY_HTML_TOP10 = `<div class="empty-state" id="emptyState">
     <div class="icon">🏆</div>
-    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP 10 Nacional — Melhores IFES do país</h2>
+    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP 10 — Cursos mais bem avaliados</h2>
     <p>Veja as <strong>10 melhores Instituições de Ensino Superior</strong> do Brasil para o curso escolhido.</p>
     <p style="margin-top:12px;font-size:12px;">O app analisa automaticamente <strong>as 27 UFs</strong>, pega o melhor curso de cada uma e ordena por <strong>CPC → ENADE → IDD</strong> — trazendo os 10 melhores do país, uma por UF.</p>
     <p style="margin-top:8px;font-size:12px;">Escolha apenas a <strong>grande área</strong> e o <strong>curso</strong> na barra lateral. O resto é automático.</p>
@@ -697,8 +697,8 @@ $('btnReset').addEventListener('click', resetAll);
 function applyMode() {
     if (MODE === 'top10') {
         // Header
-        document.title = 'MAPA-GR — TOP 10 Melhores IFES';
-        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP 10 Nacional (Melhores IFES)';
+        document.title = 'MAPA-GR — TOP 10 Cursos mais bem avaliados';
+        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP 10 — Cursos mais bem avaliados';
         // Muda cor do header para dourado
         document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
         // Esconde UF grid e thresholds
