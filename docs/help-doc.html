@@ -57,6 +57,7 @@ a{color:#1565C0;}
     <a onclick="showSection('sec-areas')" id="nav-areas">Grandes Áreas</a>
     <a onclick="showSection('sec-uso')" id="nav-uso">Como Usar</a>
     <a onclick="showSection('sec-indicadores')" id="nav-indicadores">Indicadores SINAES</a>
+    <a onclick="showSection('sec-cpc-censo')" id="nav-cpc-censo">CPC × Censo</a>
     <a onclick="showSection('sec-fontes')" id="nav-fontes">Fontes de Dados</a>
     <a onclick="showSection('sec-stats')" id="nav-stats">Estatísticas</a>
     <a onclick="showSection('sec-versoes')" id="nav-versoes">Versões</a>
@@ -188,6 +189,84 @@ a{color:#1565C0;}
 </div>
 </div>
 
+<!-- CPC × CENSO -->
+<div class="section" id="sec-cpc-censo">
+<div class="card">
+    <h2>CPC × Censo — dois indicadores complementares</h2>
+
+    <p>O MAPA-GR oferece <strong>duas páginas de análise</strong> alimentadas por <strong>fontes distintas do INEP</strong>,
+    cada uma respondendo a uma pergunta diferente. Entender essa distinção evita interpretações erradas.</p>
+
+    <div class="info-box">
+        <strong>Resumo em uma frase:</strong><br>
+        <em>O <strong>CPC/ENADE</strong> responde "<strong>quão bem</strong> o curso forma?" &#8212; é um <strong>indicador de qualidade</strong>.<br>
+        O <strong>Censo da Educação Superior</strong> responde "<strong>quantos</strong> estão cursando?" &#8212; é um <strong>indicador de estoque</strong>.</em>
+    </div>
+
+    <table style="margin-top:14px;">
+        <tr><th>Aspecto</th><th>CPC / ENADE (página <em>Estatísticas</em>)</th><th>Censo (página <em>Censo Ed. Superior 2017-2023</em>)</th></tr>
+        <tr>
+            <td><strong>O que mede</strong></td>
+            <td>Qualidade do curso &#8212; desempenho dos concluintes no exame ENADE + IDD (valor agregado) + corpo docente + infraestrutura</td>
+            <td>Estoque de alunos &#8212; quantos estão matriculados, quantos entraram, quantos concluíram em um ano</td>
+        </tr>
+        <tr>
+            <td><strong>Unidade</strong></td>
+            <td>Nota 1 a 5 por curso (faixa CPC), ou valor contínuo (CPC contínuo, ENADE contínuo, IDD)</td>
+            <td>Número absoluto de alunos (matrículas, ingressantes, concluintes, trancados, etc.)</td>
+        </tr>
+        <tr>
+            <td><strong>Periodicidade</strong></td>
+            <td>Triennial por área (ciclo ENADE)</td>
+            <td>Anual (todas as IES reportam em outubro/novembro)</td>
+        </tr>
+        <tr>
+            <td><strong>Cobertura</strong></td>
+            <td>~47 mil cursos que participaram do ENADE nos ciclos 2017, 2018, 2021, 2022 e 2023</td>
+            <td>~670 mil linhas de curso×IES×modalidade (&#8776; 9,98 milhões de matrículas em 2023)</td>
+        </tr>
+        <tr>
+            <td><strong>Granularidade útil</strong></td>
+            <td>Curso por IES: comparar qualidade entre universidades</td>
+            <td>Ano, UF, área, modalidade, grau, IES, gênero, raça, idade, financiamento (FIES, PROUNI), cotas</td>
+        </tr>
+        <tr>
+            <td><strong>Quando usar</strong></td>
+            <td>Decidir onde estudar, comparar qualidade entre IES, avaliar curso</td>
+            <td>Dimensionar demanda, analisar crescimento, planejar política educacional, verificar evasão</td>
+        </tr>
+        <tr>
+            <td><strong>Fonte</strong></td>
+            <td>INEP &#8212; Indicadores de Qualidade da Ed. Superior</td>
+            <td>INEP &#8212; Microdados do Censo da Ed. Superior (2017-2023)</td>
+        </tr>
+    </table>
+
+    <h3>Por que não juntar tudo numa página só?</h3>
+    <p>Porque <strong>qualidade e quantidade não são comparáveis</strong>. Um curso com CPC 5 e 50 alunos, e outro com CPC 3 e 5.000 alunos
+    representam realidades muito diferentes &#8212; não se reduzem a uma métrica única. Cada indicador contribui com uma dimensão da
+    realidade da graduação brasileira. Manter as duas páginas separadas evita confusão analítica.</p>
+
+    <h3>Podemos estimar matrículas a partir do CPC?</h3>
+    <p>Em teoria, sim: usando <code>n_inscritos</code> (concluintes que fizeram o ENADE) como proxy, e projetando para o estoque total.
+    Testamos essa fórmula em detalhe (ver <a href="https://github.com/david888azv/Mapa-GR/tree/main/metodologia" target="_blank">pasta <code>metodologia/</code></a>
+    no repositório). Resultado:</p>
+    <div class="warn-box">
+        <strong>Conclusão da auditoria:</strong> a fórmula <code>matrículas ≈ n_inscritos × duração × α / r</code>
+        acerta no <strong>agregado nacional</strong> (erro &#8776; &#177;2%), mas os erros por grau, área e UF
+        chegam a <strong>±150%</strong> &#8212; inúteis para análise fina. <strong>Por isso usamos o Censo real</strong>, que o INEP
+        publica anualmente. A auditoria completa e o script estão documentados na pasta <code>metodologia/</code>.
+    </div>
+
+    <h3>Dica de uso</h3>
+    <ul style="padding-left:22px;margin-top:6px;line-height:1.8;">
+        <li>Quer saber <strong>onde estão os cursos mais bem avaliados</strong> na sua área? → <a href="estatisticas.html" style="color:var(--accent);font-weight:700;">Estatísticas ENADE</a></li>
+        <li>Quer saber <strong>quantos alunos há</strong> e como isso cresceu? → <a href="censo.html" style="color:var(--accent);font-weight:700;">Censo Ed. Superior 2017-2023</a></li>
+        <li>Quer <strong>comparar IES e UFs por qualidade</strong>? → <a href="index.html" style="color:var(--accent);font-weight:700;">Painel Principal (CPC)</a> ou <a href="comparador.html" style="color:var(--accent);font-weight:700;">Comparador</a></li>
+    </ul>
+</div>
+</div>
+
 <!-- FONTES -->
 <div class="section" id="sec-fontes">
 <div class="card">
@@ -200,7 +279,7 @@ a{color:#1565C0;}
 </div>
 
 <div class="card">
-    <h2>Arquivos utilizados (5 ciclos)</h2>
+    <h2>Arquivos CPC/ENADE utilizados (5 ciclos)</h2>
     <table>
         <tr><th>Ano</th><th>URL</th><th>Cursos</th><th>Cobertura</th></tr>
         <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">resultado_cpc_2017.xlsx</a></td><td>10.570</td><td>Licenciaturas + Engenharias pré-COVID</td></tr>
@@ -209,6 +288,19 @@ a{color:#1565C0;}
         <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2022/cpc_2022.xlsx" target="_blank" style="word-break:break-all;">cpc_2022.xlsx</a></td><td>9.891</td><td>Sociais Aplicadas pós-COVID com CPC completo</td></tr>
         <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2023/CPC_2023.xlsx" target="_blank" style="word-break:break-all;">CPC_2023.xlsx</a></td><td>9.812</td><td>Engenharias, Saúde, Agrárias</td></tr>
     </table>
+</div>
+
+<div class="card">
+    <h2>Censo da Educação Superior (microdados — 4 ciclos)</h2>
+    <p>Fonte usada na página <a href="censo.html" style="color:var(--accent);font-weight:700;">Censo Ed. Superior 2017-2023</a>. O INEP publica microdados agregados por curso×IES com ~200 colunas (gênero, cor/raça, idade, turno, FIES, PROUNI, cotas, PCD, situação etc.).</p>
+    <table>
+        <tr><th>Ano</th><th>URL</th><th>Linhas (curso×IES)</th><th>Matrículas</th></tr>
+        <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2017.zip" target="_blank" style="word-break:break-all;">microdados_...2017.zip</a></td><td>119.798</td><td>8.290.911</td></tr>
+        <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2021.zip" target="_blank" style="word-break:break-all;">microdados_...2021.zip</a></td><td>444.786</td><td>8.987.120</td></tr>
+        <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2022.zip" target="_blank" style="word-break:break-all;">microdados_...2022.zip</a></td><td>573.019</td><td>9.444.116</td></tr>
+        <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2023.zip" target="_blank" style="word-break:break-all;">microdados_...2023.zip</a></td><td>671.610</td><td>9.977.217</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">Os microdados brutos (~160 MB no total) são processados localmente em Python/DuckDB para gerar um JSON consolidado e leve (&#8776; 5 MB) que alimenta o dashboard no navegador. O pipeline completo está no repositório em <code>censo_sup/pipeline_censo.py</code>.</p>
 </div>
 </div>
 
