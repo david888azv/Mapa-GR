@@ -887,7 +887,9 @@ function abrirHelp() { window.open('help-doc.html', '_blank'); }
 })();
 
 // License / disclaimer modal
+const LICENSE_KEY = 'mapa-gr-license-accepted-v1';
 function showLicenseModal() {
+    try { if (localStorage.getItem(LICENSE_KEY) === '1') { loadMetadata(); return; } } catch(e){}
     const overlay = document.createElement('div');
     overlay.id = 'licenseOverlay';
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
@@ -915,6 +917,7 @@ function showLicenseModal() {
 }
 
 function acceptLicense() {
+    try { localStorage.setItem(LICENSE_KEY, '1'); } catch(e){}
     const ov = document.getElementById('licenseOverlay');
     if (ov) ov.remove();
     loadMetadata();

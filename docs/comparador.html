@@ -136,14 +136,20 @@ tr:first-child td { font-weight: 700; }
 
 <div class="header">
     <div class="header-left">
-        <a href="index.html" class="back">← Voltar</a>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
         <h1 id="pageTitle"><span>MAPA-GR</span> — Comparador Especial (IFES por UFs)</h1>
     </div>
-    <div class="meta">
-        <div>Prof. David L. Azevedo</div>
-        <div id="hdrDate"></div>
-        <div>v1.0</div>
+    <div style="display:flex;align-items:center;gap:14px;">
+        <div class="meta">
+            <div>Prof. David L. Azevedo</div>
+            <div id="hdrDate"></div>
+            <div>v1.0</div>
+        </div>
+        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+            style="background:#FFF;color:var(--roxo);border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
+            onmouseover="this.style.background='#EDE7F6'" onmouseout="this.style.background='#FFF'">
+            ← Voltar
+        </button>
     </div>
 </div>
 
