@@ -1,0 +1,1527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0D47A1">
+<title>MAPA-GR — Censo da Educação Superior 2017-2023</title>
+<script src="chart.umd.min.js"></script>
+<style>
+:root {
+    --azul:#1B5E20; --azul2:#2E7D32; --azul3:#0D3818;
+    --censo1:#0D47A1; --censo2:#1565C0; --censo3:#1976D2; --censoAccent:#FFC107;
+    --accent:#E91E63;
+    --verde:#27AE60; --laranja:#F39C12; --vermelho:#E74C3C;
+    --bg:#F5F7FA; --card:#FFFFFF; --borda:#E0E4E8;
+    --txt:#2C3E50; --txt2:#7F8C8D;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);}
+
+.header{background:linear-gradient(135deg,var(--censo1),var(--censo2));color:#fff;padding:12px 24px;
+    display:flex;justify-content:space-between;align-items:center;
+    position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header-left{display:flex;align-items:center;gap:14px;flex:1;min-width:0;}
+.header-icon{width:44px;height:44px;border-radius:8px;flex-shrink:0;
+    background:#fff;object-fit:contain;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.header h1{font-size:20px;font-weight:700;letter-spacing:1px;}
+.header h1 span{color:var(--censoAccent);}
+.header .meta{text-align:right;font-size:12px;opacity:.85;line-height:1.5;}
+
+.container{display:flex;min-height:calc(100vh - 90px);}
+.sidebar{width:300px;min-width:300px;background:var(--card);border-right:1px solid var(--borda);
+    padding:14px;overflow-y:auto;max-height:calc(100vh - 90px);}
+.main{flex:1;padding:18px;overflow-y:auto;max-height:calc(100vh - 90px);}
+
+.filter-group{margin-bottom:14px;}
+.filter-group h3{font-size:12px;text-transform:uppercase;color:var(--txt2);
+    margin-bottom:6px;letter-spacing:.5px;border-bottom:2px solid var(--censo2);padding-bottom:3px;}
+.filter-group label{display:block;padding:2px 0;font-size:12px;cursor:pointer;}
+.filter-group label:hover{background:#f0f2f5;}
+.filter-group input[type="checkbox"]{margin-right:6px;accent-color:var(--censo2);}
+.filter-group input[type="radio"]{margin-right:6px;accent-color:var(--censo2);}
+.filter-group select{width:100%;padding:5px;border:1px solid var(--borda);border-radius:4px;font-size:12px;}
+
+.btn{display:block;width:100%;padding:9px;margin-top:6px;border:none;border-radius:6px;
+    font-size:13px;font-weight:600;cursor:pointer;transition:all .2s;}
+.btn-primary{background:var(--censo2);color:#fff;}
+.btn-primary:hover{background:var(--censo1);transform:translateY(-1px);}
+.btn-secondary{background:var(--azul);color:#fff;}
+.btn-secondary:hover{background:var(--azul3);}
+.btn-export{background:var(--verde);color:#fff;}
+.btn-export:hover{background:#1E8449;}
+
+.card{background:var(--card);border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,.08);
+    padding:14px;margin-bottom:12px;}
+.card h2{font-size:14px;color:var(--censo1);margin-bottom:8px;border-bottom:2px solid var(--censo2);padding-bottom:4px;}
+
+.stats-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px;}
+.stat-box{flex:1;min-width:100px;background:#E3F2FD;border-radius:4px;padding:8px 6px;text-align:center;
+    border-left:3px solid var(--censo2);}
+.stat-box .value{font-size:18px;font-weight:700;color:var(--censo1);}
+.stat-box .label{font-size:9px;color:var(--txt2);text-transform:uppercase;line-height:1.2;margin-top:2px;}
+.stat-box.highlight{background:#FFF8E1;border-left-color:var(--censoAccent);}
+.stat-box.highlight .value{color:#E65100;}
+.stat-box.alert{background:#FFEBEE;border-left-color:var(--vermelho);}
+.stat-box.alert .value{color:#C62828;}
+.stat-box.positive{background:#E8F5E9;border-left-color:var(--verde);}
+.stat-box.positive .value{color:#1B5E20;}
+
+.chart-container{position:relative;height:380px;margin:10px 0;}
+.chart-row{display:flex;gap:14px;flex-wrap:wrap;}
+.chart-half{flex:1;min-width:380px;}
+
+.tabs-section{display:flex;gap:0;margin-bottom:14px;border-bottom:2px solid var(--borda);flex-wrap:wrap;}
+.tab-sec{padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600;color:var(--txt2);
+    border-bottom:3px solid transparent;transition:.2s;white-space:nowrap;}
+.tab-sec:hover{color:var(--txt);background:#f8f8f8;}
+.tab-sec.active{color:var(--censo1);border-bottom-color:var(--censo2);}
+
+.section-panel{display:none;}
+.section-panel.active{display:block;}
+
+.loading{text-align:center;padding:40px;}
+.loading .spinner{width:48px;height:48px;border:4px solid var(--borda);
+    border-top-color:var(--censo2);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 14px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.toast{position:fixed;bottom:20px;right:20px;background:var(--verde);color:#fff;
+    padding:12px 20px;border-radius:8px;font-size:14px;box-shadow:0 4px 12px rgba(0,0,0,.3);
+    opacity:0;transition:opacity .3s;z-index:999;}
+.toast.show{opacity:1;}
+
+.status-bar{background:var(--azul3);color:#aaa;padding:4px 24px;font-size:11px;
+    display:flex;justify-content:space-between;}
+
+table.data-table{width:100%;border-collapse:collapse;font-size:12px;margin:8px 0;}
+table.data-table th{background:var(--censo1);color:#fff;padding:6px 8px;text-align:left;font-weight:600;font-size:11px;position:sticky;top:0;}
+table.data-table td{padding:5px 8px;border-bottom:1px solid var(--borda);}
+table.data-table tr:nth-child(even){background:#F3F8FF;}
+table.data-table tr:hover{background:#BBDEFB;}
+table.data-table .num{text-align:right;font-variant-numeric:tabular-nums;}
+table.data-table .pos{color:#1B5E20;font-weight:600;}
+table.data-table .neg{color:#C62828;font-weight:600;}
+
+.chip-toggle{display:inline-flex;gap:0;border:1px solid var(--borda);border-radius:6px;overflow:hidden;margin:6px 0;}
+.chip-toggle button{border:none;padding:6px 14px;font-size:11px;font-weight:600;cursor:pointer;
+    background:#f0f0f0;color:var(--txt2);transition:.2s;}
+.chip-toggle button.active{background:var(--censo2);color:#fff;}
+.chip-toggle button:hover:not(.active){background:#ddd;}
+
+.menu-toggle{display:none;background:none;border:none;color:#fff;font-size:26px;
+    cursor:pointer;padding:4px 10px;margin-right:6px;}
+.sidebar-overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+    background:rgba(0,0,0,.5);z-index:90;}
+.sidebar-overlay.show{display:block;}
+
+@media(max-width:900px){
+    .container{flex-direction:column;}
+    .sidebar{width:100%;min-width:auto;max-height:none;}
+    .main{max-height:none;padding:10px;}
+    .chart-half{min-width:100%;}
+}
+@media(max-width:768px){
+    .header{padding:10px 14px;}
+    .header-left{gap:8px;}
+    .header-icon{width:36px;height:36px;}
+    .header h1{font-size:14px;line-height:1.2;}
+    .header h1 span{display:block;font-size:16px;margin-bottom:2px;}
+    .header .meta{font-size:10px;}
+    .menu-toggle{display:inline-block;}
+    .container{flex-direction:column;min-height:calc(100vh - 110px);}
+    .sidebar{position:fixed;top:64px;left:-100%;width:86%;max-width:320px;
+        height:calc(100vh - 64px);max-height:none;z-index:100;transition:left .3s;
+        box-shadow:2px 0 12px rgba(0,0,0,.25);}
+    .sidebar.open{left:0;}
+    .main{padding:10px;max-height:none;}
+    .stat-box{min-width:75px;padding:5px 3px;}
+    .stat-box .value{font-size:14px;}
+    .card{padding:10px;margin-bottom:8px;}
+    .chart-container{height:260px;margin:8px 0;}
+    .tabs-section{overflow-x:auto;flex-wrap:nowrap;}
+    .tab-sec{padding:6px 10px;font-size:11px;}
+    .btn{padding:8px;font-size:12px;}
+    .status-bar{padding:4px 10px;font-size:9px;flex-wrap:wrap;gap:4px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <div class="header-left">
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">&#9776;</button>
+        <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
+        <h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2023</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+        <div class="meta">
+            <div>Prof. David L. Azevedo</div>
+            <div id="headerDate"></div>
+        </div>
+        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+            style="background:#FFF;color:var(--censo1);border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
+            onmouseover="this.style.background='#E3F2FD'" onmouseout="this.style.background='#FFF'">
+            &#8592; Voltar
+        </button>
+    </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="container">
+    <div class="sidebar" id="sidebar">
+        <div class="filter-group">
+            <h3>&#128196; Censo INEP</h3>
+            <p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Fonte: <strong>Portal INEP &#8212; Microdados do Censo da Educa&#231;&#227;o Superior</strong> (2017, 2021, 2022, 2023). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>
+        </div>
+
+        <div class="filter-group">
+            <h3>Ano de refer&#234;ncia</h3>
+            <label><input type="radio" name="ano" value="2023" checked> 2023 (mais recente)</label>
+            <label><input type="radio" name="ano" value="2022"> 2022</label>
+            <label><input type="radio" name="ano" value="2021"> 2021</label>
+            <label><input type="radio" name="ano" value="2017"> 2017</label>
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Na aba <em>Evolu&#231;&#227;o</em> todos os anos s&#227;o exibidos simultaneamente.</p>
+        </div>
+
+        <div class="filter-group">
+            <h3>M&#233;trica principal</h3>
+            <select id="selMetrica">
+                <option value="mat" selected>Matr&#237;culas ativas</option>
+                <option value="ing">Ingressantes</option>
+                <option value="con">Concluintes</option>
+                <option value="vg">Vagas ofertadas</option>
+                <option value="insc">Inscritos no processo seletivo</option>
+                <option value="mat_pcd">Matr&#237;culas &#8212; PCD</option>
+                <option value="mat_fies">Matr&#237;culas &#8212; FIES</option>
+                <option value="mat_prouni_i">Matr&#237;culas &#8212; PROUNI Integral</option>
+                <option value="mat_prouni_p">Matr&#237;culas &#8212; PROUNI Parcial</option>
+                <option value="mat_rv">Matr&#237;culas &#8212; Reserva de vagas (cotas)</option>
+                <option value="sit_tra">Situa&#231;&#227;o &#8212; Trancada</option>
+                <option value="sit_des">Situa&#231;&#227;o &#8212; Desvinculada</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <h3>Grande &#193;rea</h3>
+            <div id="areaFilter"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Modalidade</h3>
+            <label><input type="checkbox" class="mod-chk" value="1" checked> Presencial</label>
+            <label><input type="checkbox" class="mod-chk" value="2" checked> EAD</label>
+        </div>
+
+        <div class="filter-group">
+            <h3>Grau Acad&#234;mico</h3>
+            <label><input type="checkbox" class="grau-chk" value="1" checked> Bacharelado</label>
+            <label><input type="checkbox" class="grau-chk" value="2" checked> Licenciatura</label>
+            <label><input type="checkbox" class="grau-chk" value="3" checked> Tecnol&#243;gico</label>
+            <label><input type="checkbox" class="grau-chk" value="4" checked> &#193;rea b&#225;sica</label>
+        </div>
+
+        <div class="filter-group">
+            <h3>Regi&#227;o</h3>
+            <label><input type="checkbox" class="reg-chk" value="N" checked> Norte</label>
+            <label><input type="checkbox" class="reg-chk" value="NE" checked> Nordeste</label>
+            <label><input type="checkbox" class="reg-chk" value="CO" checked> Centro-Oeste</label>
+            <label><input type="checkbox" class="reg-chk" value="SE" checked> Sudeste</label>
+            <label><input type="checkbox" class="reg-chk" value="S" checked> Sul</label>
+        </div>
+
+        <div class="filter-group">
+            <h3>UF</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
+                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+            </div>
+            <div id="ufFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
+        </div>
+
+        <div class="filter-group">
+            <h3>Categoria Administrativa</h3>
+            <label><input type="checkbox" class="cat-chk" value="1" checked> P&#250;blica Federal</label>
+            <label><input type="checkbox" class="cat-chk" value="2" checked> P&#250;blica Estadual</label>
+            <label><input type="checkbox" class="cat-chk" value="3" checked> P&#250;blica Municipal</label>
+            <label><input type="checkbox" class="cat-chk" value="4" checked> Privada c/ fins</label>
+            <label><input type="checkbox" class="cat-chk" value="5" checked> Privada s/ fins</label>
+            <label><input type="checkbox" class="cat-chk" value="7" checked> Especial</label>
+        </div>
+
+        <div class="filter-group">
+            <h3>&#128269; Buscar por sigla da IES</h3>
+            <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
+            <input type="text" id="searchSigla" placeholder="ex: USP, UFRJ, UNB" disabled
+                style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
+        </div>
+
+        <button class="btn btn-primary" onclick="atualizar()">Atualizar Estat&#237;sticas</button>
+        <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
+        <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
+
+        <div style="margin-top:16px;border-top:2px solid var(--borda);padding-top:12px;">
+            <div class="filter-group"><h3>&#128230; Exportar</h3></div>
+            <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
+            <button class="btn btn-export" onclick="exportReport()">Relat&#243;rio TXT</button>
+            <button class="btn btn-export" onclick="exportPNGs()" style="background:#FF9800;">Gr&#225;ficos PNG</button>
+        </div>
+
+        <button class="btn" onclick="window.open('index.html','_self')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Painel Principal</button>
+        <button class="btn" onclick="window.open('help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documenta&#231;&#227;o</button>
+    </div>
+
+    <div class="main" id="main">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p id="loadingMsg">Carregando dados do Censo da Educa&#231;&#227;o Superior...</p>
+        </div>
+        <div id="results" style="display:none;"></div>
+    </div>
+</div>
+
+<div class="status-bar">
+    <span id="statusLeft">Carregando...</span>
+    <span id="statusRight">MAPA-GR &#8212; Censo INEP | Prof. David L. Azevedo</span>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const VERSION = '1.0';
+
+const UF_REGIAO = {
+    'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
+    'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
+    'DF':'CO','GO':'CO','MT':'CO','MS':'CO',
+    'ES':'SE','MG':'SE','RJ':'SE','SP':'SE',
+    'PR':'S','RS':'S','SC':'S'
+};
+const REGIAO_LABEL = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };
+const REGIAO_CORES = { N:'#27AE60', NE:'#F39C12', CO:'#9B59B6', SE:'#3498DB', S:'#E74C3C' };
+
+const AREA_ORDER = ['exatas','engenharias','saude','agrarias','sociais','humanas','letras','servicos'];
+const AREA_CORES = {
+    exatas:'#3498DB', engenharias:'#E67E22', saude:'#E91E63', agrarias:'#16A085',
+    sociais:'#8E44AD', humanas:'#F39C12', letras:'#2ECC71', servicos:'#95A5A6'
+};
+
+const GRAU_LABEL = {'1':'Bacharelado','2':'Licenciatura','3':'Tecnol\u00f3gico','4':'\u00c1rea b\u00e1sica'};
+const MOD_LABEL  = {'1':'Presencial','2':'EAD'};
+const CAT_LABEL = {
+    '1':'P\u00fablica Federal', '2':'P\u00fablica Estadual', '3':'P\u00fablica Municipal',
+    '4':'Privada c/ fins lucrativos', '5':'Privada s/ fins lucrativos', '7':'Especial'
+};
+const CAT_CORES = {
+    '1':'#1B5E20', '2':'#388E3C', '3':'#66BB6A',
+    '4':'#D32F2F', '5':'#F57C00', '7':'#546E7A'
+};
+
+const METRICA_LABEL = {
+    mat:'Matr\u00edculas ativas', ing:'Ingressantes', con:'Concluintes',
+    vg:'Vagas ofertadas', insc:'Inscritos',
+    mat_pcd:'Matr\u00edculas &#8212; PCD', mat_fies:'Matr\u00edculas &#8212; FIES',
+    mat_prouni_i:'Matr\u00edculas &#8212; PROUNI Integral',
+    mat_prouni_p:'Matr\u00edculas &#8212; PROUNI Parcial',
+    mat_rv:'Matr\u00edculas &#8212; Reserva de vagas',
+    sit_tra:'Situa\u00e7\u00e3o &#8212; Trancada',
+    sit_des:'Situa\u00e7\u00e3o &#8212; Desvinculada'
+};
+
+let DATA = null;
+let _charts = {};
+let _chartType = 'pie';  // global toggle for pies
+
+function setStatus(msg) { document.getElementById('statusLeft').textContent = msg; }
+function toast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+}
+function fmt(n) { if (n==null) return '\u2014'; return Number(n).toLocaleString('pt-BR'); }
+function fmtPct(n, digits=1) { if (n==null) return '\u2014'; return (n>=0?'+':'') + n.toFixed(digits) + '%'; }
+
+async function loadAll() {
+    try {
+        const r = await fetch('dados/censo_superior_consolidado.json');
+        DATA = await r.json();
+        buildFilters();
+        document.getElementById('loading').style.display = 'none';
+        document.getElementById('results').style.display = 'block';
+        atualizar();
+        setStatus('Anos ' + DATA.anos.join(', ') + ' carregados');
+    } catch(e) {
+        document.getElementById('loadingMsg').innerHTML =
+            '<span style="color:#E74C3C;">Erro ao carregar censo_superior_consolidado.json: ' + e.message + '</span>';
+    }
+}
+
+function buildFilters() {
+    // Áreas
+    const areaDiv = document.getElementById('areaFilter');
+    const areaLabels = DATA.referencias.grande_area_label || {};
+    areaDiv.innerHTML = AREA_ORDER.filter(a => a in areaLabels).map(a => {
+        const lbl = (areaLabels[a] || a).replace('Ci\u00eancias ', '');
+        return '<label><input type="checkbox" class="area-chk" value="' + a + '" checked> ' + lbl + '</label>';
+    }).join('');
+
+    // UFs
+    const ufDiv = document.getElementById('ufFilter');
+    const allUfs = Object.keys(UF_REGIAO).sort();
+    const byReg = { N:[], NE:[], CO:[], SE:[], S:[] };
+    allUfs.forEach(u => byReg[UF_REGIAO[u]].push(u));
+    let html = '';
+    ['N','NE','CO','SE','S'].forEach(r => {
+        html += '<div style="font-size:9px;color:var(--txt2);text-transform:uppercase;margin-top:4px;">' + REGIAO_LABEL[r] + '</div>';
+        html += '<div style="display:flex;flex-wrap:wrap;gap:4px 8px;">';
+        byReg[r].forEach(u => {
+            html += '<label style="font-size:11px;display:inline-flex;align-items:center;"><input type="checkbox" class="uf-chk" value="' + u + '" checked style="margin-right:2px;">' + u + '</label>';
+        });
+        html += '</div>';
+    });
+    ufDiv.innerHTML = html;
+
+    // Search toggle
+    document.getElementById('searchEnabled').addEventListener('change', e => {
+        document.getElementById('searchSigla').disabled = !e.target.checked;
+        if (e.target.checked) document.getElementById('searchSigla').focus();
+    });
+}
+
+function ufAll(checked) {
+    document.querySelectorAll('.uf-chk').forEach(e => e.checked = checked);
+}
+function marcarTodos() {
+    document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = true);
+}
+function desmarcarTodos() {
+    document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = false);
+}
+
+function getFilters() {
+    const ano = document.querySelector('input[name="ano"]:checked').value;
+    const metrica = document.getElementById('selMetrica').value;
+    const areas = [...document.querySelectorAll('.area-chk:checked')].map(e => e.value);
+    const mods  = [...document.querySelectorAll('.mod-chk:checked')].map(e => e.value);
+    const graus = [...document.querySelectorAll('.grau-chk:checked')].map(e => e.value);
+    const regs  = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
+    const ufs   = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
+    const cats  = [...document.querySelectorAll('.cat-chk:checked')].map(e => e.value);
+    const searchOn = document.getElementById('searchEnabled').checked;
+    const searchTerm = document.getElementById('searchSigla').value.trim().toUpperCase();
+    return { ano, metrica, areas, mods, graus, regs, ufs, cats, searchOn, searchTerm };
+}
+
+// Filter a single row by dimensions (depending on which keys exist)
+function matchRow(row, f, hasDim) {
+    if (hasDim.ga   && row.ga   != null && !f.areas.includes(row.ga)) return false;
+    if (hasDim.mod  && row.mod  != null && !f.mods.includes(row.mod))  return false;
+    if (hasDim.grau && row.grau != null && !f.graus.includes(row.grau)) return false;
+    if (hasDim.reg  && row.regiao != null && !f.regs.includes(row.regiao)) return false;
+    if (hasDim.uf   && row.uf   != null && !f.ufs.includes(row.uf))  return false;
+    if (hasDim.cat  && row.cat_adm != null && !f.cats.includes(row.cat_adm)) return false;
+    return true;
+}
+
+function filterAgg(rows, f) {
+    if (!rows || !rows.length) return [];
+    const sample = rows[0];
+    const hasDim = {
+        ga:   ('ga'   in sample),
+        mod:  ('mod'  in sample),
+        grau: ('grau' in sample),
+        reg:  ('regiao' in sample),
+        uf:   ('uf'   in sample),
+        cat:  ('cat_adm' in sample),
+    };
+    return rows.filter(r => matchRow(r, f, hasDim));
+}
+
+function sumMetric(rows, metric) {
+    return rows.reduce((s, r) => s + (r[metric] || 0), 0);
+}
+
+function destroyCharts() {
+    Object.values(_charts).forEach(c => { try { c.destroy(); } catch(e){} });
+    _charts = {};
+}
+
+// -------------------------------------------------------------------
+// MAIN RENDER
+// -------------------------------------------------------------------
+function atualizar() {
+    const f = getFilters();
+    const ag = DATA.agregacoes_por_ano;
+    const rowsUfGaModGrau = ag.por_uf_ga_mod_grau[f.ano] || [];
+    const rowsGaModGrau   = ag.por_ga_mod_grau[f.ano] || [];
+    const rowsRegGaModGrau = ag.por_reg_ga_mod_grau[f.ano] || [];
+    const rowsCatModGrau   = ag.por_cat_mod_grau[f.ano] || [];
+    const rowsIesModGrau   = ag.por_ies_mod_grau[f.ano] || [];
+    const rowsCineModGrau  = ag.por_cine_mod_grau[f.ano] || [];
+
+    const recsMain = filterAgg(rowsUfGaModGrau, f);
+    const recsIes  = filterAgg(rowsIesModGrau, f);  // note: no ga/uf dimension in ies rows
+    const recsCat  = filterAgg(rowsCatModGrau, f);
+
+    const main = document.getElementById('results');
+    if (recsMain.length === 0 && recsIes.length === 0) {
+        main.innerHTML = '<div class="card"><h2>Nenhum dado encontrado</h2><p>Ajuste os filtros na barra lateral.</p></div>';
+        setStatus('Filtro vazio'); return;
+    }
+
+    // Totals for the primary metric
+    const totalMat = sumMetric(recsMain, 'mat');
+    const totalIng = sumMetric(recsMain, 'ing');
+    const totalCon = sumMetric(recsMain, 'con');
+    const totalVg  = sumMetric(recsMain, 'vg');
+    const totalInsc = sumMetric(recsMain, 'insc');
+    const totalMainMetric = sumMetric(recsMain, f.metrica);
+
+    const mLabel = METRICA_LABEL[f.metrica] || f.metrica;
+
+    let html = '';
+
+    // Summary card
+    html += '<div class="card"><h2>Vis\u00e3o Geral &#8212; Censo ' + f.ano + '</h2>';
+    html += '<div class="stats-row">';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalMat) + '</div><div class="label">Matr\u00edculas</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalIng) + '</div><div class="label">Ingressantes</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalCon) + '</div><div class="label">Concluintes</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalVg) + '</div><div class="label">Vagas</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalInsc) + '</div><div class="label">Inscritos</div></div>';
+    html += '<div class="stat-box highlight"><div class="value">' + fmt(totalMainMetric) + '</div><div class="label">' + mLabel + ' (filtro)</div></div>';
+    html += '</div>';
+    html += '<p style="font-size:11px;color:var(--txt2);margin-top:6px;">Fonte: INEP — Microdados do Censo da Educa\u00e7\u00e3o Superior, gerado em ' + (DATA.gerado_em||'\u2014') + '. Ano de refer\u00eancia: <strong>' + f.ano + '</strong>.</p>';
+    html += '</div>';
+
+    // Tabs
+    html += '<div class="tabs-section">';
+    html += '<div class="tab-sec active" data-sec="sec-evol" onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o 2017-2023</div>';
+    html += '<div class="tab-sec" data-sec="sec-area" onclick="switchSection(this)">Por \u00c1rea</div>';
+    html += '<div class="tab-sec" data-sec="sec-reg"  onclick="switchSection(this)">Por Regi\u00e3o / UF</div>';
+    html += '<div class="tab-sec" data-sec="sec-gm"   onclick="switchSection(this)">Grau / Modalidade</div>';
+    html += '<div class="tab-sec" data-sec="sec-demo" onclick="switchSection(this)">Demografia</div>';
+    html += '<div class="tab-sec" data-sec="sec-incl" onclick="switchSection(this)">Inclus\u00e3o / Financiamento</div>';
+    html += '<div class="tab-sec" data-sec="sec-ies"  onclick="switchSection(this)">Top IES</div>';
+    html += '<div class="tab-sec" data-sec="sec-cat"  onclick="switchSection(this)">Cat. Administrativa</div>';
+    html += '</div>';
+
+    // SEC EVOL
+    html += '<div class="section-panel active" id="sec-evol">';
+    html += '<div class="card"><h2>Evolu\u00e7\u00e3o nacional &#8212; ' + mLabel + '</h2>';
+    html += '<p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Filtros aplicados: \u00e1reas, modalidade, grau, regi\u00e3o, UF e categoria administrativa. Eixo Y reflete a m\u00e9trica selecionada.</p>';
+    html += '<div class="chart-container"><canvas id="chartEvol"></canvas></div></div>';
+
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Crescimento total 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartVarTotal"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>CAGR 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartCagr"></canvas></div></div></div>';
+    html += '</div>';
+
+    html += '<div class="card"><h2>Totais nacionais por ano</h2>';
+    html += '<div class="chart-container" style="height:340px;"><canvas id="chartTotais"></canvas></div>';
+    html += '<table class="data-table" style="margin-top:10px;"><thead><tr><th>Ano</th><th class="num">Matr\u00edculas</th><th class="num">Ingress.</th><th class="num">Concluintes</th><th class="num">Vagas</th><th class="num">Inscritos</th></tr></thead><tbody id="tbodyEvol"></tbody></table></div>';
+    html += '</div>';
+
+    // SEC AREA
+    html += '<div class="section-panel" id="sec-area">';
+    html += '<div style="margin-bottom:8px;">';
+    html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Gr\u00e1fico:</span>';
+    html += '<div class="chip-toggle">';
+    html += '<button class="active" onclick="setChartType(\'pie\', this)">Pizza</button>';
+    html += '<button onclick="setChartType(\'bar\', this)">Barras</button>';
+    html += '<button onclick="setChartType(\'doughnut\', this)">Rosca</button>';
+    html += '</div></div>';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Grande \u00c1rea</h2>';
+    html += '<div class="chart-container"><canvas id="chartArea"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Crescimento 2017\u21922023 por Grande \u00c1rea (matr\u00edculas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartAreaGrowth"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="card"><h2>Detalhamento por Grande \u00c1rea &#8212; ' + f.ano + '</h2>';
+    html += '<table class="data-table"><thead><tr><th>\u00c1rea</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">Vagas</th><th class="num">Taxa Ocup.</th></tr></thead><tbody id="tbodyArea"></tbody></table></div>';
+    html += '</div>';
+
+    // SEC REG
+    html += '<div class="section-panel" id="sec-reg">';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Regi\u00e3o</h2>';
+    html += '<div class="chart-container"><canvas id="chartReg"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por UF</h2>';
+    html += '<div class="chart-container"><canvas id="chartUf"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="card"><h2>Detalhamento por Regi\u00e3o &#8212; ' + f.ano + '</h2>';
+    html += '<table class="data-table"><thead><tr><th>Regi\u00e3o</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">Cresc. 17\u219223</th></tr></thead><tbody id="tbodyReg"></tbody></table></div>';
+    html += '<div class="card"><h2>Detalhamento por UF &#8212; ' + f.ano + '</h2>';
+    html += '<table class="data-table"><thead><tr><th>UF</th><th>Regi\u00e3o</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyUf"></tbody></table></div>';
+    html += '</div>';
+
+    // SEC GRAU / MODALIDADE
+    html += '<div class="section-panel" id="sec-gm">';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Modalidade</h2>';
+    html += '<div class="chart-container"><canvas id="chartMod"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Grau</h2>';
+    html += '<div class="chart-container"><canvas id="chartGrau"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="card"><h2>Evolu\u00e7\u00e3o Presencial vs EAD (matr\u00edculas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartModEvol"></canvas></div></div>';
+    html += '<div class="card"><h2>Grau \u00d7 Modalidade &#8212; ' + f.ano + '</h2>';
+    html += '<table class="data-table"><thead><tr><th>Grau</th><th>Modalidade</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyGm"></tbody></table></div>';
+    html += '</div>';
+
+    // SEC DEMO
+    html += '<div class="section-panel" id="sec-demo">';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>G\u00eanero (matr\u00edculas ativas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartGender"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Cor / Ra\u00e7a (matr\u00edculas ativas)</h2>';
+    html += '<div class="chart-container"><canvas id="chartRace"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="card"><h2>Faixa et\u00e1ria das matr\u00edculas ativas</h2>';
+    html += '<div class="chart-container"><canvas id="chartAge"></canvas></div></div>';
+    html += '<div class="card"><h2>Matr\u00edculas por turno (presencial)</h2>';
+    html += '<div class="chart-container" style="height:260px;"><canvas id="chartTurno"></canvas></div></div>';
+    html += '</div>';
+
+    // SEC INCL
+    html += '<div class="section-panel" id="sec-incl">';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-container"><canvas id="chartFies"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-container"><canvas id="chartProuni"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Reserva de vagas (cotas) por tipo &#8212; ' + f.ano + '</h2>';
+    html += '<div class="chart-container"><canvas id="chartRv"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas PCD 2017\u21922023</h2>';
+    html += '<div class="chart-container"><canvas id="chartPcd"></canvas></div></div></div>';
+    html += '</div>';
+    html += '</div>';
+
+    // SEC IES
+    html += '<div class="section-panel" id="sec-ies">';
+    html += '<div class="card"><h2>Top 30 IES por matr\u00edculas &#8212; ' + f.ano + '</h2>';
+    html += '<div class="chart-container" style="height:500px;"><canvas id="chartIes"></canvas></div></div>';
+    html += '<div class="card"><h2>Detalhamento Top 50 IES</h2>';
+    html += '<table class="data-table"><thead><tr><th>#</th><th>Sigla</th><th>UF</th><th>Cat.Adm</th><th class="num">Matr\u00edculas</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyIes"></tbody></table></div>';
+    html += '</div>';
+
+    // SEC CATEGORIA
+    html += '<div class="section-panel" id="sec-cat">';
+    html += '<div class="chart-row">';
+    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas por Categoria Administrativa</h2>';
+    html += '<div class="chart-container"><canvas id="chartCat"></canvas></div></div></div>';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada 2017\u21922023</h2>';
+    html += '<div class="chart-container"><canvas id="chartPubPriv"></canvas></div></div></div>';
+    html += '</div>';
+    html += '<div class="card"><h2>Detalhamento por Categoria &#8212; ' + f.ano + '</h2>';
+    html += '<table class="data-table"><thead><tr><th>Categoria</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">FIES</th><th class="num">PROUNI-I</th></tr></thead><tbody id="tbodyCat"></tbody></table></div>';
+    html += '</div>';
+
+    main.innerHTML = html;
+
+    setTimeout(() => { renderAll(f); }, 30);
+    setStatus(fmt(totalMat) + ' matr\u00edculas | ' + fmt(totalIng) + ' ingress. | ' + fmt(totalCon) + ' concl.');
+}
+
+function switchSection(el) {
+    document.querySelectorAll('.tab-sec').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.section-panel').forEach(s => s.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById(el.dataset.sec).classList.add('active');
+}
+
+function setChartType(type, btn) {
+    _chartType = type;
+    btn.parentElement.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const f = getFilters();
+    renderArea(f);
+}
+
+function renderAll(f) {
+    destroyCharts();
+    renderEvol(f);
+    renderArea(f);
+    renderReg(f);
+    renderGm(f);
+    renderDemo(f);
+    renderIncl(f);
+    renderIes(f);
+    renderCat(f);
+}
+
+// -------------------------------------------------------------------
+// Chart helpers
+// -------------------------------------------------------------------
+function tooltipPct() {
+    return { callbacks: { label: function(ctx) {
+        let val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
+        if (typeof val !== 'number') val = Number(val) || 0;
+        const total = ctx.dataset.data.reduce((a,b) => a + (Number(b)||0), 0);
+        const pct = total > 0 ? (val*100/total).toFixed(1) : '0';
+        return ctx.label + ': ' + fmt(val) + ' (' + pct + '%)';
+    }}};
+}
+
+function tooltipSimple(suffix='') {
+    return { callbacks: { label: function(ctx) {
+        let val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
+        return (ctx.dataset.label || ctx.label) + ': ' + fmt(val) + suffix;
+    }}};
+}
+
+// -------------------------------------------------------------------
+// EVOL (all years)
+// -------------------------------------------------------------------
+function renderEvol(f) {
+    const anos = DATA.anos.map(String);
+    const ag = DATA.agregacoes_por_ano.por_uf_ga_mod_grau;
+    const serieMat = anos.map(y => sumMetric(filterAgg(ag[y]||[], f), 'mat'));
+    const serieIng = anos.map(y => sumMetric(filterAgg(ag[y]||[], f), 'ing'));
+    const serieCon = anos.map(y => sumMetric(filterAgg(ag[y]||[], f), 'con'));
+    const serieMetrica = anos.map(y => sumMetric(filterAgg(ag[y]||[], f), f.metrica));
+
+    // chartEvol — metric by year
+    const el = document.getElementById('chartEvol');
+    if (el) {
+        _charts.evol = new Chart(el, {
+            type: 'line',
+            data: {
+                labels: anos,
+                datasets: [{
+                    label: METRICA_LABEL[f.metrica] || f.metrica,
+                    data: serieMetrica,
+                    borderColor: '#0D47A1', backgroundColor:'rgba(13,71,161,0.15)',
+                    fill:true, tension:0.25, pointRadius:6
+                }]
+            },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true },
+                    tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // totais nacionais (sem filtros) — matr/ing/con por ano
+    const totNacMat = anos.map(y => DATA.totais_nacionais_por_ano[y]?.mat || 0);
+    const totNacIng = anos.map(y => DATA.totais_nacionais_por_ano[y]?.ing || 0);
+    const totNacCon = anos.map(y => DATA.totais_nacionais_por_ano[y]?.con || 0);
+
+    const elTot = document.getElementById('chartTotais');
+    if (elTot) {
+        _charts.totais = new Chart(elTot, {
+            type: 'bar',
+            data: { labels: anos, datasets: [
+                { label:'Matr\u00edculas', data: totNacMat, backgroundColor:'#1565C0' },
+                { label:'Ingressantes', data: totNacIng, backgroundColor:'#2E7D32' },
+                { label:'Concluintes',  data: totNacCon, backgroundColor:'#F57C00' },
+            ]},
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Variação total
+    const varKey = 'variacao_total_2017_2023';
+    const cagrKey = 'cagr_pct_2017_2023';
+    const varData = DATA[varKey] || {};
+    const cagrData = DATA[cagrKey] || {};
+    const metricasPrincipais = ['mat','ing','con','vg','mat_fies','mat_prouni_i','mat_pcd','mat_rv','sit_tra','sit_des','mat_60m'];
+
+    const elV = document.getElementById('chartVarTotal');
+    if (elV) {
+        _charts.varTotal = new Chart(elV, {
+            type: 'bar',
+            data: {
+                labels: metricasPrincipais.map(m => METRICA_LABEL[m] || m),
+                datasets: [{
+                    label:'Varia\u00e7\u00e3o total (%)',
+                    data: metricasPrincipais.map(m => varData[m] != null ? +varData[m].toFixed(1) : 0),
+                    backgroundColor: metricasPrincipais.map(m => (varData[m]||0) >= 0 ? '#2E7D32' : '#C62828')
+                }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
+                plugins: { legend:{ display:false },
+                    tooltip: { callbacks: { label: ctx => ctx.label + ': ' + fmtPct(ctx.raw) } } },
+                scales: { x:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    const elC = document.getElementById('chartCagr');
+    if (elC) {
+        _charts.cagr = new Chart(elC, {
+            type: 'bar',
+            data: {
+                labels: metricasPrincipais.map(m => METRICA_LABEL[m] || m),
+                datasets: [{
+                    label:'CAGR (% a.a.)',
+                    data: metricasPrincipais.map(m => cagrData[m] != null ? +cagrData[m].toFixed(2) : 0),
+                    backgroundColor: metricasPrincipais.map(m => (cagrData[m]||0) >= 0 ? '#1565C0' : '#D84315')
+                }]
+            },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis:'y',
+                plugins: { legend:{ display:false },
+                    tooltip: { callbacks: { label: ctx => ctx.label + ': ' + (ctx.raw>=0?'+':'') + ctx.raw + '% a.a.' } } },
+                scales: { x:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Tabela por ano
+    const tb = document.getElementById('tbodyEvol');
+    if (tb) {
+        tb.innerHTML = anos.map(y => {
+            const t = DATA.totais_nacionais_por_ano[y] || {};
+            return '<tr><td><strong>' + y + '</strong></td>' +
+                '<td class="num">' + fmt(t.mat) + '</td>' +
+                '<td class="num">' + fmt(t.ing) + '</td>' +
+                '<td class="num">' + fmt(t.con) + '</td>' +
+                '<td class="num">' + fmt(t.vg)  + '</td>' +
+                '<td class="num">' + fmt(t.insc) + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// AREA
+// -------------------------------------------------------------------
+function renderArea(f) {
+    ['area','areaGrowth'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
+    const byArea = {};
+    rows.forEach(r => {
+        if (!byArea[r.ga]) byArea[r.ga] = { mat:0, ing:0, con:0, vg:0, metrica:0 };
+        byArea[r.ga].mat += r.mat || 0;
+        byArea[r.ga].ing += r.ing || 0;
+        byArea[r.ga].con += r.con || 0;
+        byArea[r.ga].vg  += r.vg  || 0;
+        byArea[r.ga].metrica += r[f.metrica] || 0;
+    });
+    const areasPresent = AREA_ORDER.filter(a => byArea[a] && byArea[a].metrica > 0);
+    const labels = areasPresent.map(a => (DATA.referencias.grande_area_label[a] || a).replace('Ci\u00eancias ',''));
+    const cores = areasPresent.map(a => AREA_CORES[a] || '#888');
+    const data = areasPresent.map(a => byArea[a].metrica);
+
+    const type = _chartType;
+    const isPie = (type === 'pie' || type === 'doughnut');
+    const el = document.getElementById('chartArea');
+    if (el) {
+        _charts.area = new Chart(el, {
+            type: type,
+            data: { labels, datasets:[{ data, backgroundColor: cores }] },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis: isPie ? 'x' : 'y',
+                plugins: { legend:{ display: isPie, position:'right' }, tooltip: tooltipPct() },
+                scales: isPie ? {} : { x:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Growth by area across years
+    const anos = DATA.anos.map(String);
+    const areaGrowth = {};
+    areasPresent.forEach(a => { areaGrowth[a] = anos.map(y => {
+        const r = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[y] || [], f);
+        return r.filter(x => x.ga === a).reduce((s,x) => s + (x.mat || 0), 0);
+    }); });
+
+    const elG = document.getElementById('chartAreaGrowth');
+    if (elG) {
+        _charts.areaGrowth = new Chart(elG, {
+            type: 'line',
+            data: { labels: anos,
+                datasets: areasPresent.map(a => ({
+                    label: (DATA.referencias.grande_area_label[a] || a).replace('Ci\u00eancias ',''),
+                    data: areaGrowth[a], borderColor: AREA_CORES[a], backgroundColor:AREA_CORES[a]+'33',
+                    tension: 0.25, pointRadius: 4
+                }))
+            },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true, position:'bottom', labels:{ font:{size:10} } },
+                    tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Tabela
+    const tb = document.getElementById('tbodyArea');
+    if (tb) {
+        const total = areasPresent.reduce((s,a) => s + byArea[a].mat, 0);
+        tb.innerHTML = areasPresent.sort((a,b) => byArea[b].mat - byArea[a].mat).map(a => {
+            const d = byArea[a];
+            const pct = total > 0 ? (d.mat*100/total).toFixed(1) : '0';
+            const tx = d.vg > 0 ? (d.ing*100/d.vg).toFixed(1)+'%' : '\u2014';
+            return '<tr><td><strong>' + (DATA.referencias.grande_area_label[a] || a) + '</strong></td>' +
+                '<td class="num">' + fmt(d.mat) + '</td>' +
+                '<td class="num">' + pct + '%</td>' +
+                '<td class="num">' + fmt(d.ing) + '</td>' +
+                '<td class="num">' + fmt(d.con) + '</td>' +
+                '<td class="num">' + fmt(d.vg) + '</td>' +
+                '<td class="num">' + tx + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// REGIAO / UF
+// -------------------------------------------------------------------
+function renderReg(f) {
+    ['reg','uf'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
+
+    const byReg = {};
+    rows.forEach(r => {
+        if (!byReg[r.regiao]) byReg[r.regiao] = { mat:0, ing:0, con:0, metrica:0 };
+        byReg[r.regiao].mat += r.mat||0;
+        byReg[r.regiao].ing += r.ing||0;
+        byReg[r.regiao].con += r.con||0;
+        byReg[r.regiao].metrica += r[f.metrica]||0;
+    });
+    const regs = ['N','NE','CO','SE','S'].filter(r => byReg[r] && byReg[r].metrica > 0);
+
+    const elR = document.getElementById('chartReg');
+    if (elR) {
+        _charts.reg = new Chart(elR, {
+            type: 'pie',
+            data: { labels: regs.map(r => REGIAO_LABEL[r]),
+                    datasets: [{ data: regs.map(r => byReg[r].metrica),
+                                backgroundColor: regs.map(r => REGIAO_CORES[r]) }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ position:'right' }, tooltip: tooltipPct() }
+            }
+        });
+    }
+
+    const byUf = {};
+    rows.forEach(r => {
+        if (!byUf[r.uf]) byUf[r.uf] = { mat:0, ing:0, con:0, metrica:0 };
+        byUf[r.uf].mat += r.mat||0;
+        byUf[r.uf].ing += r.ing||0;
+        byUf[r.uf].con += r.con||0;
+        byUf[r.uf].metrica += r[f.metrica]||0;
+    });
+    const ufEntries = Object.entries(byUf).sort((a,b) => b[1].metrica - a[1].metrica);
+
+    const elU = document.getElementById('chartUf');
+    if (elU) {
+        _charts.uf = new Chart(elU, {
+            type: 'bar',
+            data: { labels: ufEntries.map(e => e[0]),
+                datasets: [{ data: ufEntries.map(e => e[1].metrica),
+                    backgroundColor: ufEntries.map(e => REGIAO_CORES[UF_REGIAO[e[0]]] || '#999') }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:false }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Tables
+    const tbR = document.getElementById('tbodyReg');
+    if (tbR) {
+        const totalM = regs.reduce((s,r) => s + byReg[r].mat, 0);
+        const prevRows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau['2017'] || [], f);
+        const prevByReg = {};
+        prevRows.forEach(r => { prevByReg[r.regiao] = (prevByReg[r.regiao]||0) + (r.mat||0); });
+        tbR.innerHTML = regs.map(r => {
+            const d = byReg[r];
+            const pct = totalM > 0 ? (d.mat*100/totalM).toFixed(1) : '0';
+            const prev = prevByReg[r] || 0;
+            const var17 = prev > 0 ? ((d.mat/prev - 1)*100) : null;
+            const varStr = var17 != null ? fmtPct(var17) : '\u2014';
+            const varCls = var17 != null ? (var17 >= 0 ? 'pos' : 'neg') : '';
+            return '<tr><td><strong>' + REGIAO_LABEL[r] + '</strong></td>' +
+                '<td class="num">' + fmt(d.mat) + '</td>' +
+                '<td class="num">' + pct + '%</td>' +
+                '<td class="num">' + fmt(d.ing) + '</td>' +
+                '<td class="num">' + fmt(d.con) + '</td>' +
+                '<td class="num ' + varCls + '">' + varStr + '</td></tr>';
+        }).join('');
+    }
+
+    const tbU = document.getElementById('tbodyUf');
+    if (tbU) {
+        const totalM = ufEntries.reduce((s,e) => s + e[1].mat, 0);
+        tbU.innerHTML = ufEntries.map(e => {
+            const u = e[0], d = e[1];
+            const pct = totalM > 0 ? (d.mat*100/totalM).toFixed(1) : '0';
+            return '<tr><td><strong>' + u + '</strong></td>' +
+                '<td>' + REGIAO_LABEL[UF_REGIAO[u]] + '</td>' +
+                '<td class="num">' + fmt(d.mat) + '</td>' +
+                '<td class="num">' + pct + '%</td>' +
+                '<td class="num">' + fmt(d.ing) + '</td>' +
+                '<td class="num">' + fmt(d.con) + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// GRAU / MODALIDADE
+// -------------------------------------------------------------------
+function renderGm(f) {
+    ['mod','grau','modEvol'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
+
+    const byMod = { '1':0, '2':0 };
+    const byGrau = { '1':0, '2':0, '3':0, '4':0 };
+    rows.forEach(r => {
+        byMod[r.mod] = (byMod[r.mod]||0) + (r[f.metrica]||0);
+        byGrau[r.grau] = (byGrau[r.grau]||0) + (r[f.metrica]||0);
+    });
+
+    const modLabels = Object.keys(byMod).filter(k => byMod[k] > 0).map(k => MOD_LABEL[k]);
+    const modData = Object.keys(byMod).filter(k => byMod[k] > 0).map(k => byMod[k]);
+    const elM = document.getElementById('chartMod');
+    if (elM) {
+        _charts.mod = new Chart(elM, {
+            type: 'pie',
+            data: { labels: modLabels, datasets:[{ data: modData, backgroundColor:['#2196F3','#FF9800'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    const grauLabels = Object.keys(byGrau).filter(k => byGrau[k] > 0).map(k => GRAU_LABEL[k]);
+    const grauData = Object.keys(byGrau).filter(k => byGrau[k] > 0).map(k => byGrau[k]);
+    const elG = document.getElementById('chartGrau');
+    if (elG) {
+        _charts.grau = new Chart(elG, {
+            type: 'pie',
+            data: { labels: grauLabels, datasets:[{ data: grauData, backgroundColor:['#1976D2','#388E3C','#F57C00','#7B1FA2'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    // Evolução mod
+    const anos = DATA.anos.map(String);
+    const pres = anos.map(y => {
+        const rr = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[y] || [], f);
+        return rr.filter(r => r.mod === '1').reduce((s,r) => s + (r.mat||0), 0);
+    });
+    const ead = anos.map(y => {
+        const rr = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[y] || [], f);
+        return rr.filter(r => r.mod === '2').reduce((s,r) => s + (r.mat||0), 0);
+    });
+    const elE = document.getElementById('chartModEvol');
+    if (elE) {
+        _charts.modEvol = new Chart(elE, {
+            type: 'line',
+            data: { labels: anos, datasets:[
+                { label:'Presencial', data: pres, borderColor:'#1976D2', backgroundColor:'rgba(25,118,210,0.15)', fill:true, tension:0.25, pointRadius:5 },
+                { label:'EAD',        data: ead,  borderColor:'#F57C00', backgroundColor:'rgba(245,124,0,0.15)', fill:true, tension:0.25, pointRadius:5 },
+            ]},
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Tabela grau×modalidade
+    const tb = document.getElementById('tbodyGm');
+    if (tb) {
+        const cross = {};
+        rows.forEach(r => {
+            const k = r.grau + '|' + r.mod;
+            if (!cross[k]) cross[k] = { mat:0, ing:0, con:0 };
+            cross[k].mat += r.mat||0; cross[k].ing += r.ing||0; cross[k].con += r.con||0;
+        });
+        const total = Object.values(cross).reduce((s,x) => s + x.mat, 0);
+        tb.innerHTML = Object.entries(cross).sort((a,b) => b[1].mat - a[1].mat).map(([k, d]) => {
+            const [g, m] = k.split('|');
+            const pct = total > 0 ? (d.mat*100/total).toFixed(1) : '0';
+            return '<tr><td><strong>' + GRAU_LABEL[g] + '</strong></td>' +
+                '<td>' + MOD_LABEL[m] + '</td>' +
+                '<td class="num">' + fmt(d.mat) + '</td>' +
+                '<td class="num">' + pct + '%</td>' +
+                '<td class="num">' + fmt(d.ing) + '</td>' +
+                '<td class="num">' + fmt(d.con) + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// DEMOGRAFIA
+// -------------------------------------------------------------------
+function renderDemo(f) {
+    ['gender','race','age','turno'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
+    const sum = (k) => rows.reduce((s,r) => s + (r[k]||0), 0);
+
+    const elG = document.getElementById('chartGender');
+    if (elG) {
+        _charts.gender = new Chart(elG, {
+            type: 'pie',
+            data: { labels:['Feminino','Masculino'], datasets:[{
+                data: [sum('mat_f'), sum('mat_m')], backgroundColor:['#E91E63','#1976D2'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    const elR = document.getElementById('chartRace');
+    if (elR) {
+        _charts.race = new Chart(elR, {
+            type: 'pie',
+            data: { labels:['Branca','Preta','Parda','Amarela','Ind\u00edgena'],
+                datasets:[{ data:[ sum('mat_br'), sum('mat_pr'), sum('mat_pa'), sum('mat_am'), sum('mat_ind') ],
+                    backgroundColor:['#FFC107','#5D4037','#D84315','#FFECB3','#558B2F'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    const elA = document.getElementById('chartAge');
+    if (elA) {
+        const bands = ['mat_17','mat_18_24','mat_25_29','mat_30_34','mat_35_39','mat_40_49','mat_50_59','mat_60m'];
+        const labels = ['0-17','18-24','25-29','30-34','35-39','40-49','50-59','60+'];
+        _charts.age = new Chart(elA, {
+            type: 'bar',
+            data: { labels, datasets:[{ data: bands.map(sum),
+                backgroundColor: ['#B3E5FC','#4FC3F7','#29B6F6','#03A9F4','#039BE5','#0288D1','#0277BD','#01579B'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ display:false }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true, title:{ display:true, text:'Matr\u00edculas' } } }
+            }
+        });
+    }
+
+    const elT = document.getElementById('chartTurno');
+    if (elT) {
+        _charts.turno = new Chart(elT, {
+            type: 'bar',
+            data: { labels:['Diurno','Noturno'],
+                datasets:[{ data:[sum('mat_d'), sum('mat_n')], backgroundColor:['#FFC107','#3949AB'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:false }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+}
+
+// -------------------------------------------------------------------
+// INCLUSAO / FINANCIAMENTO
+// -------------------------------------------------------------------
+function renderIncl(f) {
+    ['fies','prouni','rv','pcd'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    const anos = DATA.anos.map(String);
+
+    const ag = DATA.agregacoes_por_ano.por_uf_ga_mod_grau;
+    function sumKey(y, k) { return filterAgg(ag[y]||[], f).reduce((s,r) => s + (r[k]||0), 0); }
+
+    const elF = document.getElementById('chartFies');
+    if (elF) {
+        _charts.fies = new Chart(elF, {
+            type: 'line',
+            data: { labels: anos, datasets:[{ label:'FIES', data: anos.map(y => sumKey(y,'mat_fies')),
+                borderColor:'#D84315', backgroundColor:'rgba(216,67,21,0.15)', fill:true, tension:0.25, pointRadius:5 }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    const elP = document.getElementById('chartProuni');
+    if (elP) {
+        _charts.prouni = new Chart(elP, {
+            type: 'line',
+            data: { labels: anos, datasets:[
+                { label:'PROUNI Integral', data: anos.map(y => sumKey(y,'mat_prouni_i')), borderColor:'#1976D2', backgroundColor:'rgba(25,118,210,0.15)', fill:true, tension:0.25, pointRadius:5 },
+                { label:'PROUNI Parcial',  data: anos.map(y => sumKey(y,'mat_prouni_p')), borderColor:'#FFA000', backgroundColor:'rgba(255,160,0,0.15)', fill:true, tension:0.25, pointRadius:5 }
+            ]},
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    const elR = document.getElementById('chartRv');
+    if (elR) {
+        const rows = filterAgg(ag[f.ano] || [], f);
+        const sumRV = (k) => rows.reduce((s,r) => s + (r[k]||0), 0);
+        _charts.rv = new Chart(elR, {
+            type: 'doughnut',
+            data: { labels: ['Cotas &#201;tnico-raciais','Escola P\u00fablica','Social / Renda','Outras'],
+                datasets: [{ data: [sumRV('mat_rv_etn'), sumRV('mat_rv_ep'), sumRV('mat_rv_sr'), Math.max(sumRV('mat_rv') - sumRV('mat_rv_etn') - sumRV('mat_rv_ep') - sumRV('mat_rv_sr'), 0)],
+                    backgroundColor:['#8E24AA','#43A047','#E53935','#607D8B'] }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    const elD = document.getElementById('chartPcd');
+    if (elD) {
+        _charts.pcd = new Chart(elD, {
+            type: 'line',
+            data: { labels: anos, datasets:[{ label:'Matr\u00edculas PCD', data: anos.map(y => sumKey(y,'mat_pcd')),
+                borderColor:'#2E7D32', backgroundColor:'rgba(46,125,50,0.15)', fill:true, tension:0.25, pointRadius:5 }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+}
+
+// -------------------------------------------------------------------
+// IES
+// -------------------------------------------------------------------
+function renderIes(f) {
+    ['ies'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    // IES rows already list n_mat per IES in reference.ies_top500 — but we need per-year filtered.
+    // The per_ies_mod_grau aggregation has (co_ies, mod, grau, mat, ing, con, ...) — we sum across mod/grau.
+    const rowsIes = filterAgg(DATA.agregacoes_por_ano.por_ies_mod_grau[f.ano] || [], f);
+    const byIes = {};
+    rowsIes.forEach(r => {
+        if (!byIes[r.co_ies]) byIes[r.co_ies] = { mat:0, ing:0, con:0 };
+        byIes[r.co_ies].mat += r.mat||0;
+        byIes[r.co_ies].ing += r.ing||0;
+        byIes[r.co_ies].con += r.con||0;
+    });
+    // Merge with top500 metadata for sigla/uf/cat
+    const iesRef = {};
+    (DATA.referencias.ies_top500 || []).forEach(i => { iesRef[i.co_ies] = i; });
+
+    // Apply IES search filter (sigla contains)
+    let iesList = Object.entries(byIes).map(([co, d]) => {
+        const meta = iesRef[co] || {};
+        return { co, sg: meta.sg_ies || '?', uf: meta.uf || '?', cat: meta.cat_adm, ...d };
+    });
+    if (f.searchOn && f.searchTerm) {
+        iesList = iesList.filter(x => (x.sg || '').toUpperCase().includes(f.searchTerm));
+    }
+    // Apply categoria filter
+    iesList = iesList.filter(x => !x.cat || f.cats.includes(String(x.cat)));
+    iesList.sort((a,b) => b.mat - a.mat);
+
+    const top30 = iesList.slice(0, 30);
+    const el = document.getElementById('chartIes');
+    if (el) {
+        _charts.ies = new Chart(el, {
+            type: 'bar',
+            data: { labels: top30.map(p => p.sg),
+                datasets: [{ data: top30.map(p => p.mat),
+                    backgroundColor: top30.map(p => p.cat ? (CAT_CORES[String(p.cat)] || '#1565C0') : '#1565C0') }] },
+            options: { indexAxis:'y', responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:false },
+                    tooltip: { callbacks: { label: ctx => {
+                        const p = top30[ctx.dataIndex];
+                        return [p.sg + ': ' + fmt(p.mat) + ' matr\u00edculas',
+                                'Ingressantes: ' + fmt(p.ing),
+                                'Concluintes: ' + fmt(p.con),
+                                'UF: ' + p.uf + ' | Cat: ' + (CAT_LABEL[String(p.cat)] || '?')];
+                    } } } },
+                scales: { x:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    const tb = document.getElementById('tbodyIes');
+    if (tb) {
+        const top50 = iesList.slice(0, 50);
+        tb.innerHTML = top50.map((p, i) => {
+            return '<tr><td>' + (i+1) + '</td>' +
+                '<td><strong>' + p.sg + '</strong></td>' +
+                '<td>' + p.uf + '</td>' +
+                '<td style="font-size:10px;">' + (CAT_LABEL[String(p.cat)] || '\u2014') + '</td>' +
+                '<td class="num">' + fmt(p.mat) + '</td>' +
+                '<td class="num">' + fmt(p.ing) + '</td>' +
+                '<td class="num">' + fmt(p.con) + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// CATEGORIA ADM
+// -------------------------------------------------------------------
+function renderCat(f) {
+    ['cat','pubPriv'].forEach(k => { if (_charts[k]) { try { _charts[k].destroy(); } catch(e){} delete _charts[k]; } });
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_cat_mod_grau[f.ano] || [], f);
+    const byCat = {};
+    rows.forEach(r => {
+        if (!byCat[r.cat_adm]) byCat[r.cat_adm] = { mat:0, ing:0, con:0, fies:0, prouni_i:0 };
+        byCat[r.cat_adm].mat += r.mat||0;
+        byCat[r.cat_adm].ing += r.ing||0;
+        byCat[r.cat_adm].con += r.con||0;
+        byCat[r.cat_adm].fies += r.mat_fies||0;
+        byCat[r.cat_adm].prouni_i += r.mat_prouni_i||0;
+    });
+
+    const cats = Object.keys(byCat).sort();
+    const el = document.getElementById('chartCat');
+    if (el) {
+        _charts.cat = new Chart(el, {
+            type: 'doughnut',
+            data: { labels: cats.map(c => CAT_LABEL[c] || c),
+                datasets:[{ data: cats.map(c => byCat[c].mat),
+                    backgroundColor: cats.map(c => CAT_CORES[c] || '#888') }] },
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins:{ legend:{ position:'right' }, tooltip: tooltipPct() } }
+        });
+    }
+
+    // Pública vs Privada ao longo dos anos
+    const anos = DATA.anos.map(String);
+    const pub = anos.map(y => {
+        const rr = filterAgg(DATA.agregacoes_por_ano.por_cat_mod_grau[y] || [], f);
+        return rr.filter(r => ['1','2','3'].includes(r.cat_adm)).reduce((s,r) => s + (r.mat||0), 0);
+    });
+    const priv = anos.map(y => {
+        const rr = filterAgg(DATA.agregacoes_por_ano.por_cat_mod_grau[y] || [], f);
+        return rr.filter(r => ['4','5','7'].includes(r.cat_adm)).reduce((s,r) => s + (r.mat||0), 0);
+    });
+    const elP = document.getElementById('chartPubPriv');
+    if (elP) {
+        _charts.pubPriv = new Chart(elP, {
+            type: 'bar',
+            data: { labels: anos, datasets:[
+                { label:'P\u00fablica', data: pub, backgroundColor:'#2E7D32' },
+                { label:'Privada',      data: priv, backgroundColor:'#D32F2F' }
+            ]},
+            options: { responsive:true, maintainAspectRatio:false,
+                plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
+                scales: { y:{ beginAtZero:true } }
+            }
+        });
+    }
+
+    // Tabela
+    const tb = document.getElementById('tbodyCat');
+    if (tb) {
+        const total = cats.reduce((s,c) => s + byCat[c].mat, 0);
+        tb.innerHTML = cats.map(c => {
+            const d = byCat[c];
+            const pct = total > 0 ? (d.mat*100/total).toFixed(1) : '0';
+            return '<tr><td><strong>' + (CAT_LABEL[c] || c) + '</strong></td>' +
+                '<td class="num">' + fmt(d.mat) + '</td>' +
+                '<td class="num">' + pct + '%</td>' +
+                '<td class="num">' + fmt(d.ing) + '</td>' +
+                '<td class="num">' + fmt(d.con) + '</td>' +
+                '<td class="num">' + fmt(d.fies) + '</td>' +
+                '<td class="num">' + fmt(d.prouni_i) + '</td></tr>';
+        }).join('');
+    }
+}
+
+// -------------------------------------------------------------------
+// EXPORTS — CSV / TXT / PNGs
+// -------------------------------------------------------------------
+function exportCSV() {
+    const f = getFilters();
+    const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
+    if (!rows.length) { toast('Nada a exportar'); return; }
+    const keysAll = new Set();
+    rows.forEach(r => Object.keys(r).forEach(k => keysAll.add(k)));
+    const keys = [...keysAll];
+    const header = ['ano', ...keys].join(';');
+    const lines = rows.map(r => [f.ano, ...keys.map(k => r[k] != null ? r[k] : '')].join(';'));
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+    let csv = '# MAPA-GR Censo v' + VERSION + ' — ' + d.toLocaleString('pt-BR') + '\n';
+    csv += '# Fonte: INEP — Microdados do Censo da Educação Superior\n';
+    csv += '# Ano de referência: ' + f.ano + '\n';
+    csv += header + '\n' + lines.join('\n');
+    const blob = new Blob(['\ufeff' + csv], { type:'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'censo-MAPA-GR-' + f.ano + '-' + stamp + '.csv';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast(rows.length + ' linhas exportadas');
+}
+
+function padR(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
+function padL(s, n) { s = String(s); while (s.length < n) s = ' ' + s; return s; }
+
+function exportReport() {
+    const f = getFilters();
+    const ag = DATA.agregacoes_por_ano.por_uf_ga_mod_grau;
+    const rows = filterAgg(ag[f.ano] || [], f);
+    if (!rows.length) { toast('Nada a exportar'); return; }
+
+    const lines = []; const p = s => lines.push(s);
+    const d = new Date();
+
+    p('═'.repeat(66));
+    p('  MAPA-GR — CENSO DA EDUCAÇÃO SUPERIOR');
+    p('  Gerado em: ' + d.toLocaleString('pt-BR'));
+    p('  Fonte: INEP — Microdados (download.inep.gov.br)');
+    p('═'.repeat(66));
+    p('');
+    p('FILTROS APLICADOS:');
+    p('  Ano: ' + f.ano);
+    p('  Métrica principal: ' + METRICA_LABEL[f.metrica]);
+    p('  Grandes áreas: ' + f.areas.join(', '));
+    p('  Modalidades: ' + f.mods.map(m => MOD_LABEL[m]).join(', '));
+    p('  Graus: ' + f.graus.map(g => GRAU_LABEL[g]).join(', '));
+    p('  Regiões: ' + f.regs.map(r => REGIAO_LABEL[r]).join(', '));
+    p('  UFs: ' + f.ufs.length + ' selecionada(s)');
+    p('  Categorias administrativas: ' + f.cats.map(c => CAT_LABEL[c]).join(', '));
+    if (f.searchOn && f.searchTerm) p('  Busca IES: "' + f.searchTerm + '"');
+    p('');
+
+    const totMat = rows.reduce((s,r) => s + (r.mat||0), 0);
+    const totIng = rows.reduce((s,r) => s + (r.ing||0), 0);
+    const totCon = rows.reduce((s,r) => s + (r.con||0), 0);
+    const totVg  = rows.reduce((s,r) => s + (r.vg||0), 0);
+    const totInsc= rows.reduce((s,r) => s + (r.insc||0), 0);
+    p('TOTAIS (FILTRO):');
+    p('  Matrículas: ' + fmt(totMat));
+    p('  Ingressantes: ' + fmt(totIng));
+    p('  Concluintes: ' + fmt(totCon));
+    p('  Vagas ofertadas: ' + fmt(totVg));
+    p('  Inscritos: ' + fmt(totInsc));
+    p('');
+
+    // Totais nacionais ano a ano
+    p('TOTAIS NACIONAIS POR ANO (sem filtros):');
+    p('  ' + padR('Ano',6) + padL('Matrículas',14) + padL('Ingres.',14) + padL('Concluintes',14));
+    p('  ' + '─'.repeat(48));
+    DATA.anos.forEach(y => {
+        const t = DATA.totais_nacionais_por_ano[String(y)] || {};
+        p('  ' + padR(String(y),6) + padL(fmt(t.mat),14) + padL(fmt(t.ing),14) + padL(fmt(t.con),14));
+    });
+    p('');
+
+    // Crescimento / CAGR
+    const varKey = 'variacao_total_2017_2023';
+    const cagrKey = 'cagr_pct_2017_2023';
+    const varData = DATA[varKey] || {};
+    const cagrData = DATA[cagrKey] || {};
+    p('CRESCIMENTO 2017 → 2023 (totais nacionais):');
+    ['mat','ing','con','vg','mat_fies','mat_prouni_i','mat_pcd','mat_rv','sit_tra','sit_des'].forEach(m => {
+        const v = varData[m], c = cagrData[m];
+        if (v == null && c == null) return;
+        p('  ' + padR(METRICA_LABEL[m] || m, 30) +
+          padL(v != null ? fmtPct(v) : '—', 10) +
+          '   ' + padL(c != null ? fmtPct(c) + ' a.a.' : '—', 14));
+    });
+    p('');
+
+    // Por grande área
+    p('POR GRANDE ÁREA (' + f.ano + '):');
+    const byArea = {};
+    rows.forEach(r => {
+        if (!byArea[r.ga]) byArea[r.ga] = { mat:0, ing:0, con:0 };
+        byArea[r.ga].mat += r.mat||0;
+        byArea[r.ga].ing += r.ing||0;
+        byArea[r.ga].con += r.con||0;
+    });
+    p('  ' + padR('Área',32) + padL('Matrículas',14) + padL('%',8) + padL('Ingres.',14));
+    p('  ' + '─'.repeat(68));
+    AREA_ORDER.forEach(a => {
+        if (!byArea[a]) return;
+        const d = byArea[a];
+        const pct = totMat > 0 ? (d.mat*100/totMat).toFixed(1) + '%' : '—';
+        p('  ' + padR((DATA.referencias.grande_area_label[a] || a).slice(0,30), 32) + padL(fmt(d.mat),14) + padL(pct,8) + padL(fmt(d.ing),14));
+    });
+    p('');
+
+    // Por região
+    p('POR REGIÃO (' + f.ano + '):');
+    const byReg = {};
+    rows.forEach(r => {
+        if (!byReg[r.regiao]) byReg[r.regiao] = { mat:0, ing:0, con:0 };
+        byReg[r.regiao].mat += r.mat||0;
+        byReg[r.regiao].ing += r.ing||0;
+        byReg[r.regiao].con += r.con||0;
+    });
+    ['N','NE','CO','SE','S'].forEach(r => {
+        if (!byReg[r]) return;
+        const d = byReg[r];
+        const pct = totMat > 0 ? (d.mat*100/totMat).toFixed(1) + '%' : '—';
+        p('  ' + padR(REGIAO_LABEL[r],15) + padL(fmt(d.mat),14) + padL(pct,8) + '  Ingres.: ' + padL(fmt(d.ing),12));
+    });
+    p('');
+
+    // Top 10 UFs
+    p('TOP 10 UFs POR MATRÍCULAS (' + f.ano + '):');
+    const byUf = {};
+    rows.forEach(r => {
+        if (!byUf[r.uf]) byUf[r.uf] = 0;
+        byUf[r.uf] += r.mat||0;
+    });
+    Object.entries(byUf).sort((a,b) => b[1]-a[1]).slice(0,10).forEach((e,i) => {
+        p('  ' + padL(String(i+1)+'.',4) + ' ' + padR(e[0] + ' (' + REGIAO_LABEL[UF_REGIAO[e[0]]] + ')',20) + padL(fmt(e[1]),14));
+    });
+    p('');
+
+    // Demografia resumida
+    p('DEMOGRAFIA (' + f.ano + '):');
+    const sumK = k => rows.reduce((s,r) => s + (r[k]||0), 0);
+    p('  Gênero — F: ' + fmt(sumK('mat_f')) + ' | M: ' + fmt(sumK('mat_m')));
+    p('  Cor/Raça:');
+    p('    Branca:    ' + fmt(sumK('mat_br')));
+    p('    Preta:     ' + fmt(sumK('mat_pr')));
+    p('    Parda:     ' + fmt(sumK('mat_pa')));
+    p('    Amarela:   ' + fmt(sumK('mat_am')));
+    p('    Indígena:  ' + fmt(sumK('mat_ind')));
+    p('  PCD: ' + fmt(sumK('mat_pcd')));
+    p('  FIES: ' + fmt(sumK('mat_fies')) + ' | PROUNI Integral: ' + fmt(sumK('mat_prouni_i')) + ' | PROUNI Parcial: ' + fmt(sumK('mat_prouni_p')));
+    p('  Reserva de vagas (cotas): ' + fmt(sumK('mat_rv')));
+    p('');
+
+    p('─'.repeat(66));
+    p('Prof. David L. Azevedo | MAPA-GR Censo v' + VERSION);
+    p('Fonte: INEP — Portal de Dados Abertos');
+    p('URL: https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos');
+    p('─'.repeat(66));
+
+    const txt = lines.join('\n');
+    const pad = n => String(n).padStart(2,'0');
+    const stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+    const blob = new Blob(['\ufeff' + txt], { type:'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'censo-MAPA-GR-relatorio-' + f.ano + '-' + stamp + '.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast('Relatório TXT salvo');
+}
+
+function exportPNGs() {
+    const canvases = document.querySelectorAll('#results canvas');
+    if (!canvases.length) { toast('Nenhum gráfico para exportar'); return; }
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    const stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
+    canvases.forEach((cv, i) => {
+        cv.toBlob(blob => {
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'censo-MAPA-GR-grafico-' + String(i+1).padStart(2,'0') + '-' + stamp + '.png';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }, 'image/png');
+    });
+    toast(canvases.length + ' gráficos exportados');
+}
+
+// Mobile sidebar toggle
+(function() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggle = document.getElementById('menuToggle');
+    if (!toggle) return;
+    const open = () => { sidebar.classList.add('open'); overlay.classList.add('show'); };
+    const close= () => { sidebar.classList.remove('open'); overlay.classList.remove('show'); };
+    toggle.addEventListener('click', () => { sidebar.classList.contains('open') ? close() : open(); });
+    overlay.addEventListener('click', close);
+})();
+
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
+loadAll();
+</script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.3.1';
+const CACHE = 'mapa-gr-v2.3.2';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
@@ -9,11 +9,13 @@ const CORE_ASSETS = [
   './chart.umd.min.js',
   './help-doc.html',
   './estatisticas.html',
+  './censo.html',
   './icons/icon-192.png',
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './dados/metadata.json',
-  './dados/exatas.json'  // default tab
+  './dados/exatas.json',  // default tab
+  './dados/censo_superior_consolidado.json'
 ];
 
 // Optional area JSONs cached on demand
