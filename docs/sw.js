@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.3.3';
+const CACHE = 'mapa-gr-v2.3.4';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
@@ -47,7 +47,9 @@ self.addEventListener('activate', (e) => {
 });
 
 // Stale-while-revalidate for JSON data (dados/*.json)
-// Cache-first for everything else
+// Network-first for the shell/HTML (mesma proteção do MAPA-PG): garante que
+// atualizações de index.html e demais páginas cheguem assim que o usuário
+// estiver online; offline cai no cache.
 self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
@@ -68,17 +70,15 @@ self.addEventListener('fetch', (e) => {
       })
     );
   } else {
-    // cache-first
+    // network-first (atualiza o cache quando online; fallback ao cache offline)
     e.respondWith(
-      caches.match(req).then((cached) => {
-        if (cached) return cached;
-        return fetch(req).then((res) => {
-          if (!res || res.status !== 200 || res.type === 'opaque') return res;
+      fetch(req).then((res) => {
+        if (res && res.status === 200 && res.type === 'basic') {
           const copy = res.clone();
           caches.open(CACHE).then((c) => c.put(req, copy));
-          return res;
-        }).catch(() => cached);
-      })
+        }
+        return res;
+      }).catch(() => caches.match(req))
     );
   }
 });
