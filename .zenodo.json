@@ -1,0 +1,37 @@
+{
+  "title": "MAPA-GR: Monitoramento e Análise da Formação Acadêmica na Graduação",
+  "description": "Sistema interativo e gratuito (HTML5/JS estático, PWA) para monitoramento e análise da graduação brasileira a partir dos indicadores de qualidade do INEP/SINAES (CPC, ENADE, IDD, IGC) e dos microdados do Censo da Educação Superior, cobrindo cursos em 9 grandes áreas com estudo de caso da UnB.",
+  "upload_type": "software",
+  "language": "por",
+  "access_right": "open",
+  "license": "CC-BY-4.0",
+  "creators": [
+    {
+      "name": "Azevedo, David Lima",
+      "affiliation": "Grupo de Dinâmica e Ab Initio (GDAI), Núcleo de Estrutura da Matéria, Instituto de Física, Universidade de Brasília (UnB)",
+      "orcid": "0000-0002-3456-554X"
+    }
+  ],
+  "keywords": [
+    "graduação",
+    "INEP",
+    "SINAES",
+    "ENADE",
+    "CPC",
+    "Censo da Educação Superior",
+    "UnB",
+    "dados abertos"
+  ],
+  "related_identifiers": [
+    {
+      "relation": "isDocumentedBy",
+      "scheme": "doi",
+      "identifier": "10.26512/2446-564X2026e62165"
+    },
+    {
+      "relation": "isSupplementTo",
+      "scheme": "url",
+      "identifier": "https://github.com/david888azv/Mapa-GR"
+    }
+  ]
+}

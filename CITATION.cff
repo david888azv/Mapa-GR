@@ -1,0 +1,44 @@
+cff-version: 1.2.0
+message: "Se você usar este software, por favor cite-o conforme os metadados abaixo."
+title: "MAPA-GR: Monitoramento e Análise da Formação Acadêmica na Graduação"
+abstract: >-
+  Sistema interativo e gratuito (HTML5/JS estático, PWA) para monitoramento e
+  análise da graduação brasileira a partir dos indicadores de qualidade do
+  INEP/SINAES (CPC, ENADE, IDD, IGC) e dos microdados do Censo da Educação
+  Superior, cobrindo cursos em 9 grandes áreas com estudo de caso da UnB.
+type: software
+authors:
+  - family-names: Azevedo
+    given-names: David Lima
+    affiliation: "Grupo de Dinâmica e Ab Initio (GDAI), Núcleo de Estrutura da Matéria, Instituto de Física, Universidade de Brasília (UnB)"
+    email: david888azv@unb.br
+    orcid: "https://orcid.org/0000-0002-3456-554X"
+    website: "http://lattes.cnpq.br/3892893860696339"
+preferred-citation:
+  type: article
+  title: "MAPA-GR — um sistema interativo para monitoramento e análise da graduação brasileira: aplicação a dados do Censo e do ENADE com estudo de caso da UnB, das Ciências Exatas e da Física"
+  authors:
+    - family-names: Azevedo
+      given-names: David Lima
+      orcid: "https://orcid.org/0000-0002-3456-554X"
+  journal: "Physicae Organum"
+  issn: "2446-564X"
+  volume: 11
+  issue: 1
+  year: 2026
+  doi: "10.26512/2446-564X2026e62165"
+  url: "https://doi.org/10.26512/2446-564X2026e62165"
+repository-code: "https://github.com/david888azv/Mapa-GR"
+url: "https://david888azv.github.io/Mapa-GR/"
+keywords:
+  - graduação
+  - INEP
+  - SINAES
+  - ENADE
+  - CPC
+  - Censo da Educação Superior
+  - UnB
+  - dados abertos
+license: CC-BY-4.0
+version: "2.0.0"
+date-released: "2026-04-18"

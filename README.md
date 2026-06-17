@@ -22,7 +22,8 @@ Sistema interativo para acompanhamento dos cursos de graduação em **Física** 
 | Escala | 1–7 | 1–5 |
 | Unidade | Programa | Curso |
 
-Projeto irmão: https://github.com/david888azv/Mapa-PG
+Projeto irmão (pós-graduação): **MAPA-PG-UnB** — https://github.com/david888azv/Mapa-PG-UnB
+(app: https://david888azv.github.io/Mapa-PG-UnB/)
 
 ## Como instalar no celular (Android)
 
@@ -59,6 +60,20 @@ URLs específicas documentadas em `help-doc.html`.
 
 ## Autor
 
-**Prof. David L. Azevedo**
-Universidade de Brasília (UnB)
-david888azv@unb.br
+**Prof. Titular David Lima Azevedo**
+Grupo de Dinâmica e Ab Initio (GDAI) · Núcleo de Estrutura da Matéria
+Instituto de Física — Universidade de Brasília (UnB)
+
+- ORCID: https://orcid.org/0000-0002-3456-554X
+- Google Scholar: https://scholar.google.com.br/citations?hl=en&user=o-qWsUAAAAAJ&view_op=list_works&sortby=pubdate
+- Lattes: http://lattes.cnpq.br/3892893860696339
+- E-mail: david888azv@unb.br
+
+## Como citar
+
+AZEVEDO, D. L. **MAPA-GR — um sistema interativo para monitoramento e análise da
+graduação brasileira: aplicação a dados do Censo e do ENADE com estudo de caso da
+UnB, das Ciências Exatas e da Física**. *Physicae Organum*, Brasília, v. 11, n. 1,
+2026. DOI: [10.26512/2446-564X2026e62165](https://doi.org/10.26512/2446-564X2026e62165).
+
+Veja também `CITATION.cff` (formato legível por máquina).
