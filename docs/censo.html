@@ -320,12 +320,12 @@ const CAT_CORES = {
 const METRICA_LABEL = {
     mat:'Matr\u00edculas ativas', ing:'Ingressantes', con:'Concluintes',
     vg:'Vagas ofertadas', insc:'Inscritos',
-    mat_pcd:'Matr\u00edculas &#8212; PCD', mat_fies:'Matr\u00edculas &#8212; FIES',
-    mat_prouni_i:'Matr\u00edculas &#8212; PROUNI Integral',
-    mat_prouni_p:'Matr\u00edculas &#8212; PROUNI Parcial',
-    mat_rv:'Matr\u00edculas &#8212; Reserva de vagas',
-    sit_tra:'Situa\u00e7\u00e3o &#8212; Trancada',
-    sit_des:'Situa\u00e7\u00e3o &#8212; Desvinculada'
+    mat_pcd:'Matr\u00edculas \u2014 PCD', mat_fies:'Matr\u00edculas \u2014 FIES',
+    mat_prouni_i:'Matr\u00edculas \u2014 PROUNI Integral',
+    mat_prouni_p:'Matr\u00edculas \u2014 PROUNI Parcial',
+    mat_rv:'Matr\u00edculas \u2014 Reserva de vagas',
+    sit_tra:'Situa\u00e7\u00e3o \u2014 Trancada',
+    sit_des:'Situa\u00e7\u00e3o \u2014 Desvinculada'
 };
 
 let DATA = null;
@@ -1154,7 +1154,7 @@ function renderIncl(f) {
         const sumRV = (k) => rows.reduce((s,r) => s + (r[k]||0), 0);
         _charts.rv = new Chart(elR, {
             type: 'doughnut',
-            data: { labels: ['Cotas &#201;tnico-raciais','Escola P\u00fablica','Social / Renda','Outras'],
+            data: { labels: ['Cotas \u00c9tnico-raciais','Escola P\u00fablica','Social / Renda','Outras'],
                 datasets: [{ data: [sumRV('mat_rv_etn'), sumRV('mat_rv_ep'), sumRV('mat_rv_sr'), Math.max(sumRV('mat_rv') - sumRV('mat_rv_etn') - sumRV('mat_rv_ep') - sumRV('mat_rv_sr'), 0)],
                     backgroundColor:['#8E24AA','#43A047','#E53935','#607D8B'] }] },
             options: { responsive:true, maintainAspectRatio:false,
