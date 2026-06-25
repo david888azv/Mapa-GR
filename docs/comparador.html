@@ -564,10 +564,11 @@ function updateTopButtons() {
     });
 }
 
-// Aplica os filtros do painel (sigla / região / UF) ao curso escolhido
+// Aplica os filtros do painel (tipo de IES / sigla / região / UF) ao curso escolhido
 function topFilterCursos(area) {
     const regs = [...document.querySelectorAll('.treg-chk:checked')].map(e => e.value);
     const ufs  = [...document.querySelectorAll('.tuf-chk:checked')].map(e => e.value);
+    const tipos = [...document.querySelectorAll('.tipo-chk:checked')].map(e => e.value);
     const searchOn = $('tSearchEnabled').checked;
     const searchTerm = $('tSearchSigla').value.trim().toUpperCase();
     const cursos = CURRENT_DATA.cursos.filter(c => {
@@ -577,9 +578,14 @@ function topFilterCursos(area) {
         const r = UF_REGIAO[c.u] || '?';
         if (!regs.includes(r)) return false;
         if (!ufs.includes(c.u)) return false;
+        // Tipo de IES (pública/privada): só restringe se exatamente um estiver marcado
+        if (tipos.length < 2) {
+            const t = isPublica(c.ct) ? 'pub' : 'priv';
+            if (!tipos.includes(t)) return false;
+        }
         return true;
     });
-    return { cursos, regs, ufs, searchOn, searchTerm };
+    return { cursos, regs, ufs, tipos, searchOn, searchTerm };
 }
 
 // Comparador de ordenação. worst=false → melhores (desc); worst=true → mais baixas (asc)
@@ -614,6 +620,10 @@ function runTop(perState, worst) {
     const area = $('areaSelect').value;
     if (!slug || !area) { toast('Selecione grande área e curso'); return; }
 
+    if (!$('tipoPub').checked && !$('tipoPriv').checked) {
+        toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return;
+    }
+
     let filt;
     try {
         filt = topFilterCursos(area);
@@ -621,7 +631,7 @@ function runTop(perState, worst) {
         toast('Erro ao filtrar: ' + err.message); return;
     }
     if (!filt.cursos.length) {
-        toast('Nenhum curso encontrado com os filtros atuais (sigla/região/UF)');
+        toast('Nenhum curso encontrado com os filtros atuais (tipo/sigla/região/UF)');
         return;
     }
 
