@@ -193,17 +193,56 @@ tr:first-child td { font-weight: 700; }
             <p class="hint" id="stepThresholdsHint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
         </div>
 
+        <!-- ===== Filtros do modo TOP (Sigla / Região / UF) — só visíveis em modo top10 ===== -->
+        <div class="step" id="stepSigla" style="display:none;">
+            <h3>🔍 Buscar por sigla da IES</h3>
+            <label style="font-size:12px;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="tSearchEnabled" style="margin-right:6px;accent-color:var(--roxo);"> Filtrar por sigla</label>
+            <input type="text" id="tSearchSigla" placeholder="ex: UNB, UF, IF" disabled
+                style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
+            <p class="hint">Busca parcial: "UF" encontra UFMT, UFRJ, etc.</p>
+        </div>
+
+        <div class="step" id="stepRegiao" style="display:none;">
+            <h3>Região</h3>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="N" checked style="margin-right:6px;accent-color:var(--roxo);"> Norte</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="NE" checked style="margin-right:6px;accent-color:var(--roxo);"> Nordeste</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="CO" checked style="margin-right:6px;accent-color:var(--roxo);"> Centro-Oeste</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="SE" checked style="margin-right:6px;accent-color:var(--roxo);"> Sudeste</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="S" checked style="margin-right:6px;accent-color:var(--roxo);"> Sul</label>
+        </div>
+
+        <div class="step" id="stepUfFilter" style="display:none;">
+            <h3>UF (Estado)</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="tufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
+                <button type="button" onclick="tufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+            </div>
+            <div id="tufGrid" class="uf-grid">
+                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>
+            </div>
+            <p class="hint">Padrão: todas as UFs com cursos marcadas.</p>
+        </div>
+
         <div id="stepTop10Info" class="step" style="display:none;background:#FFF8E1;border-radius:6px;padding:12px;border-left:4px solid #D4AF37;">
-            <h3 style="color:#D4AF37;border-bottom-color:#D4AF37;">🏆 Modo TOP 10</h3>
+            <h3 style="color:#D4AF37;border-bottom-color:#D4AF37;">🏆 Modos TOP</h3>
             <p style="font-size:12px;color:var(--txt);line-height:1.6;">
-                O app vai procurar <strong>o melhor curso de cada uma das 27 UFs</strong>, ordenar por <strong>CPC → ENADE → IDD</strong> e mostrar os <strong>10 melhores do país</strong> (um por UF).
+                Escolha a grande área e o curso, ajuste (opcional) os filtros de <strong>sigla</strong>, <strong>região</strong> e <strong>UF</strong> e clique no relatório desejado. A ordenação é sempre por <strong>CPC → ENADE → IDD</strong>.
             </p>
-            <p style="font-size:11px;color:var(--txt2);margin-top:6px;">
-                Escolha apenas a grande área e o curso — o resto é automático.
-            </p>
+            <ul style="font-size:11px;color:var(--txt2);margin:6px 0 0 16px;line-height:1.6;">
+                <li><strong>TOP 10 / TOP 10 mais baixas</strong>: os 10 cursos do país.</li>
+                <li><strong>TOP 27 / TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado.</li>
+            </ul>
         </div>
 
         <button id="btnCompare" class="btn btn-main" disabled>Comparar</button>
+
+        <div id="topButtons" style="display:none;">
+            <button id="btnTop10High" class="btn btn-main" style="background:#D4AF37;">🏆 TOP 10 melhores do país</button>
+            <button id="btnTop27High" class="btn btn-main" style="background:#B8860B;">🗺️ TOP 27 — melhor por estado</button>
+            <button id="btnTop10Low" class="btn btn-main" style="background:#C0392B;">🔻 TOP 10 mais baixas do país</button>
+            <button id="btnTop27Low" class="btn btn-main" style="background:#922B21;">🔻 TOP 27 — pior por estado</button>
+        </div>
+
         <button id="btnReset" class="btn btn-reset">Limpar seleção</button>
     </div>
 
@@ -253,10 +292,13 @@ const EMPTY_HTML_MANUAL = `<div class="empty-state" id="emptyState">
 
 const EMPTY_HTML_TOP10 = `<div class="empty-state" id="emptyState">
     <div class="icon">🏆</div>
-    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP 10 — Cursos mais bem avaliados</h2>
-    <p>Veja as <strong>10 melhores Instituições de Ensino Superior</strong> do Brasil para o curso escolhido.</p>
-    <p style="margin-top:12px;font-size:12px;">O app analisa automaticamente <strong>as 27 UFs</strong>, pega o melhor curso de cada uma e ordena por <strong>CPC → ENADE → IDD</strong> — trazendo os 10 melhores do país, uma por UF.</p>
-    <p style="margin-top:8px;font-size:12px;">Escolha apenas a <strong>grande área</strong> e o <strong>curso</strong> na barra lateral. O resto é automático.</p>
+    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP Cursos — melhores e mais baixas</h2>
+    <p>Gere o ranking dos cursos do Brasil para o curso escolhido, ordenado por <strong>CPC → ENADE → IDD</strong>.</p>
+    <p style="margin-top:12px;font-size:12px;">
+        <strong>🏆 TOP 10</strong> / <strong>🔻 TOP 10 mais baixas</strong>: os 10 cursos do país.<br>
+        <strong>🗺️ TOP 27</strong> / <strong>🔻 TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado.
+    </p>
+    <p style="margin-top:8px;font-size:12px;">Escolha a <strong>grande área</strong> e o <strong>curso</strong>; ajuste (opcional) os filtros de <strong>sigla</strong>, <strong>região</strong> e <strong>UF</strong> — por padrão todos marcados = país inteiro.</p>
 </div>`;
 
 const EMPTY_HTML = MODE === 'top10' ? EMPTY_HTML_TOP10 : EMPTY_HTML_MANUAL;
@@ -423,6 +465,229 @@ function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
 
 // ===== Lista completa das 27 UFs (para modo TOP 10) =====
 const TODAS_UFS = Object.keys(UF_REGIAO);
+
+// =====================================================================
+// ===== MODO TOP (10/27, melhores/mais baixas) — filtros do painel =====
+// =====================================================================
+
+// Popula o grid de UFs do modo TOP (todas as UFs com cursos, marcadas por padrão)
+function populateTopUFs() {
+    if (MODE !== 'top10') return;
+    const area = $('areaSelect').value;
+    const grid = $('tufGrid');
+    grid.innerHTML = '';
+    if (!area || !CURRENT_DATA) {
+        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        return;
+    }
+    const ufsComCursos = new Set(CURRENT_DATA.cursos.filter(c => c.ar === area && c.u).map(c => c.u));
+    let html = '';
+    REGION_ORDER.forEach(r => {
+        html += `<div class="uf-region-label">${REGION_LABELS[r].toUpperCase()}</div>`;
+        UFS_POR_REGIAO[r].forEach(u => {
+            const hasData = ufsComCursos.has(u);
+            const title = hasData ? '' : ` title="Sem cursos disponíveis para ${area}"`;
+            html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="tuf-chk" value="${u}"${hasData?' checked':' disabled'}>${u}</label>`;
+        });
+    });
+    grid.innerHTML = html;
+}
+
+function tufAll(checked) {
+    document.querySelectorAll('.tuf-chk:not([disabled])').forEach(e => { e.checked = checked; });
+}
+
+// Habilita/desabilita os botões TOP conforme curso selecionado
+function updateTopButtons() {
+    if (MODE !== 'top10') return;
+    const ok = !!$('areaSelect').value;
+    ['btnTop10High','btnTop27High','btnTop10Low','btnTop27Low'].forEach(id => {
+        const b = $(id);
+        if (b) b.disabled = !ok;
+    });
+}
+
+// Aplica os filtros do painel (sigla / região / UF) ao curso escolhido
+function topFilterCursos(area) {
+    const regs = [...document.querySelectorAll('.treg-chk:checked')].map(e => e.value);
+    const ufs  = [...document.querySelectorAll('.tuf-chk:checked')].map(e => e.value);
+    const searchOn = $('tSearchEnabled').checked;
+    const searchTerm = $('tSearchSigla').value.trim().toUpperCase();
+    const cursos = CURRENT_DATA.cursos.filter(c => {
+        if (c.ar !== area) return false;
+        if (c.pc == null) return false; // precisa de CPC contínuo para ranquear
+        if (searchOn && searchTerm && !(c.sg || '').toUpperCase().includes(searchTerm)) return false;
+        const r = UF_REGIAO[c.u] || '?';
+        if (!regs.includes(r)) return false;
+        if (!ufs.includes(c.u)) return false;
+        return true;
+    });
+    return { cursos, regs, ufs, searchOn, searchTerm };
+}
+
+// Comparador de ordenação. worst=false → melhores (desc); worst=true → mais baixas (asc)
+function makeCmp(worst) {
+    const s = worst ? 1 : -1;
+    return (a, b) =>
+        s * ((a.pc || 0) - (b.pc || 0)) ||
+        s * ((a.e  || 0) - (b.e  || 0)) ||
+        s * ((a.ip || 0) - (b.ip || 0));
+}
+
+// Seleciona 1 curso (melhor ou pior) por UF — ano mais recente, depois CPC→ENADE→IDD
+function pickPerUF(cursos, worst) {
+    const byUF = {};
+    cursos.forEach(c => { (byUF[c.u] = byUF[c.u] || []).push(c); });
+    const cmp = makeCmp(worst);
+    const picks = [];
+    Object.keys(byUF).forEach(u => {
+        const arr = byUF[u];
+        const maxY = Math.max(...arr.map(c => c.y || 0));
+        const ofY = arr.filter(c => c.y === maxY);
+        ofY.sort(cmp);
+        picks.push({ ...ofY[0] });
+    });
+    return picks;
+}
+
+// Executa um dos 4 relatórios TOP
+function runTop(perState, worst) {
+    clearMain();
+    const slug = $('grandeArea').value;
+    const area = $('areaSelect').value;
+    if (!slug || !area) { toast('Selecione grande área e curso'); return; }
+
+    let filt;
+    try {
+        filt = topFilterCursos(area);
+    } catch (err) {
+        toast('Erro ao filtrar: ' + err.message); return;
+    }
+    if (!filt.cursos.length) {
+        toast('Nenhum curso encontrado com os filtros atuais (sigla/região/UF)');
+        return;
+    }
+
+    const N = perState ? 27 : 10;
+    let picks;
+    if (perState) {
+        picks = pickPerUF(filt.cursos, worst);
+        picks.sort(makeCmp(worst));
+    } else {
+        picks = filt.cursos.map(c => ({ ...c }));
+        picks.sort(makeCmp(worst));
+    }
+    picks = picks.slice(0, N);
+
+    try {
+        renderTopResults(picks, area, slug, { perState, worst, N, filt });
+    } catch (err) {
+        console.error('Erro em renderTopResults:', err);
+        toast('Erro ao renderizar: ' + err.message);
+        clearMain();
+    }
+}
+
+function renderTopResults(picks, area, slug, cfg) {
+    const gaMeta = META.grandes_areas[slug];
+    const years = [...new Set(picks.map(c => c.y))];
+    const sameYear = years.length === 1;
+    const { perState, worst, N, filt } = cfg;
+
+    const icon = worst ? '🔻' : (perState ? '🗺️' : '🏆');
+    const accent = worst ? 'var(--vermelho)' : '#D4AF37';
+    let titleText;
+    if (perState && worst)        titleText = `TOP ${picks.length} — Pior curso por estado (um por UF)`;
+    else if (perState && !worst)  titleText = `TOP ${picks.length} — Melhor curso por estado (um por UF)`;
+    else if (!perState && worst)  titleText = `TOP ${picks.length} Nacional — Cursos com métricas mais baixas`;
+    else                          titleText = `TOP ${picks.length} Nacional — Cursos mais bem avaliados`;
+
+    // Resumo dos filtros ativos
+    const totUfs = TODAS_UFS.length;
+    const regTxt = filt.regs.length === REGION_ORDER.length ? 'todas as regiões'
+        : 'regiões: ' + filt.regs.map(r => REGION_LABELS[r]).join(', ');
+    const ufTxt = filt.ufs.length >= totUfs ? 'todas as UFs' : `${filt.ufs.length} UF(s)`;
+    const sigTxt = (filt.searchOn && filt.searchTerm) ? ` · sigla contém "${filt.searchTerm}"` : '';
+    const ordTxt = worst ? 'ordenação ascendente por CPC → ENADE → IDD (mais baixas primeiro)'
+                         : 'ordenação por CPC → ENADE → IDD (melhores primeiro)';
+
+    let html = `<div class="card" style="border-top:4px solid ${accent};">
+        <h2 style="color:${accent};">${icon} ${titleText}
+            <small>Curso: <strong>${area}</strong> · ${gaMeta.label}</small>
+        </h2>
+        <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
+            ${picks.length} de ${filt.cursos.length} curso(s) no recorte · ${ordTxt}
+            <br>Filtros: ${regTxt} · ${ufTxt}${sigTxt}
+        </p>`;
+
+    if (!sameYear) {
+        html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.filter(y=>y!=null).sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
+    }
+
+    html += `<div class="chart-container"><canvas id="chartCompare"></canvas></div>
+    </div>`;
+
+    // Tabela
+    html += `<div class="card">
+        <h2>Tabela de indicadores
+            <small>Todos os 8 componentes do CPC por curso</small>
+        </h2>
+        <div class="tbl-wrap"><table><thead><tr>
+            <th>#</th><th>UF</th><th>Sigla</th><th>Ano</th>
+            <th>CPC (f)</th><th>CPC cont</th>
+            <th>ENADE</th><th>IDD</th>
+            <th>%Dr</th><th>%Ms</th><th>Regime</th>
+            <th>Infra</th><th>Org.Ped</th>
+        </tr></thead><tbody>`;
+    picks.forEach((c, i) => {
+        const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        html += `<tr>
+            <td><strong>${i+1}º</strong></td>
+            <td><strong>${c.u||'—'}</strong></td>
+            <td><strong>${c.sg||'—'}</strong></td>
+            <td>${c.y||'—'}</td>
+            ${pfCell}
+            <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
+            <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
+            <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
+            <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
+            <td>${c.ms != null ? c.ms.toFixed(2) : '—'}</td>
+            <td>${c.rg != null ? c.rg.toFixed(2) : '—'}</td>
+            <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
+            <td>${c.op != null ? c.op.toFixed(2) : '—'}</td>
+        </tr>`;
+    });
+    html += `</tbody></table></div>
+    <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
+        f = faixa (1-5). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+    </p></div>`;
+
+    // Detalhes IES
+    html += `<div class="card">
+        <h2>Detalhes das Instituições
+            <small>Informações institucionais de cada curso ranqueado</small>
+        </h2>
+        <div class="details-grid">`;
+    picks.forEach((c, i) => {
+        html += `<div class="ies-card" style="border-left-color:${accent};">
+            <div class="rank" style="color:${accent};">${i+1}º lugar</div>
+            <div class="sigla">${c.sg || '—'} <span style="color:var(--txt2);font-size:12px;font-weight:400;">(${c.u})</span></div>
+            <div class="nome">${c.ie || '—'}</div>
+            <div class="info">
+                ${c.mu ? `📍 ${c.mu}/${c.u}<br>` : ''}
+                ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
+                ${c.o ? `📚 ${c.o}<br>` : ''}
+                ${c.m ? `💻 ${c.m}<br>` : ''}
+                Código e-MEC: ${c.cc || 'n/d'}<br>
+                Ano da avaliação: ${c.y || 'n/d'}
+            </div>
+        </div>`;
+    });
+    html += `</div></div>`;
+
+    $('main').innerHTML = html;
+    setTimeout(() => renderChart(picks, area, sameYear), 20);
+}
 
 // ===== Comparar =====
 async function compare() {
@@ -672,6 +937,15 @@ function resetAll() {
     $('enadeMin').value = '3';
     $('iddMin').value = '3';
     updateUFCount();
+    // Reset dos filtros do modo TOP
+    if (MODE === 'top10') {
+        document.querySelectorAll('.treg-chk').forEach(e => { e.checked = true; });
+        $('tSearchEnabled').checked = false;
+        $('tSearchSigla').value = '';
+        $('tSearchSigla').disabled = true;
+        $('tufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        updateTopButtons();
+    }
     toast('Seleção limpa');
 }
 
@@ -679,11 +953,13 @@ function resetAll() {
 $('grandeArea').addEventListener('change', async (e) => {
     clearMain();
     const slug = e.target.value;
-    if (!slug) { CURRENT_DATA = null; populateAreas(); populateUFs(); return; }
+    if (!slug) { CURRENT_DATA = null; populateAreas(); populateUFs(); populateTopUFs(); updateTopButtons(); return; }
     try {
         CURRENT_DATA = await loadArea(slug);
         populateAreas();
         populateUFs();
+        populateTopUFs();
+        updateTopButtons();
     } catch (err) {
         toast('Erro ao carregar dados: ' + err.message);
     }
@@ -691,6 +967,8 @@ $('grandeArea').addEventListener('change', async (e) => {
 $('areaSelect').addEventListener('change', () => {
     clearMain();
     populateUFs();
+    populateTopUFs();
+    updateTopButtons();
 });
 // Filtros de faixa também limpam a view anterior
 ['cpcMin','enadeMin','iddMin'].forEach(id => {
@@ -699,22 +977,43 @@ $('areaSelect').addEventListener('change', () => {
 $('btnCompare').addEventListener('click', compare);
 $('btnReset').addEventListener('click', resetAll);
 
+// Botões do modo TOP (perState, worst)
+$('btnTop10High').addEventListener('click', () => runTop(false, false));
+$('btnTop27High').addEventListener('click', () => runTop(true,  false));
+$('btnTop10Low').addEventListener('click',  () => runTop(false, true));
+$('btnTop27Low').addEventListener('click',  () => runTop(true,  true));
+
+// Toggle do filtro por sigla (modo TOP)
+(function() {
+    const chk = $('tSearchEnabled'), inp = $('tSearchSigla');
+    if (!chk || !inp) return;
+    chk.addEventListener('change', () => {
+        inp.disabled = !chk.checked;
+        if (chk.checked) inp.focus();
+        clearMain();
+    });
+    inp.addEventListener('input', () => { clearMain(); });
+})();
+
 // ===== Aplicar modo (manual vs top10) na inicialização =====
 function applyMode() {
     if (MODE === 'top10') {
         // Header
-        document.title = 'MAPA-GR — TOP 10 Cursos mais bem avaliados';
-        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP 10 — Cursos mais bem avaliados';
+        document.title = 'MAPA-GR — TOP Cursos (melhores / mais baixas)';
+        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP Cursos — melhores e mais baixas';
         // Muda cor do header para dourado
         document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
-        // Esconde UF grid e thresholds
+        // Esconde os passos do modo manual (UF até 10 / faixas / botão Comparar)
         $('stepUfs').style.display = 'none';
         $('stepThresholds').style.display = 'none';
+        $('btnCompare').style.display = 'none';
+        // Mostra os filtros do painel TOP + info + botões
+        $('stepSigla').style.display = 'block';
+        $('stepRegiao').style.display = 'block';
+        $('stepUfFilter').style.display = 'block';
         $('stepTop10Info').style.display = 'block';
-        // Atualiza botão
-        $('btnCompare').textContent = '🏆 Gerar TOP 10';
-        // Atualiza tema do botão
-        $('btnCompare').style.background = '#D4AF37';
+        $('topButtons').style.display = 'block';
+        updateTopButtons();
     } else {
         $('btnCompare').textContent = 'Comparar';
     }
