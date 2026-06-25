@@ -236,8 +236,8 @@ tr:first-child td { font-weight: 700; }
                 Escolha a grande área e o curso, ajuste (opcional) os filtros de <strong>sigla</strong>, <strong>região</strong> e <strong>UF</strong> e clique no relatório desejado. A ordenação é sempre por <strong>CPC → ENADE → IDD</strong>.
             </p>
             <ul style="font-size:11px;color:var(--txt2);margin:6px 0 0 16px;line-height:1.6;">
-                <li><strong>TOP 10 / TOP 10 mais baixas</strong>: os 10 cursos do país.</li>
-                <li><strong>TOP 27 / TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado.</li>
+                <li><strong>TOP 10 / TOP 10 mais baixas</strong>: os 10 cursos do país pelo CPC <em>contínuo</em> (não pela nota 1–5). Um curso nota 4 de uma UF pode não entrar se houver 10+ com CPC maior.</li>
+                <li><strong>TOP 27 / TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado — use este para ver o curso de uma UF específica.</li>
             </ul>
         </div>
 
@@ -675,6 +675,9 @@ function renderTopResults(picks, area, slug, cfg) {
         : 'regiões: ' + filt.regs.map(r => REGION_LABELS[r]).join(', ');
     const ufTxt = filt.ufs.length >= totUfs ? 'todas as UFs' : `${filt.ufs.length} UF(s)`;
     const sigTxt = (filt.searchOn && filt.searchTerm) ? ` · sigla contém "${filt.searchTerm}"` : '';
+    const tipoTxt = (filt.tipos && filt.tipos.length === 1)
+        ? (filt.tipos[0] === 'pub' ? 'somente públicas' : 'somente privadas')
+        : 'públicas e privadas';
     const ordTxt = worst ? 'ordenação ascendente por CPC → ENADE → IDD (mais baixas primeiro)'
                          : 'ordenação por CPC → ENADE → IDD (melhores primeiro)';
 
@@ -684,8 +687,19 @@ function renderTopResults(picks, area, slug, cfg) {
         </h2>
         <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
             ${picks.length} de ${filt.cursos.length} curso(s) no recorte · ${ordTxt}
-            <br>Filtros: ${regTxt} · ${ufTxt}${sigTxt}
+            <br>Filtros: ${tipoTxt} · ${regTxt} · ${ufTxt}${sigTxt}
         </p>`;
+
+    if (!perState) {
+        html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
+            ℹ️ <strong>Como é definido o TOP ${N} nacional:</strong> são os ${N} cursos ${worst ? 'com os menores' : 'com os maiores'} valores
+            <strong>contínuos</strong> de CPC → ENADE → IDD em todo o país${(filt.tipos && filt.tipos.length === 1) ? ` (${tipoTxt})` : ''},
+            independentemente da UF. A classificação usa o <strong>valor contínuo</strong>, não a faixa/nota (1–5):
+            um curso com <strong>nota 4</strong> pode ficar de fora se houver ao menos ${N} outros com CPC contínuo
+            ${worst ? 'menor' : 'maior'} — inclusive outros também com nota 4 ou 5.
+            Para ver o ${worst ? 'pior' : 'melhor'} curso de <strong>cada estado</strong>, use o <strong>TOP 27 — ${worst ? 'pior' : 'melhor'} por estado</strong>.
+        </div>`;
+    }
 
     if (!sameYear) {
         html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.filter(y=>y!=null).sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
