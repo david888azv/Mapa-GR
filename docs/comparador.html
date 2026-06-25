@@ -193,6 +193,13 @@ tr:first-child td { font-weight: 700; }
             <p class="hint" id="stepThresholdsHint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
         </div>
 
+        <div class="step" id="stepTipo">
+            <h3>5. Tipo de IES</h3>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPub" class="tipo-chk" value="pub" checked style="margin-right:6px;accent-color:var(--roxo);"> Pública</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPriv" class="tipo-chk" value="priv" checked style="margin-right:6px;accent-color:var(--roxo);"> Privada</label>
+            <p class="hint">Ambas marcadas: mostra a melhor pública <em>e</em> a melhor privada de cada UF. Só uma: a melhor daquele tipo por UF.</p>
+        </div>
+
         <!-- ===== Filtros do modo TOP (Sigla / Região / UF) — só visíveis em modo top10 ===== -->
         <div class="step" id="stepSigla" style="display:none;">
             <h3>🔍 Buscar por sigla da IES</h3>
@@ -389,12 +396,14 @@ function populateUFs() {
 
     let html = '';
     REGION_ORDER.forEach(r => {
-        html += `<div class="uf-region-label">${REGION_LABELS[r].toUpperCase()}</div>`;
+        const regionHasData = UFS_POR_REGIAO[r].some(u => ufsComCursos.has(u));
+        const regDis = regionHasData ? '' : ' disabled';
+        html += `<div class="uf-region-label"><label style="display:flex;align-items:center;cursor:pointer;color:inherit;font:inherit;letter-spacing:inherit;text-transform:inherit;"><input type="checkbox" class="region-toggle" data-region="${r}"${regDis} style="margin-right:5px;accent-color:var(--roxo);">${REGION_LABELS[r].toUpperCase()}</label></div>`;
         UFS_POR_REGIAO[r].forEach(u => {
             const hasData = ufsComCursos.has(u);
             const disabled = hasData ? '' : ' disabled';
             const title = hasData ? '' : ` title="Sem cursos disponíveis para ${area}"`;
-            html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="uf-chk" value="${u}"${disabled}>${u}</label>`;
+            html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="uf-chk" value="${u}" data-region="${r}"${disabled}>${u}</label>`;
         });
     });
     grid.innerHTML = html;
@@ -403,7 +412,43 @@ function populateUFs() {
     grid.querySelectorAll('.uf-chk:not([disabled])').forEach(cb => {
         cb.addEventListener('change', onUfChange);
     });
+    grid.querySelectorAll('.region-toggle:not([disabled])').forEach(cb => {
+        cb.addEventListener('change', onRegionToggle);
+    });
+    syncRegionToggles();
     updateUFCount();
+}
+
+// Marca/desmarca todos os estados (habilitados) de uma região, respeitando o limite de 10 UFs
+function onRegionToggle(e) {
+    const r = e.target.dataset.region;
+    const want = e.target.checked;
+    const boxes = [...document.querySelectorAll(`.uf-chk[data-region="${r}"]:not([disabled])`)];
+    if (want) {
+        let capped = false;
+        for (const cb of boxes) {
+            if (cb.checked) continue;
+            if (document.querySelectorAll('.uf-chk:checked').length >= MAX_UFS) { capped = true; break; }
+            cb.checked = true;
+        }
+        if (capped) toast(`Máximo ${MAX_UFS} UFs — nem todos os estados da região foram marcados`);
+    } else {
+        boxes.forEach(cb => { cb.checked = false; });
+    }
+    syncRegionToggles();
+    updateUFCount();
+}
+
+// Sincroniza o estado dos checkboxes de região (marcado / parcial / vazio) com as UFs
+function syncRegionToggles() {
+    document.querySelectorAll('.region-toggle').forEach(rt => {
+        const r = rt.dataset.region;
+        const boxes = [...document.querySelectorAll(`.uf-chk[data-region="${r}"]:not([disabled])`)];
+        if (!boxes.length) { rt.checked = false; rt.indeterminate = false; return; }
+        const n = boxes.filter(b => b.checked).length;
+        rt.checked = n === boxes.length;
+        rt.indeterminate = n > 0 && n < boxes.length;
+    });
 }
 
 function onUfChange(e) {
@@ -412,7 +457,8 @@ function onUfChange(e) {
         e.target.checked = false;
         toast(`Máximo ${MAX_UFS} UFs por comparação`);
     }
-    // Sempre atualiza o contador e o estado do botão
+    // Sincroniza os checkboxes de região e atualiza contador/botão
+    syncRegionToggles();
     updateUFCount();
 }
 
@@ -439,8 +485,16 @@ function contToFaixa(v) {
     return 5;
 }
 
+// ===== Classificação Pública x Privada (por categoria administrativa) =====
+// Pública = Federal/Estadual/Municipal. Demais (Privada c/ e s/ fins,
+// Comunitária/Confessional, Especial) entram como "Privada".
+function isPublica(ct) {
+    return /^p[uú]blica/i.test((ct || '').trim());
+}
+
 // ===== Seleção do melhor curso por UF =====
-function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
+// tipo: 'pub' | 'priv' | null (sem restrição de tipo)
+function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, tipo) {
     const cand = CURRENT_DATA.cursos.filter(c => {
         if (c.ar !== area || c.u !== uf) return false;
         if (c.pf == null || c.pf < cpcMin) return false;
@@ -449,6 +503,9 @@ function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin) {
         if (fe != null && fe < enadeMin) return false;
         const fi = contToFaixa(c.ip);
         if (fi != null && fi < iddMin) return false;
+        // Tipo de IES (pública/privada)
+        if (tipo === 'pub'  && !isPublica(c.ct)) return false;
+        if (tipo === 'priv' &&  isPublica(c.ct)) return false;
         return true;
     });
     if (!cand.length) return null;
@@ -633,7 +690,7 @@ function renderTopResults(picks, area, slug, cfg) {
             <small>Todos os 8 componentes do CPC por curso</small>
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
-            <th>#</th><th>UF</th><th>Sigla</th><th>Ano</th>
+            <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -641,10 +698,13 @@ function renderTopResults(picks, area, slug, cfg) {
         </tr></thead><tbody>`;
     picks.forEach((c, i) => {
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        const pub = isPublica(c.ct);
+        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Pública':'Privada'}</td>`;
         html += `<tr>
             <td><strong>${i+1}º</strong></td>
             <td><strong>${c.u||'—'}</strong></td>
             <td><strong>${c.sg||'—'}</strong></td>
+            ${tipoCell}
             <td>${c.y||'—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
@@ -659,7 +719,7 @@ function renderTopResults(picks, area, slug, cfg) {
     });
     html += `</tbody></table></div>
     <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
-        f = faixa (1-5). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+        f = faixa (1-5). Tipo: Pública (Federal/Estadual/Municipal) ou Privada (demais categorias). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
     </p></div>`;
 
     // Detalhes IES
@@ -700,6 +760,7 @@ async function compare() {
 
     let ufs;
     let cpcMin, enadeMin, iddMin;
+    let wantPub = true, wantPriv = true;
 
     if (MODE === 'top10') {
         // TOP 10: considera todas as 27 UFs sem filtro de faixa (só ordena)
@@ -711,6 +772,9 @@ async function compare() {
         cpcMin = +$('cpcMin').value;
         enadeMin = +$('enadeMin').value;
         iddMin = +$('iddMin').value;
+        wantPub = $('tipoPub').checked;
+        wantPriv = $('tipoPriv').checked;
+        if (!wantPub && !wantPriv) { toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return; }
     }
 
     // picks/missing são LOCAIS — começam vazios em toda chamada
@@ -718,9 +782,23 @@ async function compare() {
     const missing = [];
     try {
         ufs.forEach(uf => {
-            const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
-            if (best) picks.push({ ...best });
-            else missing.push(uf);
+            if (MODE === 'top10') {
+                const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
+                if (best) picks.push({ ...best });
+                else missing.push(uf);
+                return;
+            }
+            // Manual: melhor pública e/ou melhor privada da UF, conforme filtro de tipo
+            let found = false;
+            if (wantPub) {
+                const b = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, 'pub');
+                if (b) { picks.push({ ...b }); found = true; }
+            }
+            if (wantPriv) {
+                const b = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, 'priv');
+                if (b) { picks.push({ ...b }); found = true; }
+            }
+            if (!found) missing.push(uf);
         });
     } catch (err) {
         console.error('Erro em pickBestForUF:', err);
@@ -791,7 +869,7 @@ function renderResults(picks, missing, area, slug, thresholds) {
             <small>Todos os 8 componentes do CPC por curso</small>
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
-            <th>#</th><th>UF</th><th>Sigla</th><th>Ano</th>
+            <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -799,10 +877,13 @@ function renderResults(picks, missing, area, slug, thresholds) {
         </tr></thead><tbody>`;
     picks.forEach((c, i) => {
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        const pub = isPublica(c.ct);
+        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Pública':'Privada'}</td>`;
         html += `<tr>
             <td><strong>${i+1}º</strong></td>
             <td><strong>${c.u||'—'}</strong></td>
             <td><strong>${c.sg||'—'}</strong></td>
+            ${tipoCell}
             <td>${c.y||'—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
@@ -817,7 +898,7 @@ function renderResults(picks, missing, area, slug, thresholds) {
     });
     html += `</tbody></table></div>
     <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
-        f = faixa (1-5). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+        f = faixa (1-5). Tipo: Pública (Federal/Estadual/Municipal) ou Privada (demais categorias). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
     </p></div>`;
 
     // Detalhes IES
@@ -936,6 +1017,8 @@ function resetAll() {
     $('cpcMin').value = '3';
     $('enadeMin').value = '3';
     $('iddMin').value = '3';
+    if ($('tipoPub')) $('tipoPub').checked = true;
+    if ($('tipoPriv')) $('tipoPriv').checked = true;
     updateUFCount();
     // Reset dos filtros do modo TOP
     if (MODE === 'top10') {
@@ -1003,9 +1086,10 @@ function applyMode() {
         $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP Cursos — melhores e mais baixas';
         // Muda cor do header para dourado
         document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
-        // Esconde os passos do modo manual (UF até 10 / faixas / botão Comparar)
+        // Esconde os passos do modo manual (UF até 10 / faixas / tipo / botão Comparar)
         $('stepUfs').style.display = 'none';
         $('stepThresholds').style.display = 'none';
+        $('stepTipo').style.display = 'none';
         $('btnCompare').style.display = 'none';
         // Mostra os filtros do painel TOP + info + botões
         $('stepSigla').style.display = 'block';
