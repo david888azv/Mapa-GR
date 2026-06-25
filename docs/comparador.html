@@ -194,10 +194,10 @@ tr:first-child td { font-weight: 700; }
         </div>
 
         <div class="step" id="stepTipo">
-            <h3>5. Tipo de IES</h3>
+            <h3 id="stepTipoTitle">5. Tipo de IES</h3>
             <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPub" class="tipo-chk" value="pub" checked style="margin-right:6px;accent-color:var(--roxo);"> Pública</label>
             <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPriv" class="tipo-chk" value="priv" checked style="margin-right:6px;accent-color:var(--roxo);"> Privada</label>
-            <p class="hint">Ambas marcadas: mostra a melhor pública <em>e</em> a melhor privada de cada UF. Só uma: a melhor daquele tipo por UF.</p>
+            <p class="hint" id="stepTipoHint">Ambas marcadas: mostra a melhor pública <em>e</em> a melhor privada de cada UF. Só uma: a melhor daquele tipo por UF.</p>
         </div>
 
         <!-- ===== Filtros do modo TOP (Sigla / Região / UF) — só visíveis em modo top10 ===== -->
@@ -766,6 +766,9 @@ async function compare() {
         // TOP 10: considera todas as 27 UFs sem filtro de faixa (só ordena)
         ufs = [...TODAS_UFS];
         cpcMin = 1; enadeMin = 1; iddMin = 1;
+        wantPub = $('tipoPub').checked;
+        wantPriv = $('tipoPriv').checked;
+        if (!wantPub && !wantPriv) { toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return; }
     } else {
         ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
         if (ufs.length < 2) { toast('Selecione pelo menos 2 UFs'); return; }
@@ -783,7 +786,9 @@ async function compare() {
     try {
         ufs.forEach(uf => {
             if (MODE === 'top10') {
-                const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin);
+                // Ambas marcadas: sem restrição (melhor da UF). Só uma: restringe ao tipo.
+                const tipo = (wantPub && wantPriv) ? null : (wantPub ? 'pub' : 'priv');
+                const best = pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, tipo);
                 if (best) picks.push({ ...best });
                 else missing.push(uf);
                 return;
@@ -1086,12 +1091,14 @@ function applyMode() {
         $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP Cursos — melhores e mais baixas';
         // Muda cor do header para dourado
         document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
-        // Esconde os passos do modo manual (UF até 10 / faixas / tipo / botão Comparar)
+        // Esconde os passos do modo manual (UF até 10 / faixas / botão Comparar)
         $('stepUfs').style.display = 'none';
         $('stepThresholds').style.display = 'none';
-        $('stepTipo').style.display = 'none';
         $('btnCompare').style.display = 'none';
         // Mostra os filtros do painel TOP + info + botões
+        $('stepTipo').style.display = 'block';
+        $('stepTipoTitle').textContent = 'Tipo de IES';
+        $('stepTipoHint').innerHTML = 'Ambas marcadas: ranking com todas as IES. Só uma: TOP apenas entre instituições daquele tipo.';
         $('stepSigla').style.display = 'block';
         $('stepRegiao').style.display = 'block';
         $('stepUfFilter').style.display = 'block';

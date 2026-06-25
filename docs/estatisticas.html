@@ -183,6 +183,13 @@ table.data-table tr:hover{background:#FFE0B2;}
         </div>
 
         <div class="filter-group">
+            <h3>Tipo de IES</h3>
+            <label><input type="checkbox" class="tipo-chk" value="pub" checked> P&#250;blica</label>
+            <label><input type="checkbox" class="tipo-chk" value="priv" checked> Privada</label>
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">P&#250;blica = Federal/Estadual/Municipal. Privada = demais categorias (c/ e s/ fins, Comunit&#225;ria/Confessional, Especial).</p>
+        </div>
+
+        <div class="filter-group">
             <h3>UF (Estado)</h3>
             <div style="display:flex;gap:4px;margin-bottom:6px;">
                 <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
@@ -345,15 +352,23 @@ function desmarcarTodos() {
     document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = false);
 }
 
+// ===== Classificação Pública x Privada (por categoria administrativa) =====
+// Pública = Federal/Estadual/Municipal. Demais (Privada c/ e s/ fins,
+// Comunitária/Confessional, Especial) entram como "Privada".
+function isPublica(ct) {
+    return /^p[uú]blica/i.test((ct || '').trim());
+}
+
 // === FILTERS ===
 function getFilters() {
     const areas = [...document.querySelectorAll('.area-chk:checked')].map(e => e.value);
     const ciclos = [...document.querySelectorAll('.cycle-chk:checked')].map(e => +e.value);
     const regs = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
     const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
+    const tipos = [...document.querySelectorAll('.tipo-chk:checked')].map(e => e.value);
     const searchOn = document.getElementById('searchEnabled').checked;
     const searchTerm = document.getElementById('searchSigla').value.trim().toUpperCase();
-    return { areas, ciclos, regs, ufs, searchOn, searchTerm };
+    return { areas, ciclos, regs, ufs, tipos, searchOn, searchTerm };
 }
 
 function filterCursos(f) {
@@ -362,6 +377,10 @@ function filterCursos(f) {
         if (!f.ciclos.includes(c.y)) return false;
         if (!f.regs.includes(c._r)) return false;
         if (f.ufs.length && !f.ufs.includes(c.u)) return false;
+        if (f.tipos.length < 2) {
+            const tipo = isPublica(c.ct) ? 'pub' : 'priv';
+            if (!f.tipos.includes(tipo)) return false;
+        }
         if (f.searchOn && f.searchTerm && !(c.sg || '').toUpperCase().includes(f.searchTerm)) return false;
         return true;
     });
@@ -1002,6 +1021,7 @@ function exportReport() {
     p('  Ciclos: ' + f.ciclos.join(', '));
     p('  Regi\u00f5es: ' + f.regs.map(function(r){ return REGIAO_LABELS[r]; }).join(', '));
     p('  UFs: ' + f.ufs.length + '/27' + (f.ufs.length === 27 ? ' (todas)' : ''));
+    p('  Tipo de IES: ' + (f.tipos.length === 2 ? 'Pública e Privada' : f.tipos.map(function(t){ return t === 'pub' ? 'Pública' : 'Privada'; }).join(', ') || 'nenhum'));
     if (f.searchOn && f.searchTerm) p('  Busca por sigla: "' + f.searchTerm + '"');
     p('');
 
