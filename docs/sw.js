@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.3.13';
+const CACHE = 'mapa-gr-v2.3.14';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
@@ -14,6 +14,7 @@ const CORE_ASSETS = [
   './icons/icon-512.png',
   './icons/icon-maskable-512.png',
   './dados/metadata.json',
+  './dados/ies_federais.json',  // índice das IFES federais (seletor de referência)
   './dados/exatas.json',  // default tab
   './dados/censo_superior_consolidado.json'
 ];

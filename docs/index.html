@@ -183,7 +183,7 @@ tr:hover { background: #EEF2F7; }
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.1</div>
+        <div id="headerVersion">v2.2</div>
     </div>
 </div>
 
@@ -195,6 +195,10 @@ tr:hover { background: #EEF2F7; }
 
 <div class="container">
     <div class="sidebar" id="sidebar">
+        <div class="filter-group" style="margin-bottom:10px;">
+            <button onclick="trocarIes()" class="btn btn-secondary" style="width:100%;">↺ Trocar instituição de referência</button>
+            <p id="refAtual" style="font-size:10px;color:var(--txt2);margin-top:4px;line-height:1.3;"></p>
+        </div>
         <div class="filter-group">
             <h3>🔍 Buscar por sigla da IES</h3>
             <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
@@ -306,7 +310,7 @@ tr:hover { background: #EEF2F7; }
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.1';
+const VERSION = '2.2';
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
     'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
@@ -328,6 +332,15 @@ let _charts = {};
 let _sortCol = null;
 let _sortDir = 1;
 
+// === REFERÊNCIA (IFES federal escolhida no seletor pós-consentimento) ===
+// Nesta versão só instituições PÚBLICAS FEDERAIS são selecionáveis (privadas em
+// release futuro). A escolhida é destacada (★, magenta) em toda a análise, como
+// era fixo para a UnB. Default UnB até a escolha; deep-link via ?ies=SIGLA.
+let REF_SIGLA = 'UNB';
+let REF_NOME = 'Universidade de Brasília';
+let IES_FED = null;   // índice das IFES federais (dados/ies_federais.json)
+function refUpper() { return (REF_SIGLA || '').toUpperCase(); }
+
 function setStatus(msg) { document.getElementById('statusLeft').textContent = msg; }
 function toast(msg) {
     const t = document.getElementById('toast');
@@ -341,6 +354,7 @@ async function loadMetadata() {
         const r = await fetch('dados/metadata.json');
         META = await r.json();
         renderTabs();
+        updateRefLabel();
         // Load default tab (exatas)
         await switchTab('exatas');
     } catch (e) {
@@ -544,9 +558,9 @@ function analisar() {
     }
 
     // UnB
-    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === 'UNB' || (c.sg||'').toUpperCase() === 'UNB');
+    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === refUpper());
     if (unbCursos.length) {
-        html += `<div class="card"><h2 class="unb">★ Universidade de Brasília (${unbCursos.length} curso${unbCursos.length>1?'s':''})</h2><div class="stats-row">`;
+        html += `<div class="card"><h2 class="unb">★ ${REF_NOME} (${unbCursos.length} curso${unbCursos.length>1?'s':''})</h2><div class="stats-row">`;
         unbCursos.forEach(c => {
             const pfBadge = c.pf != null ? `<span class="cpc-${c.pf}" style="padding:2px 6px;border-radius:4px;">${c.pf}</span>` : 'SC';
             html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${c.ar}<br>${c.y} — ${c.mu}</div></div>`;
@@ -565,7 +579,7 @@ function analisar() {
             <th>Faixa</th><th>CPC cont</th><th>ENADE</th><th>IDD</th><th>%Dr</th><th>Infra</th>
         </tr></thead><tbody>`;
     sorted.slice(0, showLimit).forEach(c => {
-        const rowClass = (c.sg||'').toUpperCase() === 'UNB' ? 'row-unb' : '';
+        const rowClass = (c.sg||'').toUpperCase() === refUpper() ? 'row-unb' : '';
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
         const grau = normGrau(c.g);
         const modal = normModal(c.m);
@@ -656,7 +670,7 @@ function renderCharts(cursos, f) {
     const iesMap = {};
     cursos.forEach(c => {
         if (c[metrica] == null) return;
-        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set(), is_unb: (c.sg||'').toUpperCase() === 'UNB' };
+        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set(), is_unb: (c.sg||'').toUpperCase() === refUpper() };
         iesMap[c.sg].vals.push(c[metrica]);
         iesMap[c.sg].ufs.add(c.u);
     });
@@ -771,9 +785,9 @@ function buildReport(cursos, f) {
     }
     p('');
 
-    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === 'UNB');
+    const unbCursos = cursos.filter(c => (c.sg||'').toUpperCase() === refUpper());
     if (unbCursos.length) {
-        p('★ UNIVERSIDADE DE BRASÍLIA:');
+        p('★ ' + (REF_NOME || '').toUpperCase() + ':');
         unbCursos.forEach(c => {
             p(`  ${c.ar} ${c.y} — ${c.mu}/${c.u}`);
             p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
@@ -786,7 +800,7 @@ function buildReport(cursos, f) {
     p('Top 20 cursos por ' + metricaLabel + ':');
     const sorted = [...cursos].filter(c => c[f.metrica] != null).sort((a,b) => b[f.metrica] - a[f.metrica]);
     sorted.slice(0, 20).forEach((c, i) => {
-        const mark = (c.sg||'').toUpperCase() === 'UNB' ? '★ ' : '  ';
+        const mark = (c.sg||'').toUpperCase() === refUpper() ? '★ ' : '  ';
         p(`  ${mark}${String(i+1).padStart(2)}. ${(c.sg||'').padEnd(14)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | Faixa ${c.pf||'?'} | ${c.ar.substr(0,45)}`);
     });
     p('');
@@ -804,7 +818,7 @@ function buildReport(cursos, f) {
         sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
     })).sort((a,b) => b.avg - a.avg);
     iesArr.slice(0, 10).forEach((p2, i) => {
-        const mark = (p2.sg||'').toUpperCase() === 'UNB' ? '★ ' : '  ';
+        const mark = (p2.sg||'').toUpperCase() === refUpper() ? '★ ' : '  ';
         p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(14)} | média=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
     });
     p('');
@@ -890,7 +904,7 @@ function abrirHelp() { window.open('help-doc.html', '_blank'); }
 // License / disclaimer modal
 const LICENSE_KEY = 'mapa-gr-license-accepted-v1';
 function showLicenseModal() {
-    try { if (localStorage.getItem(LICENSE_KEY) === '1') { loadMetadata(); return; } } catch(e){}
+    try { if (localStorage.getItem(LICENSE_KEY) === '1') { startRefPicker(); return; } } catch(e){}
     const overlay = document.createElement('div');
     overlay.id = 'licenseOverlay';
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
@@ -928,7 +942,96 @@ function acceptLicense() {
     try { localStorage.setItem(LICENSE_KEY, '1'); } catch(e){}
     const ov = document.getElementById('licenseOverlay');
     if (ov) ov.remove();
-    loadMetadata();
+    startRefPicker();
+}
+
+// ── Seletor de instituição de referência (pós-consentimento) ──────────
+// Só IFES públicas federais nesta versão. A escolhida vira a referência
+// destacada (★) na comparação. Deep-link ?ies=SIGLA entra direto.
+function capNome(s) {
+    if (!s) return '';
+    const low = new Set(['de','da','do','das','dos','e','em','a','o']);
+    return s.toLowerCase().split(/\s+/).map((w, i) =>
+        (i > 0 && low.has(w)) ? w : (w.charAt(0).toUpperCase() + w.slice(1))
+    ).join(' ');
+}
+async function startRefPicker() {
+    if (!IES_FED) {
+        try { IES_FED = await fetch('dados/ies_federais.json', {cache:'force-cache'}).then(r=>r.json()); }
+        catch(_) { IES_FED = { ies: [] }; }
+    }
+    const qs = new URLSearchParams(location.search);
+    const iesQS = (qs.get('ies') || '').toUpperCase();
+    if (iesQS) {
+        const hit = IES_FED.ies.find(i => i.sigla === iesQS);
+        if (hit) { REF_SIGLA = hit.sigla; REF_NOME = capNome(hit.nome); updateRefLabel(); loadMetadata(); return; }
+    }
+    showIesPicker();
+}
+let _iesSel = null;
+function showIesPicker() {
+    _iesSel = null;
+    const overlay = document.createElement('div');
+    overlay.id = 'iesPickerOverlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:22px 22px 18px;max-width:640px;width:94%;box-shadow:0 8px 32px rgba(0,0,0,.4);max-height:92vh;display:flex;flex-direction:column;">
+        <h2 style="color:#1B5E20;margin:0 0 4px;font-size:20px;font-weight:800;text-align:center;">Escolha a instituição de referência</h2>
+        <p style="color:#555;font-size:12.5px;line-height:1.5;text-align:center;margin:0 0 12px;">
+            Selecione <strong>uma universidade/instituto federal (IFES)</strong>. Ela será usada como referência —
+            <span style="color:#E91E63;font-weight:700;">destacada em vermelho</span> — na comparação com os demais
+            cursos de cada área. <span style="color:#7F8C8D;">(Instituições privadas em versão futura.)</span></p>
+        <input id="iesSearch" type="text" placeholder="Buscar por sigla ou nome (ex.: UNB, UFMG, federal do rio)…"
+            style="width:100%;padding:9px 12px;border:1.5px solid #C8CDD4;border-radius:8px;font-size:14px;margin-bottom:10px;" oninput="filterIes(this.value)">
+        <div id="iesList" style="overflow-y:auto;flex:1;min-height:180px;border:1px solid #E0E4E8;border-radius:8px;"></div>
+        <div style="text-align:center;margin-top:14px;">
+            <button id="iesPickerOk" disabled onclick="confirmIesPicker()"
+                style="background:#E91E63;color:#fff;border:none;padding:11px 46px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;opacity:.5;">OK</button>
+        </div>
+    </div>`;
+    document.body.appendChild(overlay);
+    filterIes('');
+    const s = document.getElementById('iesSearch'); if (s) s.focus();
+}
+function filterIes(q) {
+    const list = document.getElementById('iesList');
+    if (!list || !IES_FED) return;
+    const norm = t => (t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const nq = norm(q).trim();
+    const arr = (IES_FED.ies || []).filter(i =>
+        !nq || norm(i.sigla).includes(nq) || norm(i.nome).includes(nq) || norm(i.uf).includes(nq));
+    list.innerHTML = arr.slice(0, 400).map(i =>
+        `<div class="ies-opt" data-sig="${i.sigla}" onclick="pickIes('${i.sigla}')"
+            style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 12px;border-bottom:1px solid #EEF1F4;cursor:pointer;font-size:13px;">
+            <span><strong>${i.sigla === 'UNB' ? 'UnB' : i.sigla}</strong> <span style="color:#7F8C8D;">(${i.uf})</span><br>
+            <span style="color:#7F8C8D;font-size:11px;">${capNome(i.nome)}</span></span>
+            <span style="color:#7F8C8D;font-size:11px;white-space:nowrap;">${i.n_cursos} curso${i.n_cursos!==1?'s':''}</span>
+        </div>`).join('') || '<div style="padding:16px;color:#7F8C8D;font-size:13px;text-align:center;">Nenhuma IFES encontrada.</div>';
+    if (_iesSel) { const el = list.querySelector(`.ies-opt[data-sig="${_iesSel}"]`); if (el) { el.style.background='#FCE4EC'; } }
+}
+function pickIes(sig) {
+    _iesSel = sig;
+    document.querySelectorAll('#iesList .ies-opt').forEach(el => {
+        el.style.background = (el.getAttribute('data-sig') === sig) ? '#FCE4EC' : '#fff';
+    });
+    const ok = document.getElementById('iesPickerOk');
+    if (ok) { ok.disabled = false; ok.style.opacity = 1; }
+}
+function confirmIesPicker() {
+    if (!_iesSel) return;
+    const hit = (IES_FED.ies || []).find(i => i.sigla === _iesSel);
+    if (!hit) return;
+    REF_SIGLA = hit.sigla; REF_NOME = capNome(hit.nome);
+    const u = new URL(location.href); u.searchParams.set('ies', REF_SIGLA);
+    history.replaceState(null, '', u.toString());
+    const ov = document.getElementById('iesPickerOverlay'); if (ov) ov.remove();
+    updateRefLabel();
+    if (META) { if (CURRENT) analisar(); } else { loadMetadata(); }
+}
+// Reabre o seletor para trocar a instituição de referência.
+function trocarIes() { showIesPicker(); }
+function updateRefLabel() {
+    const el = document.getElementById('refAtual');
+    if (el) el.innerHTML = 'Referência: <strong style="color:#E91E63;">★ ' + REF_NOME + '</strong> (' + (REF_SIGLA === 'UNB' ? 'UnB' : REF_SIGLA) + ')';
 }
 
 // Init
