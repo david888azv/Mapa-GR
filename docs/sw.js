@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.3.12';
+const CACHE = 'mapa-gr-v2.3.13';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
