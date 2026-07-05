@@ -75,6 +75,8 @@ a{color:#1565C0;}
 
     <p style="margin-top:12px;">A versão 2.0 expande massivamente o escopo: enquanto a v1.0 cobria apenas Física (518 cursos), a v2.0 cobre <strong>47.094 cursos</strong> organizados em <strong>9 grandes áreas</strong>. O usuário navega entre as áreas via abas no topo da tela, e cada aba carrega seus próprios dados sob demanda (lazy-loading).</p>
 
+    <p style="margin-top:12px;"><strong>Instituição de referência (v2.2):</strong> ao abrir o aplicativo, você escolhe uma das <strong>112 instituições públicas federais (IFES)</strong> — universidades federais, institutos federais e CEFETs — como referência, que passa a ser <strong>destacada em rosa (★)</strong> na comparação com os demais cursos de cada área. Detalhes na aba <strong>Como Usar</strong>. (Instituições privadas em versão futura.)</p>
+
     <h3>Autor</h3>
     <table>
         <tr><td><strong>Autor</strong></td><td>Prof. Titular David Lima Azevedo</td></tr>
@@ -160,12 +162,19 @@ a{color:#1565C0;}
 <!-- COMO USAR -->
 <div class="section" id="sec-uso">
 <div class="card">
-    <h2>Como Usar o MAPA-GR v2.0</h2>
+    <h2>Como Usar o MAPA-GR</h2>
 
-    <h3>1. Abas no topo</h3>
+    <h3>1. Instituição de referência (após aceitar os termos)</h3>
+    <p>Logo após o <strong>"Concordo"</strong>, escolha a <strong>instituição de referência</strong> — uma das <strong>112 instituições públicas federais (IFES)</strong>: universidades federais, institutos federais e CEFETs. Use a <strong>busca por sigla ou nome</strong> (ex.: <code>UNB</code>, <code>UFMG</code>, "federal de minas") e clique em <strong>OK</strong>. A instituição escolhida passa a ser <strong>destacada em rosa (★)</strong> em todos os gráficos, na tabela e no relatório, comparada aos demais cursos de cada área. As <strong>instituições privadas</strong> serão incluídas em versão futura.</p>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Trocar referência:</strong> use o botão <strong>"↺ Trocar instituição de referência"</strong> no topo da barra lateral, a qualquer momento.</li>
+        <li><strong>Link direto:</strong> acrescente <code>?ies=SIGLA</code> à URL (ex.: <code>?ies=UFMG</code>) para abrir já com a referência escolhida, sem passar pelo seletor — ideal para compartilhar.</li>
+    </ul>
+
+    <h3>2. Abas no topo</h3>
     <p>Clique em qualquer aba para carregar os dados daquela grande área. A aba default é <strong>Exatas</strong>. Os dados são baixados sob demanda (~200-600 KB gzipped) e cacheados para uso offline.</p>
 
-    <h3>2. Filtros (Barra Lateral)</h3>
+    <h3>3. Filtros (Barra Lateral)</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li><strong>Área:</strong> Multisseleção das áreas específicas dentro da grande área atual</li>
         <li><strong>Ciclo:</strong> Anos ENADE disponíveis para a grande área</li>
@@ -177,10 +186,10 @@ a{color:#1565C0;}
         <li><strong>Métrica principal:</strong> CPC, ENADE, IDD, % Doutores, % Mestres, Regime, Infraestrutura</li>
     </ul>
 
-    <h3>3. Resultados e Exportação</h3>
+    <h3>4. Resultados e Exportação</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li><strong>Visão geral:</strong> Totais e distribuição de faixas</li>
-        <li><strong>Destaque UnB:</strong> Cursos da UnB em rosa (quando presentes)</li>
+        <li><strong>Destaque da referência:</strong> os cursos da instituição escolhida aparecem em rosa (★) — no card de destaque, na linha da tabela, no gráfico por IES e no relatório</li>
         <li><strong>Ranking:</strong> Tabela ordenável (até 500 linhas visíveis)</li>
         <li><strong>Gráficos:</strong> Faixa, Top IES, Cursos por UF, Evolução temporal</li>
         <li><strong>Relatório textual:</strong> Resumo formatado</li>
@@ -435,6 +444,8 @@ a{color:#1565C0;}
         <tr><th>Versão</th><th>Data</th><th>Alterações</th></tr>
         <tr><td>v1.0</td><td>2026-04-13</td><td>Versão inicial — Graduação em Física (Licenciatura + Bacharelado), ciclos 2017 e 2021, 518 cursos.</td></tr>
         <tr><td>v2.0</td><td>2026-04-13</td><td>Expansão para <strong>9 grandes áreas</strong> (Exatas, Biológicas, Engenharias, Saúde, Agrárias, Sociais, Humanas, Letras, Tecnólogos). <strong>47.094 cursos</strong>. 5 ciclos ENADE. Nova interface com abas e <strong>lazy-loading</strong>. Ciclo 2018 incluído com aviso de CPC parcial.</td></tr>
+        <tr><td>v2.1</td><td>2026-07-05</td><td>Contato unificado <strong>contato@daciencia.org</strong> + <strong>daciencia.org</strong>; bloco de consultoria; termos de uso (propriedade intelectual) e justificação de textos alinhados ao MAPA-PG.</td></tr>
+        <tr><td>v2.2</td><td>2026-07-05</td><td><strong>Seletor de instituição de referência</strong>: após o consentimento, o usuário escolhe entre as <strong>112 IFES públicas federais</strong> (busca por sigla/nome) a instituição destacada (★) na comparação, no lugar da UnB fixa. Botão "Trocar referência" e deep-link <code>?ies=SIGLA</code>. Privadas em versão futura.</td></tr>
     </table>
 </div>
 </div>
