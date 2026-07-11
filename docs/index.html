@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<meta name="theme-color" content="#1B5E20">
+<meta name="theme-color" content="#0F244A">
 <meta name="description" content="MAPA-GR — Análise da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de ~47.000 cursos em 9 grandes áreas.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
@@ -12,12 +12,12 @@
 <script src="chart.umd.min.js"></script>
 <style>
 :root {
-    --azul: #1B5E20; --azul2: #2E7D32; --azul3: #0D3818;
-    --accent: #E91E63; --accent2: #F48FB1;
+    --azul: #0F244A; --azul2: #113B8B; --azul3: #0B1B38;
+    --accent: #E8145F; --accent2: #F472A0;
     --verde: #27AE60; --laranja: #F39C12; --vermelho: #E74C3C;
     --bg: #F5F7FA; --card: #FFFFFF; --borda: #E0E4E8;
     --txt: #2C3E50; --txt2: #7F8C8D;
-    --unb: #E91E63;
+    --unb: #E8145F;
 }
 * { margin:0; padding:0; box-sizing:border-box; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color: var(--txt); }
@@ -909,7 +909,7 @@ function showLicenseModal() {
     overlay.id = 'licenseOverlay';
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:32px;max-width:620px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.4);text-align:center;max-height:90vh;overflow-y:auto;">
-        <h2 style="color:#1B5E20;margin-bottom:4px;font-size:22px;font-weight:800;letter-spacing:1px;">MAPA-GR</h2>
+        <h2 style="color:#0F244A;margin-bottom:4px;font-size:22px;font-weight:800;letter-spacing:1px;">MAPA-GR</h2>
         <p style="color:#555;font-size:12px;margin-bottom:12px;line-height:1.4;">Monitoramento e Análise da Formação Acadêmica na Graduação</p>
         <p style="color:#2C3E50;font-size:13px;margin-bottom:4px;">v${VERSION} — Julho 2026</p>
         <p style="color:#E91E63;font-weight:700;font-size:14px;margin-bottom:2px;">Prof. Titular David Lima Azevedo</p>
@@ -975,7 +975,7 @@ function showIesPicker() {
     overlay.id = 'iesPickerOverlay';
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:9999;display:flex;align-items:center;justify-content:center;';
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:22px 22px 18px;max-width:640px;width:94%;box-shadow:0 8px 32px rgba(0,0,0,.4);max-height:92vh;display:flex;flex-direction:column;">
-        <h2 style="color:#1B5E20;margin:0 0 4px;font-size:20px;font-weight:800;text-align:center;">Escolha a instituição de referência</h2>
+        <h2 style="color:#0F244A;margin:0 0 4px;font-size:20px;font-weight:800;text-align:center;">Escolha a instituição de referência</h2>
         <p style="color:#555;font-size:12.5px;line-height:1.5;text-align:center;margin:0 0 12px;">
             Selecione <strong>uma universidade/instituto federal (IFES)</strong>. Ela será usada como referência —
             <span style="color:#E91E63;font-weight:700;">destacada em vermelho</span> — na comparação com os demais
