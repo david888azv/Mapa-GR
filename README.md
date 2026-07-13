@@ -2,16 +2,31 @@
 
 **Monitoramento e Análise da Formação Acadêmica na Graduação**
 
-Sistema interativo para acompanhamento dos cursos de graduação em **Física** no Brasil, usando os indicadores de qualidade publicados pelo INEP/MEC (SINAES).
+Sistema interativo e gratuito para explorar a qualidade da graduação brasileira pelos
+indicadores do **INEP/SINAES** — CPC, ENADE, IDD e IGC — em **47.091 cursos** de todas as
+9 grandes áreas do conhecimento.
 
-**PWA disponível em:** https://david888azv.github.io/Mapa-GR/
+### 🔗 Abrir o aplicativo: **https://david888azv.github.io/Mapa-GR/**
 
-## Escopo v1.0
+| | |
+|---|---|
+| 📊 **Painel principal** | https://david888azv.github.io/Mapa-GR/ |
+| 📈 **Estatísticas** | https://david888azv.github.io/Mapa-GR/estatisticas.html |
+| ⚖️ **Comparador de cursos** | https://david888azv.github.io/Mapa-GR/comparador.html |
+| 🎓 **Censo da Educação Superior** | https://david888azv.github.io/Mapa-GR/censo.html |
+| 📖 **Documentação e fontes** | https://david888azv.github.io/Mapa-GR/help-doc.html |
 
-- **Área**: Física (Licenciatura + Bacharelado)
-- **Ciclos**: ENADE 2017 e 2021
-- **Total**: 518 cursos em 159 IES, cobertura nacional (27 UFs)
-- **Indicadores**: CPC, ENADE, IDD, IGC, % Doutores, Infraestrutura, Organização Didático-Pedagógica, Regime de Trabalho
+Parte do projeto de divulgação científica **DA ciência** — https://daciencia.org
+
+## Escopo
+
+- **Cobertura**: 47.091 cursos de graduação, em 9 grandes áreas (Exatas, Biológicas,
+  Engenharias, Agrárias, Saúde, Sociais Aplicadas, Humanas, Letras e Tecnólogos)
+- **Ciclos ENADE**: 2017, 2021 e 2023 (conforme a área)
+- **Censo da Educação Superior**: matrículas, ingressantes e concluintes, 2017–2023
+- **Indicadores**: CPC, ENADE, IDD, IGC, % Doutores, Infraestrutura, Organização
+  Didático-Pedagógica, Regime de Trabalho
+- **Funciona offline** (PWA) e não coleta dados de quem usa
 
 ## Distinção MAPA-PG × MAPA-GR
 
@@ -22,8 +37,9 @@ Sistema interativo para acompanhamento dos cursos de graduação em **Física** 
 | Escala | 1–7 | 1–5 |
 | Unidade | Programa | Curso |
 
-Projeto irmão (pós-graduação): **MAPA-PG-UnB** — https://github.com/david888azv/Mapa-PG-UnB
-(app: https://david888azv.github.io/Mapa-PG-UnB/)
+**Projeto irmão (pós-graduação): MAPA-PG**
+- Aplicativo: https://david888azv.github.io/Mapa-PG-UnB/
+- Repositório: https://github.com/david888azv/Mapa-PG-UnB
 
 ## Como instalar no celular (Android)
 
