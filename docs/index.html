@@ -208,7 +208,7 @@ tr:hover { background: #EEF2F7; }
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.2</div>
+        <div id="headerVersion">v2.3</div>
     </div>
 </div>
 
@@ -335,7 +335,19 @@ tr:hover { background: #EEF2F7; }
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.2';
+const VERSION = '2.3';
+
+// --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
+// O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
+// ("ENGENHARIA" etc.), ficando indistinguíveis. `nc` (quando presente) é o nome
+// real do curso, vindo do Censo. A COMPARAÇÃO/agrupamento continua por `ar` —
+// `nc` é só exibição.
+const _abrevArea = a => (a||'').replace(/\(LICENCIATURA\)/,'(L)').replace(/\(BACHARELADO\)/,'(B)');
+const nomeCurso  = c => c.nc || c.ar;                        // rótulo primário (texto puro)
+function cursoComArea(c, abrev){                             // HTML: nome + área ENADE secundária
+    const area = abrev ? _abrevArea(c.ar) : c.ar;
+    return c.nc ? `${c.nc}<br><span style="color:#999;font-weight:400;">ENADE: ${area}</span>` : area;
+}
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
     'AL':'NE','BA':'NE','CE':'NE','MA':'NE','PB':'NE','PE':'NE','PI':'NE','RN':'NE','SE':'NE',
@@ -588,7 +600,7 @@ function analisar() {
         html += `<div class="card"><h2 class="unb">★ ${REF_NOME} (${unbCursos.length} curso${unbCursos.length>1?'s':''})</h2><div class="stats-row">`;
         unbCursos.forEach(c => {
             const pfBadge = c.pf != null ? `<span class="cpc-${c.pf}" style="padding:2px 6px;border-radius:4px;">${c.pf}</span>` : 'SC';
-            html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${c.ar}<br>${c.y} — ${c.mu}</div></div>`;
+            html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${cursoComArea(c,false)}<br>${c.y} — ${c.mu}</div></div>`;
         });
         html += `</div></div>`;
     }
@@ -614,7 +626,7 @@ function analisar() {
             <td>${c.y}</td>
             <td>${grau[0]}</td>
             <td>${modal[0]}</td>
-            <td style="text-align:left;font-size:10px;">${c.ar.replace(/\(LICENCIATURA\)/,'(L)').replace(/\(BACHARELADO\)/,'(B)')}<br><span style="color:#999;">${c.mu || '—'}</span></td>
+            <td style="text-align:left;font-size:10px;">${cursoComArea(c,true)}<br><span style="color:#999;">${c.mu || '—'}</span></td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -814,7 +826,7 @@ function buildReport(cursos, f) {
     if (unbCursos.length) {
         p('★ ' + (REF_NOME || '').toUpperCase() + ':');
         unbCursos.forEach(c => {
-            p(`  ${c.ar} ${c.y} — ${c.mu}/${c.u}`);
+            p(`  ${c.nc ? c.nc+' (ENADE: '+c.ar+')' : c.ar} ${c.y} — ${c.mu}/${c.u}`);
             p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
             p(`    IDD pad: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | %Mst: ${c.ms!=null?c.ms.toFixed(3):'—'}`);
             p(`    Infra: ${c.nf!=null?c.nf.toFixed(3):'—'} | Org.Ped: ${c.op!=null?c.op.toFixed(3):'—'} | Regime: ${c.rg!=null?c.rg.toFixed(3):'—'}`);
@@ -826,7 +838,7 @@ function buildReport(cursos, f) {
     const sorted = [...cursos].filter(c => c[f.metrica] != null).sort((a,b) => b[f.metrica] - a[f.metrica]);
     sorted.slice(0, 20).forEach((c, i) => {
         const mark = (c.sg||'').toUpperCase() === refUpper() ? '★ ' : '  ';
-        p(`  ${mark}${String(i+1).padStart(2)}. ${(c.sg||'').padEnd(14)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | Faixa ${c.pf||'?'} | ${c.ar.substr(0,45)}`);
+        p(`  ${mark}${String(i+1).padStart(2)}. ${(c.sg||'').padEnd(14)} ${c.u} ${c.y} | ${c[f.metrica].toFixed(3)} | Faixa ${c.pf||'?'} | ${nomeCurso(c).substr(0,45)}`);
     });
     p('');
 
@@ -888,10 +900,10 @@ function exportCSV() {
     const f = getFilters();
     const cursos = filterCursos(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
-    const header = ['grande_area','ano','sigla','ies','uf','municipio','area','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
+    const header = ['grande_area','ano','sigla','ies','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
     const rows = cursos.map(c => [
         CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`, c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
-        `"${c.ar.replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
+        `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
         c.pf||'', c.pc||'', c.e||'', c.ip||'', c.ms||'', c.dr||'', c.rg||'', c.nf||'',
         c.ni||'', c.np||''
     ].join(';'));

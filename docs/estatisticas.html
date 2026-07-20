@@ -983,12 +983,13 @@ function exportCSV() {
     var cursos = filterCursos(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
 
-    var header = ['grande_area','ano','sigla','ies','uf','regiao','municipio','area','faixa','cpc_cont','enade_cont','idd_pad','n_inscritos','n_participantes'];
+    var header = ['grande_area','ano','sigla','ies','uf','regiao','municipio','area','nome_curso','faixa','cpc_cont','enade_cont','idd_pad','n_inscritos','n_participantes'];
     var rows = cursos.map(function(c) {
         return [
             c._gaLabel, c.y, c.sg, '"' + (c.ie||'').replace(/"/g,'""') + '"',
             c.u, REGIAO_LABELS[c._r] || c._r, '"' + (c.mu||'').replace(/"/g,'""') + '"',
             '"' + c.ar.replace(/"/g,'""') + '"',
+            '"' + (c.nc||'').replace(/"/g,'""') + '"',
             c.pf||'', c.pc||'', c.e||'', c.ip||'',
             c.ni||'', c.np||''
         ].join(';');

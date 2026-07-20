@@ -2,6 +2,8 @@ dados_inep/*.xlsx
 dados_inep/*.xls
 dados_inep/*.csv
 dados_inep/*.zip
+dados_inep/*.json
+dados_inep/*.ods
 __pycache__/
 *.pyc
 .venv/

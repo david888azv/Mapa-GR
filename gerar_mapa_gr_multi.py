@@ -18,11 +18,47 @@ Saída: docs/dados/{grande_area}.json (minificado)
 import openpyxl
 import json
 import os
+import re
+import unicodedata
 from collections import defaultdict
 from datetime import datetime
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 IN_DIR = os.path.join(BASE, 'dados_inep')
+CC_NOME_PATH = os.path.join(IN_DIR, 'cc_nome.json')
+
+
+def _norm_nome(x):
+    """Chave de comparacao: sem acento, sem parenteses (BACHARELADO/...), so alnum."""
+    x = re.sub(r'\(.*?\)', '', x or '')
+    x = unicodedata.normalize('NFKD', x).encode('ascii', 'ignore').decode()
+    return re.sub(r'[^A-Za-z0-9]', '', x).upper()
+
+
+def carregar_cc_nome():
+    """Mapa cc(str) -> nome real do curso (Censo). Vazio se ausente (nao fatal)."""
+    if not os.path.exists(CC_NOME_PATH):
+        print(f'  [aviso] {CC_NOME_PATH} ausente — rode gerar_cc_nome.py antes '
+              'para preencher os nomes reais (campo `nc`). Seguindo sem eles.')
+        return {}
+    with open(CC_NOME_PATH, encoding='utf-8') as f:
+        return json.load(f)
+
+
+def injetar_nomes(cursos, cc_nome):
+    """Preenche `nc` (nome real do curso) SO quando ele acrescenta informacao alem
+    da area de avaliacao ENADE (`ar`) — i.e., nos cursos agrupados em areas
+    genericas como "ENGENHARIA". Retorna (n_preenchidos, n_resolvidos)."""
+    n_fill = n_res = 0
+    for c in cursos:
+        nome = cc_nome.get(str(c.get('cc')))
+        if not nome:
+            continue
+        n_res += 1
+        if _norm_nome(nome) != _norm_nome(c.get('ar', '')):
+            c['nc'] = nome
+            n_fill += 1
+    return n_fill, n_res
 
 # ===== Mapeamento Área INEP → Grande Área =====
 AREA_TO_GROUP = {
@@ -300,6 +336,14 @@ def main():
 
     all_courses = d17 + d18 + d21 + d22 + d23
     print(f'\nTotal cursos consolidados: {len(all_courses)}')
+
+    # Nome real do curso (Censo) -> campo `nc`, só onde a área ENADE (`ar`) esconde
+    # o nome (áreas genéricas como "ENGENHARIA"). Ver gerar_cc_nome.py.
+    cc_nome = carregar_cc_nome()
+    n_fill, n_res = injetar_nomes(all_courses, cc_nome)
+    print(f'  Nomes reais: {n_res}/{len(all_courses)} resolvidos no Censo '
+          f'({n_res/len(all_courses)*100:.1f}%) | `nc` preenchido em {n_fill} '
+          f'({n_fill/len(all_courses)*100:.1f}%, onde difere da área ENADE)')
 
     # Agrupar por grande área
     groups = defaultdict(list)
