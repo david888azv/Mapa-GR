@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.4.1 — Documentação e Fontes de Dados</title>
+<title>MAPA-GR v2.4.2 — Documentação e Fontes de Dados</title>
 <meta name="description" content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES (CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -64,12 +64,12 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentação v2.4.1</h1>
+        <h1><em>MAPA-GR</em> — Documentação v2.4.2</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div>Prof. David L. Azevedo</div>
-            <div>v2.4.1 — Julho 2026</div>
+            <div>v2.4.2 — Julho 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -201,7 +201,7 @@ a{color:#2563EB;}
 
     <h3>3. Filtros (Barra Lateral)</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
-        <li><strong>Busca (sigla, curso ou área):</strong> campo de texto que casa a <strong>sigla da IES</strong>, o <strong>nome real do curso</strong> ou a <strong>área de avaliação do ENADE</strong>, de forma parcial e <strong>acento-insensível</strong>. Ex.: <code>Biomédica</code> (ou <code>biomedica</code>) encontra a Engenharia Biomédica de todas as IES — inclusive a da UFPE, que é avaliada sob a área ENADE genérica "ENGENHARIA"; <code>UFPE</code> filtra pela sigla.</li>
+        <li><strong>Busca (global):</strong> campo de texto que varre as <strong>9 grandes áreas</strong> (não só a aba atual), <strong>acento-insensível</strong>, casando <strong>sigla da IES, nome real do curso, área ENADE, nome da IES e município</strong>. Vários termos separados por espaço combinam com <strong>"E"</strong>: <code>ufpe biomedica</code> acha exatamente a Engenharia Biomédica da UFPE; <code>biomedica</code> sozinho lista todas. Cursos sem exame ENADE próprio (ex.: Engenharia Biomédica, avaliada sob a área genérica "ENGENHARIA") são encontrados pelo nome. Em modo de busca, os filtros de <strong>Área, Ciclo e UF</strong> (específicos da aba) não se aplicam.</li>
         <li><strong>Área:</strong> Multisseleção das <strong>áreas de avaliação do ENADE</strong> dentro da grande área atual — é a <strong>unidade de comparação</strong> do INEP. Nomes de curso não aparecem aqui (para achar um curso pelo nome, use a busca acima).</li>
         <li><strong>Ciclo:</strong> Anos ENADE disponíveis para a grande área</li>
         <li><strong>Grau:</strong> Licenciatura, Bacharelado, Tecnólogo/Outro</li>
@@ -475,6 +475,7 @@ a{color:#2563EB;}
         <tr><td>v2.2</td><td>2026-07-05</td><td><strong>Seletor de instituição de referência</strong>: após o consentimento, o usuário escolhe entre as <strong>112 IFES públicas federais</strong> (busca por sigla/nome) a instituição destacada (★) na comparação, no lugar da UnB fixa. Botão "Trocar referência" e deep-link <code>?ies=SIGLA</code>. Privadas em versão futura.</td></tr>
         <tr><td>v2.4.0</td><td>2026-07-20</td><td><strong>Nomes reais dos cursos</strong>: cada curso passa a exibir seu nome (Microdados do Censo) com a área de avaliação do ENADE como contexto. Cursos sem exame próprio — antes agrupados como "ENGENHARIA" genérica (ex.: Engenharia Biomédica, Naval, de Materiais) — ficam distinguíveis. Cobertura 99,7%; nome exibido em <strong>11.395 cursos</strong>. Coluna <code>nome_curso</code> nos exports CSV.</td></tr>
         <tr><td>v2.4.1</td><td>2026-07-20</td><td><strong>Busca por nome do curso e área</strong>: o campo de busca da barra lateral passa a casar, além da sigla da IES, o <strong>nome do curso</strong> e a <strong>área ENADE</strong>, de forma acento-insensível (ex.: "Biomédica" acha a Engenharia Biomédica). O multiseletor de Área permanece por área ENADE.</td></tr>
+        <tr><td>v2.4.2</td><td>2026-07-20</td><td><strong>Busca global e termos combinados</strong>: o campo de busca passa a varrer as <strong>9 grandes áreas</strong> (não só a aba atual) e a aceitar <strong>vários termos com "E"</strong> (ex.: "ufpe biomedica" isola a Engenharia Biomédica da UFPE). Assim, digitar o nome do curso de qualquer aba o encontra. Casa também nome da IES e município.</td></tr>
     </table>
 </div>
 </div>
@@ -482,7 +483,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.4.1 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.4.2 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>

@@ -208,7 +208,7 @@ tr:hover { background: #EEF2F7; }
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.4.1</div>
+        <div id="headerVersion">v2.4.2</div>
     </div>
 </div>
 
@@ -329,13 +329,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.4.1 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.4.2 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.4.1';
+const VERSION = '2.4.2';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -514,8 +514,9 @@ function getFilters() {
     const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
     const metrica = document.getElementById('selMetrica').value;
     const searchOn = document.getElementById('searchEnabled').checked;
-    const searchTerm = document.getElementById('searchSigla').value.trim().toUpperCase();
-    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, searchOn, searchTerm };
+    const searchTerm = document.getElementById('searchSigla').value.trim();
+    const searchTokens = _srch(searchTerm).split(/\s+/).filter(Boolean); // termos combinados (E)
+    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, searchOn, searchTerm, searchTokens };
 }
 
 function normModal(m) {
@@ -531,33 +532,58 @@ function normGrau(g) {
     return 'Outro';
 }
 
-function filterCursos(f) {
-    if (!CURRENT) return [];
-    return CURRENT.cursos.filter(c => {
-        if (f.searchOn && f.searchTerm) {
-            const t = _srch(f.searchTerm);
-            if (!(_srch(c.sg).includes(t) || _srch(c.nc).includes(t) || _srch(c.ar).includes(t))) return false;
+function filterCursos(f, pool) {
+    // pool != null => BUSCA GLOBAL (varre todas as áreas). Nesse modo, os filtros
+    // específicos da aba (Área/Ciclo/UF, populados a partir da grande área atual)
+    // não se aplicam; os globais (Grau/Modalidade/Categoria/Faixa/Região) sim.
+    const global = !!pool;
+    const src = pool || (CURRENT ? CURRENT.cursos : []);
+    return src.filter(c => {
+        if (f.searchOn && f.searchTokens.length) {
+            // termos combinados (E): cada token precisa casar algum campo. Campos
+            // unidos por espaco (tokens nao tem espaco), evitando vazamento entre eles.
+            const hay = [c.sg, c.nc, c.ar, c.ie, c.mu].map(_srch).join(' ');
+            if (!f.searchTokens.every(t => hay.includes(t))) return false;
         }
-        if (f.areas.length && !f.areas.includes(c.ar)) return false;
-        if (!f.ciclos.includes(c.y)) return false;
+        if (!global && f.areas.length && !f.areas.includes(c.ar)) return false;
+        if (!global && !f.ciclos.includes(c.y)) return false;
+        if (!global && f.ufs.length && !f.ufs.includes(c.u)) return false;
         const grau = normGrau(c.g || '');
         if (!f.graus.includes(grau)) return false;
         if (!f.modais.includes(normModal(c.m))) return false;
         if (!f.cats.includes(c.ct)) return false;
         if (c.pf == null || !f.pfs.includes(c.pf)) return false;
         if (!f.regs.includes(c._r)) return false;
-        if (f.ufs.length && !f.ufs.includes(c.u)) return false;
         return true;
     });
+}
+
+// Garante que todas as grandes áreas estejam carregadas (para a busca global).
+async function ensureAllAreas() {
+    await Promise.all(Object.keys(META.grandes_areas).map(s => loadArea(s).catch(() => null)));
+}
+function allCursos() {
+    return Object.keys(META.grandes_areas).flatMap(s => (CACHE[s] ? CACHE[s].cursos : []));
 }
 
 function mean(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
 
 // === RENDERING ===
-function analisar() {
+let _searchSeq = 0;
+async function analisar() {
     if (!CURRENT) return;
     const f = getFilters();
-    const cursos = filterCursos(f);
+    const global = f.searchOn && f.searchTokens.length > 0;
+    let cursos;
+    if (global) {
+        const seq = ++_searchSeq;
+        setStatus('Buscando em todas as áreas…');
+        await ensureAllAreas();
+        if (seq !== _searchSeq) return;   // uma busca mais nova começou; aborta esta
+        cursos = filterCursos(f, allCursos());
+    } else {
+        cursos = filterCursos(f);
+    }
     const main = document.getElementById('results');
 
     if (cursos.length === 0) {
@@ -578,8 +604,9 @@ function analisar() {
     // Check partial data
     const partialCount = cursos.filter(c => c._partial).length;
     const partialBadge = partialCount > 0 ? `<span class="partial-badge">${partialCount} sem CPC composto</span>` : '';
+    const scopeTitle = global ? '🔎 Busca global (todas as áreas)' : `${CURRENT.icon} ${CURRENT.label}`;
 
-    let html = `<div class="card"><h2>${CURRENT.icon} ${CURRENT.label} ${partialBadge}</h2>
+    let html = `<div class="card"><h2>${scopeTitle} ${partialBadge}</h2>
         <div class="stats-row">
             <div class="stat-box"><div class="value">${cursos.length}</div><div class="label">Cursos filtrados</div></div>
             <div class="stat-box"><div class="value">${ies.size}</div><div class="label">IES</div></div>
@@ -591,6 +618,8 @@ function analisar() {
             <div class="stat-box" style="border-left-color:#FFE0B2;"><div class="value">${fs[2]||0}</div><div class="label">Faixa 2</div></div>
             <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Faixa 1</div></div>
         </div></div>`;
+
+    if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas — os filtros de <b>Área, Ciclo e UF</b> (específicos de cada aba) não se aplicam aqui; <b>Grau, Modalidade, Categoria, Faixa e Região</b> continuam valendo.</p></div>`;
 
     if (partialCount > 0) {
         html += `<div class="card" style="background:#FFF3E0;border-left:4px solid #FF9800;">
@@ -803,7 +832,7 @@ function buildReport(cursos, f) {
     p(`  UFs: ${f.ufs.length}/${totalUfs} (${f.ufs.length === totalUfs ? 'todas' : f.ufs.join(', ')})`);
     p(`  Métrica principal: ${metricaLabel}`);
     if (f.searchOn && f.searchTerm) {
-        p(`  Busca por sigla: "${f.searchTerm}" (parcial)`);
+        p(`  Busca: "${f.searchTerm}" (sigla, curso ou área; global)`);
     }
     p('');
     p(`Resultados:`);
