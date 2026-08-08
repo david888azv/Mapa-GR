@@ -731,6 +731,7 @@ function renderTopResults(picks, area, slug, cfg) {
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
             <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
+            <th title="Código e-MEC da IES e do curso, como divulgados pelo INEP">e-MEC<br>IES / curso</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -746,6 +747,7 @@ function renderTopResults(picks, area, slug, cfg) {
             <td><strong>${c.sg||'—'}</strong></td>
             ${tipoCell}
             <td>${c.y||'—'}</td>
+            <td style="font-size:11px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -778,7 +780,8 @@ function renderTopResults(picks, area, slug, cfg) {
                 ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
                 ${c.o ? `📚 ${c.o}<br>` : ''}
                 ${c.m ? `💻 ${c.m}<br>` : ''}
-                Código e-MEC: ${c.cc || 'n/d'}<br>
+                Código e-MEC da IES: ${c.ci != null ? c.ci : 'n/d'}<br>
+                Código e-MEC do curso: ${c.cc != null ? c.cc : 'n/d'}<br>
                 Ano da avaliação: ${c.y || 'n/d'}
             </div>
         </div>`;
@@ -915,6 +918,7 @@ function renderResults(picks, missing, area, slug, thresholds) {
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
             <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
+            <th title="Código e-MEC da IES e do curso, como divulgados pelo INEP">e-MEC<br>IES / curso</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -930,6 +934,7 @@ function renderResults(picks, missing, area, slug, thresholds) {
             <td><strong>${c.sg||'—'}</strong></td>
             ${tipoCell}
             <td>${c.y||'—'}</td>
+            <td style="font-size:11px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -962,7 +967,8 @@ function renderResults(picks, missing, area, slug, thresholds) {
                 ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
                 ${c.o ? `📚 ${c.o}<br>` : ''}
                 ${c.m ? `💻 ${c.m}<br>` : ''}
-                Código e-MEC: ${c.cc || 'n/d'}<br>
+                Código e-MEC da IES: ${c.ci != null ? c.ci : 'n/d'}<br>
+                Código e-MEC do curso: ${c.cc != null ? c.cc : 'n/d'}<br>
                 Ano da avaliação: ${c.y || 'n/d'}<br>
                 Ano de fundação: n/d
             </div>
