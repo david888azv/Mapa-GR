@@ -1,0 +1,7 @@
+# HTMLs de saída gerados por gerar_offline.py (grandes, dados embutidos)
+# Regenere com: python3 gerar_offline.py
+index.html
+estatisticas.html
+comparador.html
+censo.html
+help-doc.html
