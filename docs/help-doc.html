@@ -102,6 +102,8 @@ a{color:#2563EB;}
 
     <p style="margin-top:12px;"><strong>Instituição de referência (v2.5):</strong> ao abrir o aplicativo, você escolhe uma das <strong>264 instituições públicas</strong> — 112 federais, 117 estaduais e 35 municipais — como referência, que passa a ser <strong>destacada em rosa (★)</strong> na comparação com os demais cursos de cada área. Detalhes na aba <strong>Como Usar</strong>. (Instituições privadas em versão futura.)</p>
 
+    <p style="margin-top:12px;text-align:justify;">O seletor define apenas <em>qual instituição fica em destaque</em>. Os cursos de <strong>todas</strong> as instituições — públicas e privadas — sempre entram na análise, no ranking e nas estatísticas, e podem ser recortados a qualquer momento pelo filtro <strong>Categoria</strong> da barra lateral.</p>
+
     <h3>Autor</h3>
     <table>
         <tr><td><strong>Autor</strong></td><td>Prof. Titular David Lima Azevedo</td></tr>
@@ -193,7 +195,8 @@ a{color:#2563EB;}
     <p>Logo após o <strong>"Concordo"</strong>, escolha a <strong>instituição de referência</strong> — uma das <strong>264 instituições públicas</strong>: 112 federais (universidades, institutos federais e CEFETs), 117 estaduais e 35 municipais. Use a <strong>busca por sigla, nome, UF ou esfera</strong> (ex.: <code>UEMA</code>, <code>UFMG</code>, "federal de minas", <code>estadual</code>, <code>MA</code>) e clique em <strong>OK</strong>. A instituição escolhida passa a ser <strong>destacada em rosa (★)</strong> em todos os gráficos, na tabela e no relatório, comparada aos demais cursos de cada área. As <strong>instituições privadas</strong> serão incluídas em versão futura.</p>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li><strong>Trocar referência:</strong> use o botão <strong>"↺ Trocar instituição de referência"</strong> no topo da barra lateral, a qualquer momento.</li>
-        <li><strong>Link direto:</strong> acrescente <code>?ies=SIGLA</code> à URL (ex.: <code>?ies=UFMG</code>) para abrir já com a referência escolhida, sem passar pelo seletor — ideal para compartilhar.</li>
+        <li><strong>Etiqueta de esfera:</strong> cada opção da lista mostra se a instituição é <strong>federal</strong>, <strong>estadual</strong> ou <strong>municipal</strong>. As 7 instituições sem sigla no cadastro do INEP aparecem pelo nome.</li>
+        <li><strong>Link direto:</strong> acrescente <code>?ies=SIGLA</code> à URL (ex.: <code>?ies=UFMG</code>) para abrir já com a referência escolhida, sem passar pelo seletor — ideal para compartilhar. Também vale o <strong>código da IES do INEP</strong> (ex.: <code>?ies=568</code>), que é a forma <strong>não ambígua</strong>: a sigla <code>FATEC</code>, por exemplo, pertence a 5 instituições distintas, e por sigla abre-se a primeira delas.</li>
     </ul>
 
     <h3>2. Abas no topo</h3>
@@ -472,11 +475,49 @@ a{color:#2563EB;}
         <tr><td>v1.0</td><td>2026-04-13</td><td>Versão inicial — Graduação em Física (Licenciatura + Bacharelado), ciclos 2017 e 2021, 518 cursos.</td></tr>
         <tr><td>v2.0</td><td>2026-04-13</td><td>Expansão para <strong>9 grandes áreas</strong> (Exatas, Biológicas, Engenharias, Saúde, Agrárias, Sociais, Humanas, Letras, Tecnólogos). <strong>47.094 cursos</strong>. 5 ciclos ENADE. Nova interface com abas e <strong>lazy-loading</strong>. Ciclo 2018 incluído com aviso de CPC parcial.</td></tr>
         <tr><td>v2.1</td><td>2026-07-05</td><td>Contato unificado <strong>contato@daciencia.org</strong> + <strong>daciencia.org</strong>; bloco de consultoria; termos de uso (propriedade intelectual) e justificação de textos alinhados ao MAPA-PG.</td></tr>
-        <tr><td>v2.5</td><td>2026-08-08</td><td><strong>Estaduais e municipais no seletor de referência</strong>: o índice passa de 112 IFES federais para <strong>264 instituições públicas</strong> (112 federais, 117 estaduais, 35 municipais) — a UEMA, a UNESP, a UERJ e as demais estaduais passam a ser selecionáveis. A referência passou a ser identificada pelo <strong>código da IES do INEP</strong> em vez da sigla (a sigla FATEC pertence a 5 instituições distintas e 7 IES não têm sigla). Busca também por esfera (<code>estadual</code>) e deep-link por código: <code>?ies=568</code>. Corrigido o seletor vazio na versão offline. Privadas em versão futura.</td></tr>
         <tr><td>v2.2</td><td>2026-07-05</td><td><strong>Seletor de instituição de referência</strong>: após o consentimento, o usuário escolhe entre as <strong>112 IFES públicas federais</strong> (busca por sigla/nome) a instituição destacada (★) na comparação, no lugar da UnB fixa. Botão "Trocar referência" e deep-link <code>?ies=SIGLA</code>. Privadas em versão futura.</td></tr>
         <tr><td>v2.4.0</td><td>2026-07-20</td><td><strong>Nomes reais dos cursos</strong>: cada curso passa a exibir seu nome (Microdados do Censo) com a área de avaliação do ENADE como contexto. Cursos sem exame próprio — antes agrupados como "ENGENHARIA" genérica (ex.: Engenharia Biomédica, Naval, de Materiais) — ficam distinguíveis. Cobertura 99,7%; nome exibido em <strong>11.395 cursos</strong>. Coluna <code>nome_curso</code> nos exports CSV.</td></tr>
         <tr><td>v2.4.1</td><td>2026-07-20</td><td><strong>Busca por nome do curso e área</strong>: o campo de busca da barra lateral passa a casar, além da sigla da IES, o <strong>nome do curso</strong> e a <strong>área ENADE</strong>, de forma acento-insensível (ex.: "Biomédica" acha a Engenharia Biomédica). O multiseletor de Área permanece por área ENADE.</td></tr>
         <tr><td>v2.4.2</td><td>2026-07-20</td><td><strong>Busca global e termos combinados</strong>: o campo de busca passa a varrer as <strong>9 grandes áreas</strong> (não só a aba atual) e a aceitar <strong>vários termos com "E"</strong> (ex.: "ufpe biomedica" isola a Engenharia Biomédica da UFPE). Assim, digitar o nome do curso de qualquer aba o encontra. Casa também nome da IES e município.</td></tr>
+        <tr><td><strong>v2.5.0</strong></td><td>2026-08-08</td><td><strong>Estaduais e municipais no seletor de instituição de referência.</strong> Detalhamento na tabela abaixo.</td></tr>
+    </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
+    <p style="text-align:justify;">Até a v2.4 o seletor de referência cobria apenas as <strong>112 instituições públicas federais</strong>. Os cursos das estaduais e municipais <em>já eram analisados e ranqueados normalmente</em> — o que estava limitado era só a escolha de qual instituição ficaria em destaque (★) na comparação. A v2.5.0 remove essa limitação e arruma o que ela escondia.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>264 instituições públicas</strong></td>
+            <td>O índice do seletor passa de 112 federais para <strong>264 IES públicas</strong>: <strong>112 federais</strong> (universidades, institutos federais e CEFETs), <strong>117 estaduais</strong> e <strong>35 municipais</strong>. A UEMA, a UNESP, a UERJ, as estaduais do interior e as municipais passam a ser escolhíveis como referência. Instituições <strong>privadas</strong> seguem para versão futura.</td>
+        </tr>
+        <tr>
+            <td><strong>Referência pelo código da IES</strong></td>
+            <td>A instituição de referência passou a ser identificada pelo <strong>código da IES do INEP</strong> (campo <code>ci</code>) e não mais pela sigla. Entre as públicas a sigla <code>FATEC</code> pertence a <strong>5 instituições distintas</strong>, <strong>7 instituições não têm sigla</strong> no cadastro e algumas variam a grafia entre ciclos: chavear por sigla fundia umas e sumia com outras (254 entradas para 264 instituições reais). A sigla continua sendo o rótulo exibido; as 7 sem sigla aparecem pelo nome.</td>
+        </tr>
+        <tr>
+            <td><strong>Destaque (★) corrigido</strong></td>
+            <td>Os <strong>6 pontos de comparação</strong> do aplicativo passam a decidir o destaque por uma regra única. Onde o dado é o curso — bloco da instituição na tela e no relatório, tabela de resultados e Top 20 de cursos — a comparação é feita <strong>pelo código da IES</strong>; antes, duas instituições de mesma sigla podiam receber o ★ trocado. Nos dois agregados cuja chave é a própria sigla (gráfico de IES e Top 10 de IES) a comparação segue por sigla, porque é assim que o INEP agrega esses totais.</td>
+        </tr>
+        <tr>
+            <td><strong>Busca por esfera e UF</strong></td>
+            <td>O campo do seletor casa <strong>sigla, nome, UF e esfera administrativa</strong>, ignorando acentos e caixa: <code>estadual</code> lista as estaduais, <code>MA</code> lista as do Maranhão, "federal de minas" chega à UFMG. Cada opção traz uma <strong>etiqueta colorida</strong> — federal, estadual ou municipal.</td>
+        </tr>
+        <tr>
+            <td><strong>Link direto por código</strong></td>
+            <td><code>?ies=</code> aceita a <strong>sigla</strong> (<code>?ies=UFMG</code>) ou o <strong>código INEP</strong> (<code>?ies=568</code>). O código é a forma não ambígua — é o que se deve usar para compartilhar uma referência cuja sigla é repetida.</td>
+        </tr>
+        <tr>
+            <td><strong>Versão offline</strong></td>
+            <td>Corrigido o <strong>seletor vazio na versão offline</strong>: o índice de IES públicas passou a ser embutido nas páginas autocontidas. O gerador da versão offline (<code>offline/gerar_offline.py</code>) foi versionado no repositório, para que a distribuição local possa ser regerada a cada atualização de dados.</td>
+        </tr>
+        <tr>
+            <td><strong>Cache e desempenho</strong></td>
+            <td>Service Worker em <code>mapa-gr-v2.5.0</code>, para que os clientes já instalados busquem o índice novo em vez do antigo. Custo: <strong>+23 KB (+3,9 KB comprimido)</strong> sobre ~17 MB de dados de curso. Não há impacto na análise — a referência nunca filtrou o universo comparado.</td>
+        </tr>
+        <tr>
+            <td><strong>Reprodutibilidade</strong></td>
+            <td>Novo gerador <code>build/gerar_ies_publicas.py</code> (substitui <code>gerar_ies_federais.py</code>): filtra as três categorias administrativas públicas do INEP, agrupa por código de IES e resolve as grafias variantes pela ocorrência mais frequente, com verificações de duplicidade. <code>CITATION.cff</code> e <code>.zenodo.json</code> atualizados para a v2.5.0.</td>
+        </tr>
     </table>
 </div>
 </div>

@@ -26,6 +26,12 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
 - **Censo da Educação Superior**: matrículas, ingressantes e concluintes, 2017–2023
 - **Indicadores**: CPC, ENADE, IDD, IGC, % Doutores, Infraestrutura, Organização
   Didático-Pedagógica, Regime de Trabalho
+- **Instituição de referência** (v2.5): ao abrir, escolhe-se uma entre **264 instituições
+  públicas** — 112 federais, 117 estaduais e 35 municipais — que passa a ser destacada (★)
+  na comparação. Busca por sigla, nome, UF ou esfera; link direto por sigla
+  (`?ies=UFMG`) ou pelo código da IES do INEP (`?ies=568`). O seletor define só o
+  destaque: os cursos de **todas** as instituições, inclusive privadas, sempre entram na
+  análise. Privadas selecionáveis em versão futura.
 - **Funciona offline** (PWA) e não coleta dados de quem usa
 
 ## Distinção MAPA-PG × MAPA-GR
@@ -55,6 +61,8 @@ mapa-gr/
 ├── dados_inep.json          # dataset consolidado (gerado por gerar_mapa_gr.py)
 ├── help-doc.html            # documentação
 ├── gerar_mapa_gr.py         # script de extração dos XLSX do INEP
+├── build/
+│   └── gerar_ies_publicas.py  # índice das 264 IES públicas (seletor de referência)
 ├── docs/                    # PWA servida pelo GitHub Pages
 │   ├── index.html
 │   ├── manifest.json
@@ -62,11 +70,18 @@ mapa-gr/
 │   ├── chart.umd.min.js
 │   ├── dados_inep.json
 │   ├── help-doc.html
+│   ├── dados/               # área-*.json + ies_publicas.json
 │   └── icons/
+├── offline/                 # distribuição local, 5 páginas autocontidas
+│   └── gerar_offline.py     # regera a versão offline a partir de docs/
 └── logos/
 ```
 
 A pasta `dados_inep/` local (arquivos XLSX brutos do INEP, ~15 MB) não é commitada — ver `.gitignore`. Para regenerar o dataset, baixe os arquivos dos Indicadores de Qualidade do portal INEP e rode `python3 gerar_mapa_gr.py`.
+
+Para reconstruir o índice do seletor de referência: `python3 build/gerar_ies_publicas.py`
+(lê os `docs/dados/*.json` de curso e grava `docs/dados/ies_publicas.json`). Depois de
+alterar `docs/`, regere a versão local com `cd offline && python3 gerar_offline.py`.
 
 ## Fontes de dados
 
