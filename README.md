@@ -32,7 +32,13 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
   (`?ies=UFMG`) ou pelo código da IES do INEP (`?ies=568`). O seletor define só o
   destaque: os cursos de **todas** as instituições, inclusive privadas, sempre entram na
   análise. Privadas selecionáveis em versão futura.
+- **Códigos e-MEC** (v2.6): cada linha do ranking traz os códigos e-MEC da **IES** e do
+  **curso** (`2 / 1188880`); no CSV saem separados em `cod_ies_emec` e `cod_curso_emec`.
+  São os códigos vigentes na inscrição do ENADE daquele ciclo, não os do cadastro atual
 - **Funciona offline** (PWA) e não coleta dados de quem usa
+
+> A **USP não consta da base**: não participa do ENADE, então não tem Conceito ENADE e
+> não entra nos Indicadores de Qualidade publicados pelo INEP. É ausência da fonte.
 
 ## Distinção MAPA-PG × MAPA-GR
 

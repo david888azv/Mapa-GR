@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.5.0 — Documentação e Fontes de Dados</title>
+<title>MAPA-GR v2.6.0 — Documentação e Fontes de Dados</title>
 <meta name="description" content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES (CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -64,12 +64,12 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentação v2.5.0</h1>
+        <h1><em>MAPA-GR</em> — Documentação v2.6.0</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div>Prof. David L. Azevedo</div>
-            <div>v2.5.0 — Agosto 2026</div>
+            <div>v2.6.0 — Agosto 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -221,10 +221,21 @@ a{color:#2563EB;}
         <li><strong>Nome do curso:</strong> cada curso é exibido pelo seu <strong>nome real</strong> (Censo INEP), com a <strong>área de avaliação do ENADE</strong> como contexto — cursos sem exame próprio (ex.: Engenharia Biomédica, Naval, de Materiais) aparecem sob <code>ENADE: ENGENHARIA</code></li>
         <li><strong>Destaque da referência:</strong> os cursos da instituição escolhida aparecem em rosa (★) — no card de destaque, na linha da tabela, no gráfico por IES e no relatório</li>
         <li><strong>Ranking:</strong> Tabela ordenável (até 500 linhas visíveis)</li>
+        <li><strong>Códigos e-MEC (v2.6):</strong> a coluna <strong>e-MEC IES / curso</strong> traz os dois códigos de cada linha do ranking, no formato <code>2 / 1188880</code> — o primeiro identifica a <strong>instituição</strong>, o segundo o <strong>curso</strong>. No CSV eles saem em colunas separadas (<code>cod_ies_emec</code> e <code>cod_curso_emec</code>), e no relatório e no card de destaque aparecem por extenso. Ver a ressalva abaixo.</li>
         <li><strong>Gráficos:</strong> Faixa, Top IES, Cursos por UF, Evolução temporal</li>
         <li><strong>Relatório textual:</strong> Resumo formatado</li>
         <li><strong>CSV:</strong> Exportação dos cursos filtrados</li>
     </ul>
+
+    <div class="warn-box" style="text-align:justify;">
+        <strong>Os códigos e-MEC são um retrato do momento da inscrição no ENADE</strong>, não o estado atual do cadastro. É o que o próprio INEP declara na planilha de origem: <em>"Nome, sigla, Organização Acadêmica, Categoria Administrativa e código e-MEC da IES são divulgados considerando o status de cada dado no momento da inscrição no Enade"</em>. Por isso o código vem sempre <strong>ao lado do ano do ciclo</strong> — e por isso pode divergir de uma consulta feita hoje no e-MEC.
+        <br><br>
+        A divergência não é rara nem é erro: na base do MAPA-GR, <strong>214 códigos de curso</strong> aparecem sob mais de uma instituição ao longo dos ciclos, e <strong>339 códigos de IES</strong> aparecem com mais de uma sigla. O caso típico é o desmembramento — o curso de código <code>1188880</code>, por exemplo, aparece sob a UFMT (<code>ci=1</code>) num ciclo e sob a UFR de Rondonópolis (<code>ci=25352</code>) noutro, porque a instituição mudou entre um ENADE e o seguinte. O par exibido é fiel ao ciclo daquela linha.
+    </div>
+
+    <div class="info-box" style="text-align:justify;">
+        <strong>Por que a USP não aparece.</strong> A Universidade de São Paulo <strong>não consta da base</strong> — não por omissão do MAPA-GR, mas porque não está nos arquivos de origem do INEP: as planilhas dos Indicadores de Qualidade não trazem uma única linha com o código da USP. Sem participação no ENADE não há Conceito ENADE, e sem ele não há CPC nem IDD a publicar. O mesmo vale para qualquer curso cujos estudantes não tenham participado do exame.
+    </div>
 
     <div class="warn-box" style="text-align:justify;">
         <strong>Ciclo 2018 (Sociais Aplicadas + Humanas):</strong> Para o ciclo ENADE 2018 (Administração, Direito, Contábeis, Psicologia e outras), o INEP <strong>não publicou o CPC composto completo</strong> — apenas o Conceito ENADE e o IDD. Para esses cursos, o MAPA-GR usa a faixa ENADE (1-5) como proxy, e indicadores como % Doutores, Infraestrutura, Regime de Trabalho <strong>não estão disponíveis</strong>. Os cursos afetados aparecem marcados com aviso "sem CPC composto".
@@ -480,6 +491,7 @@ a{color:#2563EB;}
         <tr><td>v2.4.1</td><td>2026-07-20</td><td><strong>Busca por nome do curso e área</strong>: o campo de busca da barra lateral passa a casar, além da sigla da IES, o <strong>nome do curso</strong> e a <strong>área ENADE</strong>, de forma acento-insensível (ex.: "Biomédica" acha a Engenharia Biomédica). O multiseletor de Área permanece por área ENADE.</td></tr>
         <tr><td>v2.4.2</td><td>2026-07-20</td><td><strong>Busca global e termos combinados</strong>: o campo de busca passa a varrer as <strong>9 grandes áreas</strong> (não só a aba atual) e a aceitar <strong>vários termos com "E"</strong> (ex.: "ufpe biomedica" isola a Engenharia Biomédica da UFPE). Assim, digitar o nome do curso de qualquer aba o encontra. Casa também nome da IES e município.</td></tr>
         <tr><td><strong>v2.5.0</strong></td><td>2026-08-08</td><td><strong>Estaduais e municipais no seletor de instituição de referência.</strong> Detalhamento na tabela abaixo.</td></tr>
+        <tr><td><strong>v2.6.0</strong></td><td>2026-08-08</td><td><strong>Códigos e-MEC da IES e do curso no ranqueamento</strong>: nova coluna <strong>e-MEC IES / curso</strong> na tabela (formato <code>2 / 1188880</code>), duas colunas separadas no CSV (<code>cod_ies_emec</code>, <code>cod_curso_emec</code>), e os dois códigos no relatório TXT e no card da instituição de referência. Cobertura de <strong>100% dos 47.091 cursos</strong> nos cinco ciclos — os campos já vinham do INEP e não eram exibidos. Documentada a ressalva de que o código é o vigente na inscrição do ENADE, e a ausência da USP na base de origem.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -519,13 +531,43 @@ a{color:#2563EB;}
             <td>Novo gerador <code>build/gerar_ies_publicas.py</code> (substitui <code>gerar_ies_federais.py</code>): filtra as três categorias administrativas públicas do INEP, agrupa por código de IES e resolve as grafias variantes pela ocorrência mais frequente, com verificações de duplicidade. <code>CITATION.cff</code> e <code>.zenodo.json</code> atualizados para a v2.5.0.</td>
         </tr>
     </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.6.0 (8 de agosto de 2026)</h3>
+    <p style="text-align:justify;">Os códigos e-MEC da instituição e do curso <em>já vinham</em> nos arquivos do INEP e <em>já viajavam</em> para o navegador em todos os 47.091 cursos — mas não eram exibidos em lugar nenhum: nem na tabela, nem no relatório, nem no CSV. Eram usados só internamente (o código da IES decide o destaque ★ desde a v2.5). A v2.6.0 é de apresentação: nenhum dado novo foi coletado ou reprocessado.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>Coluna no ranking</strong></td>
+            <td>Nova coluna <strong>e-MEC IES / curso</strong> na tabela de ranqueamento, no formato compacto <code>2 / 1188880</code>. Optou-se por <strong>uma coluna e não duas</strong>: a tabela já tem doze colunas e cabe sem rolagem horizontal, invariante que duas colunas novas colocariam em risco.</td>
+        </tr>
+        <tr>
+            <td><strong>CSV com colunas separadas</strong></td>
+            <td>No CSV, onde não há custo de layout, os códigos saem em <strong>duas colunas próprias</strong>: <code>cod_ies_emec</code> e <code>cod_curso_emec</code>, logo após <code>ies</code>. É o formato que serve para cruzar a exportação com o e-MEC e com outras bases.</td>
+        </tr>
+        <tr>
+            <td><strong>Relatório e card de destaque</strong></td>
+            <td>O relatório TXT ganha a linha <code>e-MEC: IES … | curso …</code> em cada curso da instituição de referência, e o card de destaque (★) mostra o par abaixo do ciclo e do município.</td>
+        </tr>
+        <tr>
+            <td><strong>Cobertura</strong></td>
+            <td><strong>100% dos 47.091 cursos</strong> têm os dois códigos, nos cinco ciclos (2017, 2018, 2021, 2022 e 2023) — verificado registro a registro. Não há linha com código ausente.</td>
+        </tr>
+        <tr>
+            <td><strong>Ressalva documentada</strong></td>
+            <td>O código é o <strong>vigente na inscrição do ENADE</strong> daquele ciclo, não o do cadastro de hoje — declaração do próprio INEP na planilha de origem. Quantificado: 214 códigos de curso sob mais de uma IES e 339 códigos de IES com mais de uma sigla, ao longo dos ciclos. Ver a aba <strong>Como Usar</strong>.</td>
+        </tr>
+        <tr>
+            <td><strong>Ausência da USP</strong></td>
+            <td>Documentada na aba <strong>Como Usar</strong>: a USP não está na base porque não está nos arquivos do INEP — sem participação no ENADE não há Conceito ENADE, e sem ele não há CPC nem IDD. É uma ausência de origem, não do MAPA-GR.</td>
+        </tr>
+    </table>
 </div>
 </div>
 
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.5.0 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.6.0 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>

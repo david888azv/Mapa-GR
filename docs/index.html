@@ -208,7 +208,7 @@ tr:hover { background: #EEF2F7; }
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.5.0</div>
+        <div id="headerVersion">v2.6.0</div>
     </div>
 </div>
 
@@ -329,13 +329,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.5.0 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.6.0 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.5.0';
+const VERSION = '2.6.0';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -648,7 +648,8 @@ async function analisar() {
         html += `<div class="card"><h2 class="unb">★ ${REF_NOME} (${unbCursos.length} curso${unbCursos.length>1?'s':''})</h2><div class="stats-row">`;
         unbCursos.forEach(c => {
             const pfBadge = c.pf != null ? `<span class="cpc-${c.pf}" style="padding:2px 6px;border-radius:4px;">${c.pf}</span>` : 'SC';
-            html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${cursoComArea(c,false)}<br>${c.y} — ${c.mu}</div></div>`;
+            const emec = `e-MEC ${c.ci != null ? c.ci : '—'} / ${c.cc != null ? c.cc : '—'}`;
+            html += `<div class="stat-box unb" style="min-width:200px;"><div class="value">${pfBadge}</div><div class="label">${cursoComArea(c,false)}<br>${c.y} — ${c.mu}<br><span style="color:#8A9099;font-size:10px;text-transform:none;">${emec}</span></div></div>`;
         });
         html += `</div></div>`;
     }
@@ -661,6 +662,7 @@ async function analisar() {
         <div class="tbl-wrap"><table id="tabelaCursos"><thead><tr>
             <th>Sigla</th><th>UF</th><th>Ano</th><th>G</th><th>M</th>
             <th>Área / Município</th>
+            <th title="Código e-MEC da IES e do curso, como divulgados pelo INEP">e-MEC<br>IES / curso</th>
             <th>Faixa</th><th>CPC cont</th><th>ENADE</th><th>IDD</th><th>%Dr</th><th>Infra</th>
         </tr></thead><tbody>`;
     sorted.slice(0, showLimit).forEach(c => {
@@ -675,6 +677,7 @@ async function analisar() {
             <td>${grau[0]}</td>
             <td>${modal[0]}</td>
             <td style="text-align:left;font-size:10px;">${cursoComArea(c,true)}<br><span style="color:#999;">${c.mu || '—'}</span></td>
+            <td style="font-size:10px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -875,6 +878,7 @@ function buildReport(cursos, f) {
         p('★ ' + (REF_NOME || '').toUpperCase() + ':');
         unbCursos.forEach(c => {
             p(`  ${c.nc ? c.nc+' (ENADE: '+c.ar+')' : c.ar} ${c.y} — ${c.mu}/${c.u}`);
+            p(`    e-MEC: IES ${c.ci!=null?c.ci:'—'} | curso ${c.cc!=null?c.cc:'—'}`);
             p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
             p(`    IDD pad: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | %Mst: ${c.ms!=null?c.ms.toFixed(3):'—'}`);
             p(`    Infra: ${c.nf!=null?c.nf.toFixed(3):'—'} | Org.Ped: ${c.op!=null?c.op.toFixed(3):'—'} | Regime: ${c.rg!=null?c.rg.toFixed(3):'—'}`);
@@ -948,9 +952,11 @@ function exportCSV() {
     const f = getFilters();
     const cursos = filterCursos(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
-    const header = ['grande_area','ano','sigla','ies','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
+    const header = ['grande_area','ano','sigla','ies','cod_ies_emec','cod_curso_emec','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
     const rows = cursos.map(c => [
-        CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`, c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
+        CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`,
+        c.ci != null ? c.ci : '', c.cc != null ? c.cc : '',
+        c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
         `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
         c.pf||'', c.pc||'', c.e||'', c.ip||'', c.ms||'', c.dr||'', c.rg||'', c.nf||'',
         c.ni||'', c.np||''
