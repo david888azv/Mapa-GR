@@ -208,7 +208,7 @@ tr:hover { background: #EEF2F7; }
     <div class="meta">
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.7.1</div>
+        <div id="headerVersion">v2.8.0</div>
     </div>
 </div>
 
@@ -316,6 +316,7 @@ tr:hover { background: #EEF2F7; }
         <button class="btn" onclick="window.open('estatisticas.html','_blank')" style="background:#FF5722;color:#fff;margin-top:16px;">📊 Estatísticas ENADE</button>
         <button class="btn" onclick="window.open('censo.html','_blank')" style="background:#1565C0;color:#fff;margin-top:4px;">📈 Censo Ed. Superior 2017-2023</button>
         <button class="btn" onclick="abrirHelp()" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documentação</button>
+        <button class="btn" onclick="sugerir()" style="background:#00897B;color:#fff;margin-top:16px;" title="Pedir um ajuste, apontar um dado errado ou sugerir uma melhoria">💡 Sugerir melhoria</button>
     </div>
 
     <div class="main" id="main">
@@ -329,13 +330,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.7.1 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.8.0 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.7.1';
+const VERSION = '2.8.0';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -974,6 +975,17 @@ function exportCSV() {
 }
 
 function abrirHelp() { window.open('help-doc.html', '_blank'); }
+
+// Sugestões: o formulário fica FORA do app, em daciencia.org/sugestao. Aqui
+// dentro ele seria um POST cross-origin, e o texto ficaria refém do cache do
+// service worker. Como o app já sabe a instituição de referência, a sigla vai
+// pré-preenchida — justamente o campo que o formulário precisa para localizar
+// o caso.
+function sugerir() {
+    const q = new URLSearchParams({ app: 'mapa-gr' });
+    if (REF_SIGLA) q.set('ies', REF_SIGLA);
+    window.open('https://daciencia.org/sugestao?' + q.toString(), '_blank', 'noopener');
+}
 
 // Search by sigla — toggle and debounce
 (function() {
