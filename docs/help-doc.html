@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.7.0 — Documentação e Fontes de Dados</title>
+<title>MAPA-GR v2.7.1 — Documentação e Fontes de Dados</title>
 <meta name="description" content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES (CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -64,12 +64,12 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentação v2.7.0</h1>
+        <h1><em>MAPA-GR</em> — Documentação v2.7.1</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div>Prof. David L. Azevedo</div>
-            <div>v2.7.0 — Agosto 2026</div>
+            <div>v2.7.1 — Agosto 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -247,12 +247,12 @@ a{color:#2563EB;}
     <div class="warn-box" style="text-align:justify;">
         <strong>TOP 27 tem dois significados — e a diferença é a seleção de UFs:</strong>
         <ul style="padding-left:20px;margin-top:8px;line-height:1.8;">
-            <li><strong>Com TODAS as UFs marcadas</strong> — o TOP 27 é <strong>“um por estado”</strong>: traz o melhor (ou o pior) curso de <strong>cada</strong> unidade da federação, <strong>no máximo um por estado</strong>, mesmo que um único estado concentre vários dos melhores do país.</li>
-            <li><strong>Com apenas ALGUMAS UFs marcadas</strong> — o TOP 27 passa a ser os <strong>27 melhores (ou piores) cursos dentre as UFs selecionadas</strong>, e aí <strong>pode haver mais de um curso do mesmo estado</strong> — inclusive todos os 27 de um só, se for lá que eles estão.</li>
+            <li><strong>Com TODAS as UFs marcadas</strong> — o TOP 27 é <strong>“um por estado”</strong>: traz o melhor curso (ou a menor nota) de <strong>cada</strong> unidade da federação, <strong>no máximo um por estado</strong>, mesmo que um único estado concentre vários dos melhores do país.</li>
+            <li><strong>Com apenas ALGUMAS UFs marcadas</strong> — o TOP 27 passa a ser os <strong>27 cursos mais bem avaliados (ou com as menores notas) dentre as UFs marcadas</strong>, e aí <strong>pode haver mais de um curso do mesmo estado</strong> — inclusive todos os 27 de um só, se for lá que eles estão.</li>
         </ul>
-        O <strong>TOP 10</strong> nunca foi “um por estado”: são sempre os 10 melhores (ou piores) do recorte, e portanto respeita as UFs selecionadas da mesma forma.
+        O <strong>TOP 10</strong> nunca foi “um por estado”: são sempre os 10 do recorte — <strong>“TOP 10 melhores do país”</strong> e <strong>“TOP menores notas do país”</strong> —, e portanto ele respeita as UFs marcadas da mesma forma, podendo trazer mais de uma IES do mesmo estado.
         <br><br>
-        Para não deixar dúvida, o <strong>rótulo do botão muda sozinho</strong> conforme a seleção — “TOP 27 — melhor por estado” quando todas as UFs estão marcadas, “TOP 27 — melhores das UFs selecionadas” quando não estão —, e o resultado sempre abre com um aviso dizendo qual das duas regras foi aplicada.
+        Para não deixar dúvida, o <strong>rótulo do botão muda sozinho</strong> conforme a seleção — <strong>“TOP 27 — melhor por estado”</strong> e <strong>“TOP 27 — menores notas por UF”</strong> quando todas as UFs estão marcadas; <strong>“TOP 27 — melhores no recorte”</strong> e <strong>“TOP 27 — menores notas no recorte”</strong> quando não estão. O resultado sempre abre com um aviso dizendo qual das duas regras foi aplicada.
     </div>
 
     <div class="warn-box" style="text-align:justify;">
@@ -520,6 +520,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.6.0</strong></td><td>2026-08-08</td><td><strong>Códigos e-MEC da IES e do curso no ranqueamento</strong>: nova coluna <strong>e-MEC IES / curso</strong> na tabela (formato <code>2 / 1188880</code>), duas colunas separadas no CSV (<code>cod_ies_emec</code>, <code>cod_curso_emec</code>), e os dois códigos no relatório TXT e no card da instituição de referência. Cobertura de <strong>100% dos 47.091 cursos</strong> nos cinco ciclos — os campos já vinham do INEP e não eram exibidos. Documentada a ressalva de que o código é o vigente na inscrição do ENADE, e a ausência da USP na base de origem.</td></tr>
         <tr><td><strong>v2.6.1</strong></td><td>2026-08-08</td><td><strong>Códigos e-MEC também no Comparador</strong>: a v2.6.0 alcançou só o painel principal. As duas tabelas do <strong>comparador</strong> (TOP 10/27 e comparação de cursos) ganham a mesma coluna <strong>e-MEC IES / curso</strong>, e os cards de <strong>Detalhes das Instituições</strong> — que traziam um <code>Código e-MEC</code> sem qualificação, exibindo apenas o do curso — passam a mostrar os dois, cada um com seu rótulo.</td></tr>
         <tr><td><strong>v2.7.0</strong></td><td>2026-08-08</td><td><strong>TOP 27 sensível à seleção de UFs</strong>: com <strong>todas as UFs marcadas</strong>, o TOP 27 segue sendo <strong>um curso por estado</strong>; com um <strong>subconjunto de UFs</strong>, passa a ser os <strong>27 melhores (ou piores) dentre as UFs selecionadas</strong>, permitindo <strong>mais de um curso por estado</strong>. Antes, um recorte de 3 UFs devolvia 3 linhas. O rótulo do botão muda sozinho conforme a seleção e o resultado abre declarando qual regra foi aplicada. Documentada também a ressalva dos <strong>cursos sem oferta em todas as UFs</strong>: as UFs sem o curso ficam desabilitadas, “todas as UFs” significa “todas as que ofertam”, e um TOP 27 por estado pode devolver menos de 27 linhas sem estar truncado.</td></tr>
+        <tr><td><strong>v2.7.1</strong></td><td>2026-08-08</td><td><strong>Rótulos dos TOP de menores notas</strong>: “TOP 27 — pior por estado” passa a <strong>“TOP 27 — menores notas por UF”</strong> e “TOP 10 mais baixas do país” passa a <strong>“TOP menores notas do país”</strong>, com títulos e avisos de resultado alinhados ao mesmo vocabulário. Os rótulos dinâmicos do recorte parcial foram encurtados para <strong>“melhores no recorte”</strong> e <strong>“menores notas no recorte”</strong>: medido no painel de 320px, a forma longa ocupava 295px contra 267px úteis e quebrava o botão em duas linhas. A regra completa passou para o <em>tooltip</em> do botão.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -595,7 +596,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.7.0 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.7.1 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>
