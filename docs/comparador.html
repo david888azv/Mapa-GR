@@ -555,6 +555,19 @@ function populateTopUFs() {
     }
     const ufsComCursos = new Set(CURRENT_DATA.cursos.filter(c => c.ar === area && c.u).map(c => c.u));
     let html = '';
+    // Nem todo curso é ofertado nas 27 UFs. As sem oferta ficam desabilitadas, e é
+    // preciso dizer isso: senão "marque todas as UFs" vira instrução impossível, e
+    // um TOP 27 "um por estado" com 14 linhas parece resultado truncado.
+    const semOferta = TODAS_UFS.length - ufsComCursos.size;
+    if (semOferta > 0) {
+        html += `<div style="grid-column:1/-1;font-size:10px;line-height:1.45;color:var(--txt2);
+            background:#FFF8E1;border-left:3px solid #D4AF37;padding:6px 8px;margin-bottom:6px;border-radius:3px;">
+            <strong>${ufsComCursos.size} de ${TODAS_UFS.length} UFs</strong> ofertam este curso.
+            As <strong>${semOferta}</strong> sem oferta aparecem esmaecidas e não podem ser marcadas —
+            por isso o <strong>TOP 27 “por estado”</strong> devolve, no máximo,
+            <strong>${ufsComCursos.size} linha(s)</strong>.
+        </div>`;
+    }
     REGION_ORDER.forEach(r => {
         html += `<div class="uf-region-label">${REGION_LABELS[r].toUpperCase()}</div>`;
         UFS_POR_REGIAO[r].forEach(u => {
@@ -568,9 +581,12 @@ function populateTopUFs() {
 
 function tufAll(checked) {
     document.querySelectorAll('.tuf-chk:not([disabled])').forEach(e => { e.checked = checked; });
+    updateTopButtons();   // "por estado" só vale com todas marcadas — o rótulo acompanha
 }
 
-// Habilita/desabilita os botões TOP conforme curso selecionado
+// Habilita/desabilita os botões TOP conforme curso selecionado, e mantém o rótulo
+// dos dois botões de TOP 27 coerente com o recorte de UF vigente: "por estado" só
+// vale com todas as UFs com oferta marcadas (ver coberturaUF).
 function updateTopButtons() {
     if (MODE !== 'top10') return;
     const ok = !!$('areaSelect').value;
@@ -578,6 +594,13 @@ function updateTopButtons() {
         const b = $(id);
         if (b) b.disabled = !ok;
     });
+    const porEstado = coberturaUF().completa &&
+        document.querySelectorAll('.treg-chk:checked').length === REGION_ORDER.length;
+    const alta = $('btnTop27High'), baixa = $('btnTop27Low');
+    if (alta) alta.textContent = porEstado ? '🗺️ TOP 27 — melhor por estado'
+                                           : '🗺️ TOP 27 — melhores das UFs selecionadas';
+    if (baixa) baixa.textContent = porEstado ? '🔻 TOP 27 — pior por estado'
+                                             : '🔻 TOP 27 — piores das UFs selecionadas';
 }
 
 // Aplica os filtros do painel (tipo de IES / sigla / região / UF) ao curso escolhido
@@ -611,6 +634,24 @@ function makeCmp(worst) {
         s * ((a.pc || 0) - (b.pc || 0)) ||
         s * ((a.e  || 0) - (b.e  || 0)) ||
         s * ((a.ip || 0) - (b.ip || 0));
+}
+
+// Cobertura do recorte de UFs. O grid desabilita as UFs SEM oferta do curso, e elas
+// nascem desmarcadas — então comparar com as 27 da federação classificaria como
+// "recorte parcial" um curso que simplesmente não existe no país inteiro, e o
+// TOP 27 nunca voltaria a ser "um por estado" para cursos de oferta restrita.
+// A pergunta certa é: o usuário desmarcou alguma UF que PODIA marcar?
+function coberturaUF() {
+    const habilitadas = document.querySelectorAll('.tuf-chk:not([disabled])').length;
+    const marcadas = document.querySelectorAll('.tuf-chk:checked').length;
+    return { habilitadas, marcadas, completa: habilitadas > 0 && marcadas >= habilitadas };
+}
+
+// Recorte "país inteiro": todas as UFs com oferta E todas as regiões. Desmarcar uma
+// região tira as UFs dela do filtro, então checar só as UFs deixaria passar um
+// recorte parcial como se fosse nacional.
+function ehPaisInteiro(filt) {
+    return coberturaUF().completa && filt.regs.length === REGION_ORDER.length;
 }
 
 // Seleciona 1 curso (melhor ou pior) por UF — ano mais recente, depois CPC→ENADE→IDD
@@ -652,8 +693,14 @@ function runTop(perState, worst) {
     }
 
     const N = perState ? 27 : 10;
+    // "Um por estado" só faz sentido com o país inteiro no recorte. Com um
+    // subconjunto de UFs, a regra de 1 por UF devolveria menos linhas que o N
+    // pedido (3 UFs -> 3 cursos), o que não é um TOP 27. Nesse caso o TOP 27 passa
+    // a ser os 27 melhores DENTRE as UFs selecionadas, com repetição de estado
+    // permitida. Ver renderTopResults, que rotula os dois casos de forma distinta.
+    const umPorEstado = perState && ehPaisInteiro(filt);
     let picks;
-    if (perState) {
+    if (umPorEstado) {
         picks = pickPerUF(filt.cursos, worst);
         picks.sort(makeCmp(worst));
     } else {
@@ -663,7 +710,7 @@ function runTop(perState, worst) {
     picks = picks.slice(0, N);
 
     try {
-        renderTopResults(picks, area, slug, { perState, worst, N, filt });
+        renderTopResults(picks, area, slug, { perState, umPorEstado, worst, N, filt });
     } catch (err) {
         console.error('Erro em renderTopResults:', err);
         toast('Erro ao renderizar: ' + err.message);
@@ -675,15 +722,21 @@ function renderTopResults(picks, area, slug, cfg) {
     const gaMeta = META.grandes_areas[slug];
     const years = [...new Set(picks.map(c => c.y))];
     const sameYear = years.length === 1;
-    const { perState, worst, N, filt } = cfg;
+    const { perState, umPorEstado, worst, N, filt } = cfg;
+    const nUfs = filt.ufs.length;
+    const cob = coberturaUF();
 
     const icon = worst ? '🔻' : (perState ? '🗺️' : '🏆');
     const accent = worst ? 'var(--vermelho)' : '#D4AF37';
+    const qual = worst ? 'mais baixas' : 'mais bem avaliados';
     let titleText;
-    if (perState && worst)        titleText = `TOP ${picks.length} — Pior curso por estado (um por UF)`;
-    else if (perState && !worst)  titleText = `TOP ${picks.length} — Melhor curso por estado (um por UF)`;
-    else if (!perState && worst)  titleText = `TOP ${picks.length} Nacional — Cursos com métricas mais baixas`;
-    else                          titleText = `TOP ${picks.length} Nacional — Cursos mais bem avaliados`;
+    if (umPorEstado && worst)     titleText = `TOP ${picks.length} — Pior curso por estado (um por UF)`;
+    else if (umPorEstado)         titleText = `TOP ${picks.length} — Melhor curso por estado (um por UF)`;
+    else if (perState)            titleText = `TOP ${picks.length} — Cursos ${qual} em ${nUfs} UF(s) selecionada(s)`;
+    else if (worst)               titleText = `TOP ${picks.length} — Cursos com métricas mais baixas`
+                                      + (ehPaisInteiro(filt) ? ' (nacional)' : ` em ${nUfs} UF(s)`);
+    else                          titleText = `TOP ${picks.length} — Cursos mais bem avaliados`
+                                      + (ehPaisInteiro(filt) ? ' (nacional)' : ` em ${nUfs} UF(s)`);
 
     // Resumo dos filtros ativos
     const totUfs = TODAS_UFS.length;
@@ -706,14 +759,41 @@ function renderTopResults(picks, area, slug, cfg) {
             <br>Filtros: ${tipoTxt} · ${regTxt} · ${ufTxt}${sigTxt}
         </p>`;
 
+    const escopoTxt = ehPaisInteiro(filt) ? 'em todo o país' : `nas ${nUfs} UF(s) selecionada(s)`;
+
     if (!perState) {
         html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
-            ℹ️ <strong>Como é definido o TOP ${N} nacional:</strong> são os ${N} cursos ${worst ? 'com os menores' : 'com os maiores'} valores
-            <strong>contínuos</strong> de CPC → ENADE → IDD em todo o país${(filt.tipos && filt.tipos.length === 1) ? ` (${tipoTxt})` : ''},
-            independentemente da UF. A classificação usa o <strong>valor contínuo</strong>, não a faixa/nota (1–5):
+            ℹ️ <strong>Como é definido este TOP ${N}:</strong> são os ${picks.length} cursos ${worst ? 'com os menores' : 'com os maiores'} valores
+            <strong>contínuos</strong> de CPC → ENADE → IDD ${escopoTxt}${(filt.tipos && filt.tipos.length === 1) ? ` (${tipoTxt})` : ''},
+            independentemente da UF — <strong>pode haver mais de um curso do mesmo estado</strong>.
+            A classificação usa o <strong>valor contínuo</strong>, não a faixa/nota (1–5):
             um curso com <strong>nota 4</strong> pode ficar de fora se houver ao menos ${N} outros com CPC contínuo
             ${worst ? 'menor' : 'maior'} — inclusive outros também com nota 4 ou 5.
-            Para ver o ${worst ? 'pior' : 'melhor'} curso de <strong>cada estado</strong>, use o <strong>TOP 27 — ${worst ? 'pior' : 'melhor'} por estado</strong>.
+            Para ver o ${worst ? 'pior' : 'melhor'} curso de <strong>cada estado</strong>, marque <strong>todas as UFs</strong> e use o <strong>TOP 27</strong>.
+        </div>`;
+    } else if (umPorEstado) {
+        html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
+            ℹ️ <strong>Este TOP 27 é “um por estado”:</strong> com <strong>todas as ${cob.habilitadas} UF(s) com oferta deste curso</strong>
+            selecionadas, a lista traz o ${worst ? 'pior' : 'melhor'} curso de <strong>cada</strong> unidade da federação — no máximo
+            um por estado, mesmo que um mesmo estado tenha vários cursos ${worst ? 'entre os piores' : 'entre os melhores'}.
+            ${cob.habilitadas < TODAS_UFS.length ? `<br><br><strong>Por que são ${picks.length} e não 27:</strong> este curso é ofertado
+            em <strong>${cob.habilitadas} das ${TODAS_UFS.length} UFs</strong>. As demais não têm curso a indicar, então não entram
+            na lista — o resultado não está truncado.` : ''}
+            <br><br>
+            <strong>Se você desmarcar qualquer UF, esta opção muda de significado:</strong> passa a listar os
+            <strong>27 ${worst ? 'piores' : 'melhores'} cursos dentre as UFs selecionadas</strong>, e aí
+            <strong>pode haver mais de um curso do mesmo estado</strong>.
+        </div>`;
+    } else {
+        html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
+            ℹ️ <strong>Atenção — este TOP 27 NÃO é “um por estado”:</strong> como <strong>${nUfs} de ${cob.habilitadas} UF(s)</strong>
+            com oferta estão selecionadas, a lista traz até <strong>27 dos ${worst ? 'piores' : 'melhores'} cursos dentre essas UFs</strong>,
+            e <strong>pode haver mais de um curso do mesmo estado</strong> — inclusive todos de um só, se for lá que estão.
+            ${picks.length < N ? `<br><br><strong>São ${picks.length} e não 27</strong> porque esse é o total de cursos no recorte:
+            as ${nUfs} UF(s) selecionadas têm ${filt.cursos.length} curso(s) com CPC contínuo.` : ''}
+            <br><br>
+            Para obter o ${worst ? 'pior' : 'melhor'} curso de <strong>cada</strong> estado, <strong>marque todas as UFs</strong>
+            (botão “Todos” no filtro de UF): aí o TOP 27 devolve no máximo um curso por unidade da federação.
         </div>`;
     }
 
@@ -1112,6 +1192,16 @@ $('btnCompare').addEventListener('click', compare);
 $('btnReset').addEventListener('click', resetAll);
 
 // Botões do modo TOP (perState, worst)
+// Marcar/desmarcar UF ou região muda o SIGNIFICADO do TOP 27 — o rótulo do botão
+// tem de acompanhar em tempo real. Delegado, porque o grid de UFs é regerado a
+// cada troca de curso e listeners diretos morreriam com ele.
+document.addEventListener('change', (ev) => {
+    const t = ev.target;
+    if (t && t.classList && (t.classList.contains('tuf-chk') || t.classList.contains('treg-chk'))) {
+        updateTopButtons();
+    }
+});
+
 $('btnTop10High').addEventListener('click', () => runTop(false, false));
 $('btnTop27High').addEventListener('click', () => runTop(true,  false));
 $('btnTop10Low').addEventListener('click',  () => runTop(false, true));
