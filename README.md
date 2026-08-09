@@ -35,7 +35,13 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
 - **Códigos e-MEC** (v2.6): cada linha do ranking traz os códigos e-MEC da **IES** e do
   **curso** (`2 / 1188880`); no CSV saem separados em `cod_ies_emec` e `cod_curso_emec`.
   São os códigos vigentes na inscrição do ENADE daquele ciclo, não os do cadastro atual
-- **Funciona offline** (PWA) e não coleta dados de quem usa
+- **Sugestões** (v2.8): botão **"💡 Sugerir melhoria"** na barra lateral das quatro telas,
+  que abre o formulário em `daciencia.org/sugestao` — sigla da IES obrigatória, nome e
+  e-mail opcionais, texto de até 250 palavras. No painel principal a sigla da instituição
+  de referência já vai preenchida. O formulário fica **fora** do aplicativo, em outro
+  domínio
+- **Funciona offline** (PWA) e não coleta dados de quem usa — o botão de sugestões não muda
+  isso: só sai daqui o que a pessoa escrever, de propósito, no formulário
 
 > A **USP não consta da base**: não participa do ENADE, então não tem Conceito ENADE e
 > não entra nos Indicadores de Qualidade publicados pelo INEP. É ausência da fonte.
