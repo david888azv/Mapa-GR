@@ -27,7 +27,7 @@ preferred-citation:
   issue: 1
   year: 2026
   doi: "10.26512/2446-564X2026e62165"
-  url: "https://doi.org/10.26512/2446-564X2026e62165"
+  url: "https://periodicos.unb.br/index.php/physicae/article/view/62165/45055"
 repository-code: "https://github.com/david888azv/Mapa-GR"
 url: "https://david888azv.github.io/Mapa-GR/"
 keywords:
@@ -40,5 +40,5 @@ keywords:
   - UnB
   - dados abertos
 license: CC-BY-4.0
-version: "2.8.0"
+version: "2.8.1"
 date-released: "2026-08-09"
