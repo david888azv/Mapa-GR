@@ -117,6 +117,6 @@ Instituto de Física — Universidade de Brasília (UnB)
 AZEVEDO, D. L. **MAPA-GR — um sistema interativo para monitoramento e análise da
 graduação brasileira: aplicação a dados do Censo e do ENADE com estudo de caso da
 UnB, das Ciências Exatas e da Física**. *Physicae Organum*, Brasília, v. 11, n. 1,
-2026. DOI: [10.26512/2446-564X2026e62165](https://doi.org/10.26512/2446-564X2026e62165).
+2026. DOI: [10.26512/2446-564X2026e62165](https://periodicos.unb.br/index.php/physicae/article/view/62165/45055).
 
 Veja também `CITATION.cff` (formato legível por máquina).
