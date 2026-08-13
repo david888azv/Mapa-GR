@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.8.1 — Documentação e Fontes de Dados</title>
+<title>MAPA-GR v2.8.2 — Documentação e Fontes de Dados</title>
 <meta name="description" content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES (CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -64,12 +64,12 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentação v2.8.1</h1>
+        <h1><em>MAPA-GR</em> — Documentação v2.8.2</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div>Prof. David L. Azevedo</div>
-            <div>v2.8.1 — Agosto 2026</div>
+            <div>v2.8.2 — Agosto 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -523,6 +523,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.7.1</strong></td><td>2026-08-08</td><td><strong>Rótulos dos TOP de menores notas</strong>: “TOP 27 — pior por estado” passa a <strong>“TOP 27 — menores notas por UF”</strong> e “TOP 10 mais baixas do país” passa a <strong>“TOP menores notas do país”</strong>, com títulos e avisos de resultado alinhados ao mesmo vocabulário. Os rótulos dinâmicos do recorte parcial foram encurtados para <strong>“melhores no recorte”</strong> e <strong>“menores notas no recorte”</strong>: medido no painel de 320px, a forma longa ocupava 295px contra 267px úteis e quebrava o botão em duas linhas. A regra completa passou para o <em>tooltip</em> do botão.</td></tr>
         <tr><td><strong>v2.8.0</strong></td><td>2026-08-09</td><td><strong>Botão “💡 Sugerir melhoria”</strong> na barra lateral das quatro telas (painel principal, Comparador, Estatísticas ENADE e Censo). Abre o formulário em <strong>daciencia.org/sugestao</strong>, onde se pede um ajuste, aponta-se um dado errado ou sugere-se uma melhoria — sigla da IES obrigatória, nome e e-mail opcionais, texto de até 250 palavras. No painel principal a <strong>sigla da instituição de referência vai pré-preenchida</strong>. O formulário fica fora do aplicativo de propósito: aqui dentro o envio seria uma requisição para outro domínio, e o texto ficaria preso ao cache do <em>service worker</em> a cada ajuste de redação.</td></tr>
         <tr><td><strong>v2.8.1</strong></td><td>2026-08-10</td><td><strong>O link da citação passa a abrir o artigo</strong>: o <code>https://doi.org/…</code> do MAPA-GR não resolvia (o registro do DOI ainda não propagou), e o leitor que clicasse em “Como citar” caía num <em>DOI Not Found</em>. O <strong>texto do DOI continua exibido</strong> — é o identificador da publicação — mas o link agora aponta para o artigo na <strong>Physicae Organum</strong>. Mesma correção na documentação, no README, no <code>CITATION.cff</code> e na página do projeto.</td></tr>
+        <tr><td><strong>v2.8.2</strong></td><td>2026-08-13</td><td><strong>Grafia dos municípios do ciclo de 2018</strong>: a planilha do ENADE 2018 — única fonte do ciclo — grava o município em caixa alta e sem acento (<code>SAO ROQUE</code>), enquanto os demais ciclos gravam <code>São Roque</code>. O mesmo município aparecia, portanto, <strong>duas vezes</strong> nas listas e nas buscas, e quem procurasse pela grafia correta <strong>perdia o ciclo de 2018 inteiro</strong>. A correção usa o <strong>Código do Município (IBGE)</strong>, presente em todas as planilhas do INEP, para adotar a grafia dos ciclos que a trazem: <strong>8.821 registros</strong> corrigidos e <strong>734 municípios</strong> reunificados. O código também corrigiu <strong>13 erros de grafia da própria fonte</strong> (o INEP escrevia <code>ANGRA DO REIS</code>, <code>PALMEIRA DO INDIOS</code>, <code>PAU DO FERROS</code> e <code>MOGI-GUACU</code>, hoje <em>Angra dos Reis</em>, <em>Palmeira dos Índios</em>, <em>Pau dos Ferros</em> e <em>Mogi Guaçu</em>). Nenhum indicador foi alterado — a correção toca apenas o nome do município.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -598,7 +599,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.8.1 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.8.2 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>
