@@ -16,6 +16,7 @@ Saída: docs/dados/{grande_area}.json (minificado)
 """
 
 import openpyxl
+import glob
 import json
 import os
 import re
@@ -197,6 +198,132 @@ def clean(d):
     return {k: v for k, v in d.items() if v not in (None, '')}
 
 
+# ===== Município: normalização da grafia =====
+#
+# A planilha do ENADE 2018 (única fonte do ciclo de 2018) grava o município em
+# CAIXA ALTA e sem acento — "SAO ROQUE" onde todos os outros ciclos gravam
+# "São Roque". Sem correção, o mesmo município vira DUAS entradas nos filtros do
+# app e quem filtra por "São Paulo" perde o ciclo de 2018 inteiro.
+#
+# A correção não adivinha acento: usa o Código do Município (IBGE), que existe em
+# todas as planilhas do INEP, para buscar a grafia correta nos ciclos que a têm.
+
+CONECTIVOS_PT = {'da', 'das', 'de', 'do', 'dos', 'e'}
+
+# Municípios que só aparecem no ciclo de 2018 — não há grafia acentuada em
+# nenhuma planilha do INEP para copiar. Chave = Código do Município (IBGE).
+# Se `normalizar_municipios` reportar código fora desta tabela, acrescente-o.
+MUNICIPIOS_SO_EM_2018 = {
+    '2312403': 'São Gonçalo do Amarante',
+    '2412500': 'São Miguel',
+    '3139607': 'Mantena',
+    '3152006': 'Pompéu',
+    '3202306': 'Guaçuí',
+    '3302502': 'Magé',
+    '5100201': 'Água Boa',
+    '4103453': 'Cafelândia',
+    '4120002': 'Porecatu',
+    '4125605': 'São Mateus do Sul',
+    '4300604': 'Alvorada',
+    '4313201': 'Nova Petrópolis',
+    '4313391': 'Novo Cabrais',
+}
+
+
+def _bem_grafado(x):
+    """Um nome bem grafado tem minúscula; o de 2018 é todo em caixa alta.
+
+    Testar por ausência de acento não serve: `SANTA BARBARA D´OESTE` traz o
+    acento agudo solto (U+00B4), que não é letra acentuada e passaria por
+    grafia correta.
+    """
+    return any(ch.islower() for ch in x)
+
+
+def _grafia_degradada(x):
+    """True quando o nome está em caixa alta (o defeito de 2018)."""
+    return bool(x) and not _bem_grafado(x)
+
+
+def _titulo_pt(nome):
+    """Último recurso: capitaliza mantendo os conectivos em minúscula.
+
+    Não recupera acento — serve só para o município novo que ainda não esteja em
+    MUNICIPIOS_SO_EM_2018, e o log avisa quando isso acontece.
+    """
+    palavras = nome.lower().split()
+    return ' '.join(p if i and p in CONECTIVOS_PT else p.capitalize()
+                    for i, p in enumerate(palavras))
+
+
+def municipios_canonicos(in_dir):
+    """Mapa código IBGE -> nome do município, colhido das planilhas bem grafadas.
+
+    Varre toda a pasta em vez de listar arquivos: qualquer planilha do INEP com
+    as colunas "Código do Município" e "Município ..." serve de fonte, e novas
+    planilhas passam a contribuir sozinhas. Nomes em caixa alta são ignorados,
+    senão o próprio 2018 (e as poucas planilhas que gravam `MAGÉ`) se
+    autoconfirmariam.
+    """
+    por_codigo = {}
+    for caminho in sorted(glob.glob(os.path.join(in_dir, '*.xlsx'))):
+        wb = openpyxl.load_workbook(caminho, read_only=True, data_only=True)
+        for aba in wb.sheetnames:
+            linhas = wb[aba].iter_rows(values_only=True)
+            try:
+                cab = [s(x) for x in next(linhas)]
+            except StopIteration:
+                continue
+            i_cod = next((j for j, h in enumerate(cab)
+                          if 'Código do Município' in h), None)
+            i_nome = next((j for j, h in enumerate(cab)
+                           if h.startswith('Município')), None)
+            if i_cod is None or i_nome is None:
+                continue
+            for r in linhas:
+                if not r:
+                    continue
+                cod, nome = s(r[i_cod]), s(r[i_nome])
+                if cod and nome and _bem_grafado(nome):
+                    por_codigo.setdefault(cod, nome)
+        wb.close()
+    return por_codigo
+
+
+def normalizar_municipios(cursos, in_dir):
+    """Corrige `mu` onde a grafia veio degradada, pelo Código do Município.
+
+    Consome o campo temporário `_cm` gravado pelos extratores. Devolve
+    (corrigidos, por_tabela, residuais) — `residuais` são os municípios que
+    caíram no _titulo_pt, isto é, seguem sem acento.
+    """
+    alvos = [c for c in cursos if _grafia_degradada(c.get('mu', ''))]
+    if not alvos:
+        for c in cursos:
+            c.pop('_cm', None)
+        return 0, 0, []
+
+    canon = municipios_canonicos(in_dir)
+    corrigidos = por_tabela = 0
+    residuais = set()
+    for c in cursos:
+        cod = c.pop('_cm', '')
+        mu = c.get('mu', '')
+        if not mu or not _grafia_degradada(mu):
+            continue
+        nome = canon.get(cod)
+        if nome is None:
+            nome = MUNICIPIOS_SO_EM_2018.get(cod)
+            if nome is not None:
+                por_tabela += 1
+            else:
+                nome = _titulo_pt(mu)
+                residuais.add(f'{cod or "sem código"} {mu}/{c.get("u", "")}')
+        c['mu'] = nome
+        corrigidos += 1
+    return corrigidos, por_tabela, sorted(residuais)
+
+
 # ===== Extraction functions =====
 
 def extract_cpc_2017(path):
@@ -303,6 +430,7 @@ def extract_enade_idd_2018(enade_path, idd_path):
             'ni': iint(r[13]), 'np': iint(r[14]), 'fg': fnum(r[15]), 'ce': fnum(r[17]),
             'e': fnum(r[19]), 'pf': iint(r[20]),  # Faixa ENADE (1-5) como proxy do CPC
             '_partial': 1,  # flag: indicadores parciais (sem CPC completo)
+            '_cm': s(r[10]),  # Código do Município: só para normalizar `mu`, some depois
         }
     wb_i = openpyxl.load_workbook(idd_path, read_only=True, data_only=True)
     ws_i = wb_i['IDD_2018']
@@ -327,6 +455,14 @@ def main():
         os.path.join(IN_DIR, 'conceito_enade_2018.xlsx'),
         os.path.join(IN_DIR, 'IDD_2018.xlsx'))
     print(f'  ENADE+IDD 2018: {len(d18)} cursos (parcial, sem CPC composto)')
+    n_mu, n_tab, residuais = normalizar_municipios(d18, IN_DIR)
+    print(f'    Municípios normalizados: {n_mu} registros '
+          f'({n_mu - n_tab} pelo Código do Município, {n_tab} pela tabela local)')
+    if residuais:
+        print(f'    ! {len(residuais)} município(s) sem grafia acentuada em nenhuma '
+              f'fonte — acrescente a MUNICIPIOS_SO_EM_2018:')
+        for r in residuais:
+            print(f'      {r}')
     d21 = extract_cpc_2021(os.path.join(IN_DIR, 'CPC_2021.xlsx'))
     print(f'  CPC 2021: {len(d21)} cursos')
     d22 = extract_cpc_2022(os.path.join(IN_DIR, 'CPC_2022.xlsx'))
