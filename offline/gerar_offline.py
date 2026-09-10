@@ -111,6 +111,14 @@ def transform(html, src_dir, chart_js, icon_uri, data_paths):
     html = html.replace("'serviceWorker' in navigator",
                         "false /* offline: SW desativado */ && 'serviceWorker' in navigator")
 
+    # 6. Remover o beacon do Cloudflare Web Analytics (aplicar_web_analytics.py).
+    #    Cópia offline não telefona para casa: quem leva o zip para uma máquina
+    #    sem rede — que é o caso de uso — não deve ter a página tentando falar
+    #    com a internet, nem ser contado como acesso. O MAPA-PG não precisa do
+    #    equivalente: o build dele reconstrói o <head>, onde o beacon mora.
+    html = re.sub(r'\s*<!-- cf-web-analytics -->.*?<!-- /cf-web-analytics -->', '',
+                  html, flags=re.S)
+
     return html
 
 
