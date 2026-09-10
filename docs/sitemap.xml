@@ -1,8 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://david888azv.github.io/Mapa-GR/</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://david888azv.github.io/Mapa-GR/estatisticas.html</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://david888azv.github.io/Mapa-GR/comparador.html</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://david888azv.github.io/Mapa-GR/censo.html</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
-  <url><loc>https://david888azv.github.io/Mapa-GR/help-doc.html</loc><lastmod>2026-07-13</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://david888azv.github.io/Mapa-GR/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/en/</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.95</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/estatisticas.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/estatisticas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/estatisticas.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/estatisticas.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/en/estatisticas.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/estatisticas.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/estatisticas.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/estatisticas.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/comparador.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/comparador.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/comparador.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/comparador.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/en/comparador.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/comparador.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/comparador.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/comparador.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/censo.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/censo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/censo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/censo.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/en/censo.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/censo.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/censo.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/censo.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.75</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/help-doc.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/help-doc.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/help-doc.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/help-doc.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>
+  <url><loc>https://david888azv.github.io/Mapa-GR/en/help-doc.html</loc>
+    <xhtml:link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/help-doc.html"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/help-doc.html"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/help-doc.html"/>
+    <lastmod>2026-09-10</lastmod><changefreq>monthly</changefreq><priority>0.45</priority></url>
 </urlset>

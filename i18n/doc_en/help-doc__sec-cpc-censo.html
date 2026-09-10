@@ -1,0 +1,69 @@
+<!-- sha:b500fc619e7e5c7c -->
+<div class="card">
+    <h2>CPC × Census — two complementary indicators</h2>
+    <p>MAPA-GR offers <strong>two analysis pages</strong> fed by <strong>different INEP sources</strong>,
+    each answering a different question. Understanding the distinction prevents misreadings.</p>
+    <div class="info-box">
+        <strong>In one sentence:</strong><br>
+        <em><strong>CPC/ENADE</strong> answers "<strong>how well</strong> does this programme educate?" &#8212; it is a <strong>quality indicator</strong>.<br>
+        The <strong>Higher Education Census</strong> answers "<strong>how many</strong> are studying?" &#8212; it is a <strong>stock indicator</strong>.</em>
+    </div>
+    <table style="margin-top:14px;">
+        <tr><th>Aspect</th><th>CPC / ENADE (the <em>Statistics</em> page)</th><th>Census (the <em>Higher Education Census 2017-2023</em> page)</th></tr>
+        <tr>
+            <td><strong>What it measures</strong></td>
+            <td>Programme quality &#8212; final-year students' performance in the ENADE exam + IDD (value added) + faculty + infrastructure</td>
+            <td>Student stock &#8212; how many are enrolled, how many entered, how many graduated in a year</td>
+        </tr>
+        <tr>
+            <td><strong>Unit</strong></td>
+            <td>A 1 to 5 score per programme (the CPC band), or a continuous value (continuous CPC, continuous ENADE, IDD)</td>
+            <td>Absolute number of students (enrolments, entrants, graduates, suspended, and so on)</td>
+        </tr>
+        <tr>
+            <td><strong>Frequency</strong></td>
+            <td>Every three years, by field (the ENADE cycle)</td>
+            <td>Yearly (every institution reports in October/November)</td>
+        </tr>
+        <tr>
+            <td><strong>Coverage</strong></td>
+            <td>~47 thousand programmes that took part in ENADE in the 2017, 2018, 2021, 2022 and 2023 cycles</td>
+            <td>~670 thousand rows of programme×institution×mode (&#8776; 9.98 million enrolments in 2023)</td>
+        </tr>
+        <tr>
+            <td><strong>Useful granularity</strong></td>
+            <td>Programme by institution: comparing quality across universities</td>
+            <td>Year, state, field, mode, degree type, institution, gender, race, age, funding (FIES, PROUNI), quotas</td>
+        </tr>
+        <tr>
+            <td><strong>When to use it</strong></td>
+            <td>Deciding where to study, comparing quality across institutions, assessing a programme</td>
+            <td>Sizing demand, analysing growth, planning education policy, checking dropout</td>
+        </tr>
+        <tr>
+            <td><strong>Source</strong></td>
+            <td>INEP &#8212; Higher Education Quality Indicators</td>
+            <td>INEP &#8212; Higher Education Census microdata (2017-2023)</td>
+        </tr>
+    </table>
+    <h3>Why not put it all on a single page?</h3>
+    <p>Because <strong>quality and quantity are not comparable</strong>. A programme with CPC 5 and 50 students, and another with CPC 3 and 5,000 students
+    describe very different realities &#8212; they do not reduce to a single metric. Each indicator contributes one dimension of
+    Brazilian undergraduate education. Keeping the two pages apart avoids analytical confusion.</p>
+    <h3>Can enrolments be estimated from the CPC?</h3>
+    <p>In theory, yes: using <code>n_inscritos</code> (final-year students who sat ENADE) as a proxy and projecting to the total stock.
+    We tested that formula in detail (see the <a href="https://github.com/david888azv/Mapa-GR/tree/main/metodologia" target="_blank"><code>metodologia/</code> folder</a>
+    in the repository). The result:</p>
+    <div class="warn-box">
+        <strong>What the audit concluded:</strong> the formula <code>enrolments ≈ n_inscritos × duration × α / r</code>
+        is right in the <strong>national aggregate</strong> (error &#8776; &#177;2%), but errors by degree type, field and state
+        reach <strong>±150%</strong> &#8212; useless for fine-grained analysis. <strong>That is why we use the real Census</strong>, which INEP
+        publishes yearly. The full audit and the script are documented in the <code>metodologia/</code> folder.
+    </div>
+    <h3>Which page to open</h3>
+    <ul style="padding-left:22px;margin-top:6px;line-height:1.8;">
+        <li>Want to know <strong>where the best-rated programmes</strong> in your field are? → <a href="estatisticas.html" style="color:var(--accent);font-weight:700;">ENADE statistics</a></li>
+        <li>Want to know <strong>how many students there are</strong> and how that has grown? → <a href="censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a></li>
+        <li>Want to <strong>compare institutions and states by quality</strong>? → <a href="index.html" style="color:var(--accent);font-weight:700;">Main panel (CPC)</a> or the <a href="comparador.html" style="color:var(--accent);font-weight:700;">Comparator</a></li>
+    </ul>
+</div>

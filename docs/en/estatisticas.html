@@ -1,28 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- en/ e subpasta: sem isto, dados, icones e Chart.js seriam
+     procurados em /Mapa-GR/en/ e nao existiriam la. -->
+<base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR — Estatísticas da Graduação Brasileira</title>
-<meta name="description" content="Estatísticas descritivas da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC): distribuições por grande área, UF e organização acadêmica.">
+<title>MAPA-GR — Statistics of Brazilian Undergraduate Education</title>
+<meta name="description" content="Descriptive statistics of Brazilian undergraduate education from the SINAES/INEP indicators (CPC, ENADE, IDD, IGC): distributions by broad field, state and academic organisation.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
-<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/estatisticas.html">
+<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/en/estatisticas.html">
 <link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/estatisticas.html">
 <link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/estatisticas.html">
 <link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/estatisticas.html">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MAPA-GR">
-<meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="MAPA-GR — Estatísticas da Graduação Brasileira">
-<meta property="og:description" content="Estatísticas descritivas da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC): distribuições por grande área, UF e organização acadêmica.">
-<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/estatisticas.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:title" content="MAPA-GR — Statistics of Brazilian Undergraduate Education">
+<meta property="og:description" content="Descriptive statistics of Brazilian undergraduate education from the SINAES/INEP indicators (CPC, ENADE, IDD, IGC): distributions by broad field, state and academic organisation.">
+<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/en/estatisticas.html">
 <meta property="og:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MAPA-GR — Estatísticas da Graduação Brasileira">
-<meta name="twitter:description" content="Estatísticas descritivas da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC): distribuições por grande área, UF e organização acadêmica.">
+<meta name="twitter:description" content="Descriptive statistics of Brazilian undergraduate education from the SINAES/INEP indicators (CPC, ENADE, IDD, IGC): distributions by broad field, state and academic organisation.">
 <meta name="twitter:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <script src="chart.umd.min.js"></script>
 <style>
@@ -176,20 +180,20 @@ table.data-table tr:hover{background:#FFE0B2;}
 
 <div class="header">
     <div class="header-left">
-        <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">&#9776;</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open filters">&#9776;</button>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1><span>MAPA-GR</span> &#8212; Estat&#237;sticas da Gradua&#231;&#227;o Brasileira</h1>
+        <h1><span>MAPA-GR</span> &#8212; Statistics of Brazilian Undergraduate Education</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
-            <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/estatisticas.html" hreflang="en" lang="en">EN</a></div>
+            <div class="langsel"><a href="../estatisticas.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
             <div id="headerDate"></div>
         </div>
-        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+        <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:#FFF;color:#E65100;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
             onmouseover="this.style.background='#FFF9C4'" onmouseout="this.style.background='#FFF'">
-            &#8592; Voltar
+            &#8592; Back
         </button>
     </div>
 </div>
@@ -199,74 +203,74 @@ table.data-table tr:hover{background:#FFE0B2;}
 <div class="container">
     <div class="sidebar" id="sidebar">
         <div class="filter-group">
-            <h3>&#128202; Filtros de Estat&#237;sticas</h3>
-            <p style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Selecione os filtros e clique <strong>Atualizar</strong> para gerar os gr&#225;ficos.</p>
+            <h3>&#128202; Statistics filters</h3>
+            <p style="font-size:11px;color:var(--txt2);margin-bottom:8px;">Choose the filters and click <strong>Update</strong> to build the charts.</p>
         </div>
 
         <div class="filter-group">
-            <h3>Grande &#193;rea</h3>
+            <h3>Broad field</h3>
             <div id="areaFilter" style="max-height:200px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
         <div class="filter-group">
-            <h3>Ciclo ENADE</h3>
+            <h3>ENADE cycle</h3>
             <div id="cycleFilter"></div>
         </div>
 
         <div class="filter-group">
-            <h3>Regi&#227;o</h3>
-            <label><input type="checkbox" class="reg-chk" value="N" checked> Norte</label>
-            <label><input type="checkbox" class="reg-chk" value="NE" checked> Nordeste</label>
-            <label><input type="checkbox" class="reg-chk" value="CO" checked> Centro-Oeste</label>
-            <label><input type="checkbox" class="reg-chk" value="SE" checked> Sudeste</label>
-            <label><input type="checkbox" class="reg-chk" value="S" checked> Sul</label>
+            <h3>Region</h3>
+            <label><input type="checkbox" class="reg-chk" value="N" checked> North</label>
+            <label><input type="checkbox" class="reg-chk" value="NE" checked> Northeast</label>
+            <label><input type="checkbox" class="reg-chk" value="CO" checked> Central-West</label>
+            <label><input type="checkbox" class="reg-chk" value="SE" checked> Southeast</label>
+            <label><input type="checkbox" class="reg-chk" value="S" checked> South</label>
         </div>
 
         <div class="filter-group">
-            <h3>Tipo de IES</h3>
-            <label><input type="checkbox" class="tipo-chk" value="pub" checked> P&#250;blica</label>
-            <label><input type="checkbox" class="tipo-chk" value="priv" checked> Privada</label>
-            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">P&#250;blica = Federal/Estadual/Municipal. Privada = demais categorias (c/ e s/ fins, Comunit&#225;ria/Confessional, Especial).</p>
+            <h3>Institution type</h3>
+            <label><input type="checkbox" class="tipo-chk" value="pub" checked> Public</label>
+            <label><input type="checkbox" class="tipo-chk" value="priv" checked> Private</label>
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Public = federal/state/municipal. Private = all other categories (for- and non-profit, community/confessional, special).</p>
         </div>
 
         <div class="filter-group">
-            <h3>UF (Estado)</h3>
+            <h3>State (UF)</h3>
             <div style="display:flex;gap:4px;margin-bottom:6px;">
-                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
-                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">All</button>
+                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">None</button>
             </div>
             <div id="ufFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
         <div class="filter-group">
-            <h3>&#128269; Buscar por sigla da IES</h3>
-            <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
-            <input type="text" id="searchSigla" placeholder="ex: UNB, UFRJ, USP" disabled
+            <h3>&#128269; Search by institution acronym</h3>
+            <label><input type="checkbox" id="searchEnabled"> Filter by acronym</label>
+            <input type="text" id="searchSigla" placeholder="e.g.: UNB, UFRJ, USP" disabled
                 style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
-            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Busca parcial: "UF" encontra UFMT, UFRJ, etc.</p>
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Partial match: "UF" finds UFMT, UFRJ, and so on.</p>
         </div>
 
-        <button class="btn btn-primary" onclick="atualizar()">Atualizar Estat&#237;sticas</button>
-        <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
-        <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
+        <button class="btn btn-primary" onclick="atualizar()">Update statistics</button>
+        <button class="btn btn-secondary" onclick="marcarTodos()">Select all</button>
+        <button class="btn btn-secondary" onclick="desmarcarTodos()">Clear all</button>
 
         <div style="margin-top:16px;border-top:2px solid var(--borda);padding-top:12px;">
             <div class="filter-group">
-                <h3>&#128230; Exportar</h3>
+                <h3>&#128230; Export</h3>
             </div>
-            <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
-            <button class="btn btn-export" onclick="exportReport()">Relat&#243;rio TXT</button>
+            <button class="btn btn-export" onclick="exportCSV()">Export CSV</button>
+            <button class="btn btn-export" onclick="exportReport()">TXT report</button>
         </div>
 
-        <button class="btn" onclick="window.open('index.html','_blank')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Painel Principal</button>
-        <button class="btn" onclick="window.open('help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documenta&#231;&#227;o</button>
-        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Pedir um ajuste, apontar um dado errado ou sugerir uma melhoria">&#128161; Sugerir melhoria</button>
+        <button class="btn" onclick="window.open('en/index.html','_blank')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Main panel</button>
+        <button class="btn" onclick="window.open('en/help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Help / Documentation</button>
+        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Ask for a change, report wrong data or suggest an improvement">&#128161; Suggest an improvement</button>
     </div>
 
     <div class="main" id="main">
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p id="loadingMsg">Carregando todos os datasets...</p>
+            <p id="loadingMsg">Loading all datasets...</p>
         </div>
         <div id="results" style="display:none;"></div>
     </div>
@@ -313,7 +317,7 @@ async function loadAll() {
     try {
         const r = await fetch('dados/metadata.json');
         META = await r.json();
-        setStatus('Carregando datasets...');
+        setStatus('Loading datasets...');
 
         const promises = AREA_ORDER.map(async (slug) => {
             const meta = META.grandes_areas[slug];
@@ -339,7 +343,7 @@ async function loadAll() {
         document.getElementById('loading').style.display = 'none';
         document.getElementById('results').style.display = 'block';
         atualizar();
-        setStatus('Todos os datasets carregados');
+        setStatus('All datasets loaded');
     } catch(e) {
         document.getElementById('loadingMsg').innerHTML =
             '<span style="color:#E74C3C;">Erro: ' + e.message + '</span>';
@@ -440,8 +444,8 @@ function atualizar() {
     const main = document.getElementById('results');
 
     if (cursos.length === 0) {
-        main.innerHTML = '<div class="card"><h2>Nenhum dado encontrado</h2><p>Ajuste os filtros na barra lateral.</p></div>';
-        setStatus('Filtro vazio');
+        main.innerHTML = '<div class="card"><h2>No data found</h2><p>Adjust the filters in the sidebar.</p></div>';
+        setStatus('No results');
         return;
     }
 
@@ -456,22 +460,22 @@ function atualizar() {
     let html = '';
 
     // Summary cards
-    html += '<div class="card"><h2>Vis\u00e3o Geral</h2>';
+    html += '<div class="card"><h2>Overview</h2>';
     html += '<div class="stats-row">';
-    html += '<div class="stat-box"><div class="value">' + totalCursos.toLocaleString('pt-BR') + '</div><div class="label">Cursos</div></div>';
-    html += '<div class="stat-box"><div class="value">' + totalIES.toLocaleString('pt-BR') + '</div><div class="label">IES</div></div>';
-    html += '<div class="stat-box"><div class="value">' + totalUFs + '</div><div class="label">UFs</div></div>';
-    html += '<div class="stat-box"><div class="value">' + totalNi.toLocaleString('pt-BR') + '</div><div class="label">Inscritos</div></div>';
-    html += '<div class="stat-box"><div class="value">' + totalNp.toLocaleString('pt-BR') + '</div><div class="label">Participantes</div></div>';
-    html += '<div class="stat-box"><div class="value">' + taxaParticipacao + '%</div><div class="label">Taxa Participa\u00e7\u00e3o</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalCursos.toLocaleString('en-US') + '</div><div class="label">Programmes</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalIES.toLocaleString('en-US') + '</div><div class="label">IES</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalUFs + '</div><div class="label">States</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalNi.toLocaleString('en-US') + '</div><div class="label">Registered</div></div>';
+    html += '<div class="stat-box"><div class="value">' + totalNp.toLocaleString('en-US') + '</div><div class="label">Sat the exam</div></div>';
+    html += '<div class="stat-box"><div class="value">' + taxaParticipacao + '%</div><div class="label">Turnout</div></div>';
     html += '</div></div>';
 
     // Tab sections
     html += '<div class="tabs-section" id="tabsSec">';
-    html += '<div class="tab-sec active" data-sec="sec-areas" onclick="switchSection(this)">Por \u00c1rea</div>';
-    html += '<div class="tab-sec" data-sec="sec-regiao" onclick="switchSection(this)">Por Regi\u00e3o / Estado</div>';
-    html += '<div class="tab-sec" data-sec="sec-ciclo" onclick="switchSection(this)">Por Ciclo</div>';
-    html += '<div class="tab-sec" data-sec="sec-ies" onclick="switchSection(this)">Por IES</div>';
+    html += '<div class="tab-sec active" data-sec="sec-areas" onclick="switchSection(this)">By field</div>';
+    html += '<div class="tab-sec" data-sec="sec-regiao" onclick="switchSection(this)">By region / state</div>';
+    html += '<div class="tab-sec" data-sec="sec-ciclo" onclick="switchSection(this)">By cycle</div>';
+    html += '<div class="tab-sec" data-sec="sec-ies" onclick="switchSection(this)">By institution</div>';
     html += '</div>';
 
     // === SECTION: POR AREA ===
@@ -481,27 +485,27 @@ function atualizar() {
     html += '<div style="margin-bottom:10px;">';
     html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Tipo de gr\u00e1fico:</span>';
     html += '<div class="chip-toggle" id="toggleAreaChart">';
-    html += '<button class="active" onclick="setChartType(\'area\',\'pie\',this)">Pizza</button>';
-    html += '<button onclick="setChartType(\'area\',\'bar\',this)">Barras</button>';
-    html += '<button onclick="setChartType(\'area\',\'doughnut\',this)">Rosca</button>';
+    html += '<button class="active" onclick="setChartType(\'area\',\'pie\',this)">Pie</button>';
+    html += '<button onclick="setChartType(\'area\',\'bar\',this)">Bars</button>';
+    html += '<button onclick="setChartType(\'area\',\'doughnut\',this)">Doughnut</button>';
     html += '</div></div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Cursos por Grande \u00c1rea</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Programmes by broad field</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaCursos"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Grande \u00c1rea</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Registered students by broad field</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaAlunos"></canvas></div></div></div>';
     html += '</div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Participantes ENADE por Grande \u00c1rea</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>ENADE participants by broad field</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaPart"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Taxa de Participa\u00e7\u00e3o por Grande \u00c1rea (%)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Turnout by broad field (%)</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaTaxa"></canvas></div></div></div>';
     html += '</div>';
 
     // Table
-    html += '<div class="card"><h2>Detalhamento por Grande \u00c1rea</h2>';
+    html += '<div class="card"><h2>Breakdown by broad field</h2>';
     html += '<table class="data-table"><thead><tr><th>\u00c1rea</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th><th>Taxa Part.</th></tr></thead><tbody id="tbodyArea"></tbody></table>';
     html += '</div>';
 
@@ -513,33 +517,33 @@ function atualizar() {
     html += '<div style="margin-bottom:10px;">';
     html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Tipo de gr\u00e1fico:</span>';
     html += '<div class="chip-toggle" id="toggleRegChart">';
-    html += '<button class="active" onclick="setChartType(\'reg\',\'pie\',this)">Pizza</button>';
-    html += '<button onclick="setChartType(\'reg\',\'bar\',this)">Barras</button>';
-    html += '<button onclick="setChartType(\'reg\',\'doughnut\',this)">Rosca</button>';
+    html += '<button class="active" onclick="setChartType(\'reg\',\'pie\',this)">Pie</button>';
+    html += '<button onclick="setChartType(\'reg\',\'bar\',this)">Bars</button>';
+    html += '<button onclick="setChartType(\'reg\',\'doughnut\',this)">Doughnut</button>';
     html += '</div></div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Cursos por Regi\u00e3o</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Programmes by region</h2>';
     html += '<div class="chart-container"><canvas id="chartRegCursos"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Regi\u00e3o</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Registered students by region</h2>';
     html += '<div class="chart-container"><canvas id="chartRegAlunos"></canvas></div></div></div>';
     html += '</div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Cursos por Estado (UF)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Programmes by state</h2>';
     html += '<div class="chart-container"><canvas id="chartUfCursos"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Alunos Inscritos por Estado (UF)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Registered students by state</h2>';
     html += '<div class="chart-container"><canvas id="chartUfAlunos"></canvas></div></div></div>';
     html += '</div>';
 
     // Region table
-    html += '<div class="card"><h2>Detalhamento por Regi\u00e3o</h2>';
-    html += '<table class="data-table"><thead><tr><th>Regi\u00e3o</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th></tr></thead><tbody id="tbodyReg"></tbody></table>';
+    html += '<div class="card"><h2>Breakdown by region</h2>';
+    html += '<table class="data-table"><thead><tr><th>Region</th><th>Progr.</th><th>%</th><th>Inst.</th><th>Registered</th><th>%</th><th>Sat</th><th>%</th></tr></thead><tbody id="tbodyReg"></tbody></table>';
     html += '</div>';
 
     // State table
-    html += '<div class="card"><h2>Detalhamento por Estado (UF)</h2>';
-    html += '<table class="data-table"><thead><tr><th>UF</th><th>Regi\u00e3o</th><th>Cursos</th><th>%</th><th>IES</th><th>Inscritos</th><th>%</th><th>Participantes</th><th>%</th></tr></thead><tbody id="tbodyUf"></tbody></table>';
+    html += '<div class="card"><h2>Breakdown by state</h2>';
+    html += '<table class="data-table"><thead><tr><th>State</th><th>Region</th><th>Progr.</th><th>%</th><th>Inst.</th><th>Registered</th><th>%</th><th>Sat</th><th>%</th></tr></thead><tbody id="tbodyUf"></tbody></table>';
     html += '</div>';
 
     html += '</div>'; // end sec-regiao
@@ -548,17 +552,17 @@ function atualizar() {
     html += '<div class="section-panel" id="sec-ciclo">';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Cursos por Ciclo ENADE</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Programmes by ENADE cycle</h2>';
     html += '<div class="chart-container"><canvas id="chartCicloCursos"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Alunos por Ciclo ENADE</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Students by ENADE cycle</h2>';
     html += '<div class="chart-container"><canvas id="chartCicloAlunos"></canvas></div></div></div>';
     html += '</div>';
 
-    html += '<div class="card"><h2>Inscritos vs Participantes por Ciclo</h2>';
+    html += '<div class="card"><h2>Registered vs. sat, by cycle</h2>';
     html += '<div class="chart-container" style="height:320px;"><canvas id="chartCicloComp"></canvas></div></div>';
 
-    html += '<div class="card"><h2>Detalhamento por Ciclo</h2>';
-    html += '<table class="data-table"><thead><tr><th>Ciclo</th><th>Cursos</th><th>IES</th><th>Inscritos</th><th>Participantes</th><th>Taxa Part.</th></tr></thead><tbody id="tbodyCiclo"></tbody></table>';
+    html += '<div class="card"><h2>Breakdown by cycle</h2>';
+    html += '<table class="data-table"><thead><tr><th>Cycle</th><th>Progr.</th><th>Inst.</th><th>Registered</th><th>Sat</th><th>Turnout</th></tr></thead><tbody id="tbodyCiclo"></tbody></table>';
     html += '</div>';
 
     html += '</div>'; // end sec-ciclo
@@ -566,14 +570,14 @@ function atualizar() {
     // === SECTION: POR IES ===
     html += '<div class="section-panel" id="sec-ies">';
 
-    html += '<div class="card"><h2>Top 30 IES por N\u00famero de Cursos</h2>';
+    html += '<div class="card"><h2>Top 30 institutions by number of programmes</h2>';
     html += '<div class="chart-container" style="height:500px;"><canvas id="chartIesCursos"></canvas></div></div>';
 
-    html += '<div class="card"><h2>Top 30 IES por Alunos Inscritos</h2>';
+    html += '<div class="card"><h2>Top 30 institutions by registered students</h2>';
     html += '<div class="chart-container" style="height:500px;"><canvas id="chartIesAlunos"></canvas></div></div>';
 
-    html += '<div class="card"><h2>Detalhamento por IES (Top 50)</h2>';
-    html += '<table class="data-table"><thead><tr><th>#</th><th>Sigla</th><th>UFs</th><th>Cursos</th><th>Inscritos</th><th>Participantes</th><th>Taxa</th></tr></thead><tbody id="tbodyIes"></tbody></table>';
+    html += '<div class="card"><h2>Breakdown by institution (top 50)</h2>';
+    html += '<table class="data-table"><thead><tr><th>#</th><th>Acronym</th><th>States</th><th>Progr.</th><th>Registered</th><th>Sat</th><th>Turnout</th></tr></thead><tbody id="tbodyIes"></tbody></table>';
     html += '</div>';
 
     html += '</div>'; // end sec-ies
@@ -581,7 +585,7 @@ function atualizar() {
     main.innerHTML = html;
 
     setTimeout(function() { renderAllCharts(cursos, f); }, 30);
-    setStatus(totalCursos.toLocaleString('pt-BR') + ' cursos | ' + totalNi.toLocaleString('pt-BR') + ' inscritos');
+    setStatus(totalCursos.toLocaleString('en-US') + ' programmes | ' + totalNi.toLocaleString('en-US') + ' registered');
 }
 
 // === SECTION SWITCHING ===
@@ -645,7 +649,7 @@ function renderAreaCharts(cursos) {
             var val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
             var total = ctx.dataset.data.reduce(function(a,b){ return a+b; }, 0);
             var pct = total > 0 ? (val * 100 / total).toFixed(1) : '0';
-            return ctx.label + ': ' + val.toLocaleString('pt-BR') + ' (' + pct + '%)';
+            return ctx.label + ': ' + val.toLocaleString('en-US') + ' (' + pct + '%)';
         }
     };
 
@@ -735,7 +739,7 @@ function renderRegCharts(cursos) {
             var val = ctx.parsed !== undefined ? (typeof ctx.parsed === 'object' ? (ctx.parsed.y !== undefined ? ctx.parsed.y : ctx.parsed) : ctx.parsed) : ctx.raw;
             var total = ctx.dataset.data.reduce(function(a,b){ return a+b; }, 0);
             var pct = total > 0 ? (val * 100 / total).toFixed(1) : '0';
-            return ctx.label + ': ' + val.toLocaleString('pt-BR') + ' (' + pct + '%)';
+            return ctx.label + ': ' + val.toLocaleString('en-US') + ' (' + pct + '%)';
         }
     };
 
@@ -783,7 +787,7 @@ function renderRegCharts(cursos) {
                     backgroundColor: ufEntries.map(function(e){ return REGIAO_CORES[UF_REGIAO[e[0]]] || '#95A5A6'; }) }] },
             options: { responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false },
-                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntries[ctx.dataIndex]; return [e[0] + ': ' + e[1].cursos + ' cursos', 'Regi\u00e3o: ' + REGIAO_LABELS[UF_REGIAO[e[0]]]]; } } }
+                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntries[ctx.dataIndex]; return [e[0] + ': ' + e[1].cursos + ' cursos', 'Region: ' + REGIAO_LABELS[UF_REGIAO[e[0]]]]; } } }
                 },
                 scales: { y: { beginAtZero: true } }
             }
@@ -800,7 +804,7 @@ function renderRegCharts(cursos) {
                     backgroundColor: ufEntriesNi.map(function(e){ return REGIAO_CORES[UF_REGIAO[e[0]]] || '#95A5A6'; }) }] },
             options: { responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false },
-                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntriesNi[ctx.dataIndex]; return [e[0] + ': ' + e[1].ni.toLocaleString('pt-BR') + ' inscritos', 'Participantes: ' + e[1].np.toLocaleString('pt-BR')]; } } }
+                    tooltip: { callbacks: { label: function(ctx) { var e = ufEntriesNi[ctx.dataIndex]; return [e[0] + ': ' + e[1].ni.toLocaleString('en-US') + ' registered', 'Sat the exam: ' + e[1].np.toLocaleString('en-US')]; } } }
                 },
                 scales: { y: { beginAtZero: true } }
             }
@@ -815,8 +819,8 @@ function renderRegCharts(cursos) {
         var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
         tbodyReg.innerHTML = regKeys.map(function(r) {
             var d = byReg[r];
-            return '<tr><td><strong>' + REGIAO_LABELS[r] + '</strong></td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
-        }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td>TOTAL</td><td>' + totalC.toLocaleString('pt-BR') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + totalNp.toLocaleString('pt-BR') + '</td><td>100%</td></tr>';
+            return '<tr><td><strong>' + REGIAO_LABELS[r] + '</strong></td><td>' + d.cursos.toLocaleString('en-US') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('en-US') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('en-US') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
+        }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td>TOTAL</td><td>' + totalC.toLocaleString('en-US') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('en-US') + '</td><td>100%</td><td>' + totalNp.toLocaleString('en-US') + '</td><td>100%</td></tr>';
     }
 
     var tbodyUf = document.getElementById('tbodyUf');
@@ -826,7 +830,7 @@ function renderRegCharts(cursos) {
         var totalNp = cursos.reduce(function(s,c){ return s + (c.np||0); }, 0);
         tbodyUf.innerHTML = ufEntries.map(function(e) {
             var u = e[0]; var d = e[1];
-            return '<tr><td><strong>' + u + '</strong></td><td>' + REGIAO_LABELS[UF_REGIAO[u]] + '</td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
+            return '<tr><td><strong>' + u + '</strong></td><td>' + REGIAO_LABELS[UF_REGIAO[u]] + '</td><td>' + d.cursos.toLocaleString('en-US') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('en-US') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('en-US') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td></tr>';
         }).join('');
     }
 }
@@ -856,7 +860,7 @@ function renderCicloCharts(cursos) {
             data: { labels: years, datasets: [{ label: 'Cursos', data: years.map(function(y){ return byCiclo[y].cursos; }), backgroundColor: coresCiclo }] },
             options: { responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false },
-                    tooltip: { callbacks: { label: function(ctx) { var y = years[ctx.dataIndex]; var d = byCiclo[y]; return ['Cursos: ' + d.cursos.toLocaleString('pt-BR'), 'IES: ' + d.ies.size]; } } }
+                    tooltip: { callbacks: { label: function(ctx) { var y = years[ctx.dataIndex]; var d = byCiclo[y]; return ['Programmes: ' + d.cursos.toLocaleString('en-US'), 'Institutions: ' + d.ies.size]; } } }
                 },
                 scales: { y: { beginAtZero: true } }
             }
@@ -892,7 +896,7 @@ function renderCicloCharts(cursos) {
                         borderColor: '#FF5722', backgroundColor: 'rgba(255,87,34,0.1)', fill: true, tension: 0.2, pointRadius: 6 }
                 ] },
             options: { responsive: true, maintainAspectRatio: false,
-                plugins: { tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw.toLocaleString('pt-BR'); } } } },
+                plugins: { tooltip: { callbacks: { label: function(ctx) { return ctx.dataset.label + ': ' + ctx.raw.toLocaleString('en-US'); } } } },
                 scales: { y: { beginAtZero: true } }
             }
         });
@@ -904,7 +908,7 @@ function renderCicloCharts(cursos) {
         tbodyCiclo.innerHTML = years.map(function(y) {
             var d = byCiclo[y];
             var taxa = d.ni > 0 ? (d.np * 100 / d.ni).toFixed(1) + '%' : '-';
-            return '<tr><td><strong>' + y + '</strong></td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + taxa + '</td></tr>';
+            return '<tr><td><strong>' + y + '</strong></td><td>' + d.cursos.toLocaleString('en-US') + '</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('en-US') + '</td><td>' + d.np.toLocaleString('en-US') + '</td><td>' + taxa + '</td></tr>';
         }).join('');
     }
 }
@@ -939,7 +943,7 @@ function renderIesCharts(cursos) {
                 datasets: [{ data: topCursos.map(function(p){ return p.cursos; }), backgroundColor: '#FF5722' }] },
             options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false },
-                    tooltip: { callbacks: { label: function(ctx) { var p = topCursos[ctx.dataIndex]; return [p.sg + ': ' + p.cursos + ' cursos', 'UFs: ' + p.ufs.join(', '), 'Inscritos: ' + p.ni.toLocaleString('pt-BR')]; } } }
+                    tooltip: { callbacks: { label: function(ctx) { var p = topCursos[ctx.dataIndex]; return [p.sg + ': ' + p.cursos + ' cursos', 'States: ' + p.ufs.join(', '), 'Inscritos: ' + p.ni.toLocaleString('en-US')]; } } }
                 },
                 scales: { x: { beginAtZero: true } }
             }
@@ -956,7 +960,7 @@ function renderIesCharts(cursos) {
                 datasets: [{ data: topAlunos.map(function(p){ return p.ni; }), backgroundColor: '#2196F3' }] },
             options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
                 plugins: { legend: { display: false },
-                    tooltip: { callbacks: { label: function(ctx) { var p = topAlunos[ctx.dataIndex]; return [p.sg + ': ' + p.ni.toLocaleString('pt-BR') + ' inscritos', 'Participantes: ' + p.np.toLocaleString('pt-BR'), 'Cursos: ' + p.cursos, 'UFs: ' + p.ufs.join(', ')]; } } }
+                    tooltip: { callbacks: { label: function(ctx) { var p = topAlunos[ctx.dataIndex]; return [p.sg + ': ' + p.ni.toLocaleString('en-US') + ' registered', 'Sat the exam: ' + p.np.toLocaleString('en-US'), 'Programmes: ' + p.cursos, 'States: ' + p.ufs.join(', ')]; } } }
                 },
                 scales: { x: { beginAtZero: true } }
             }
@@ -969,7 +973,7 @@ function renderIesCharts(cursos) {
         var top50 = iesList.slice().sort(function(a,b){ return b.cursos - a.cursos; }).slice(0, 50);
         tbodyIes.innerHTML = top50.map(function(p, i) {
             var taxa = p.ni > 0 ? (p.np * 100 / p.ni).toFixed(1) + '%' : '-';
-            return '<tr><td>' + (i+1) + '</td><td><strong>' + p.sg + '</strong></td><td>' + p.ufs.join(', ') + '</td><td>' + p.cursos + '</td><td>' + p.ni.toLocaleString('pt-BR') + '</td><td>' + p.np.toLocaleString('pt-BR') + '</td><td>' + taxa + '</td></tr>';
+            return '<tr><td>' + (i+1) + '</td><td><strong>' + p.sg + '</strong></td><td>' + p.ufs.join(', ') + '</td><td>' + p.cursos + '</td><td>' + p.ni.toLocaleString('en-US') + '</td><td>' + p.np.toLocaleString('en-US') + '</td><td>' + taxa + '</td></tr>';
         }).join('');
     }
 }
@@ -997,15 +1001,15 @@ function renderTables(cursos) {
         var d = byArea[s];
         var label = META.grandes_areas[s] ? META.grandes_areas[s].icon + ' ' + META.grandes_areas[s].label : s;
         var taxa = d.ni > 0 ? (d.np * 100 / d.ni).toFixed(1) + '%' : '-';
-        return '<tr><td style="text-align:left;">' + label + '</td><td>' + d.cursos.toLocaleString('pt-BR') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('pt-BR') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('pt-BR') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td><td>' + taxa + '</td></tr>';
-    }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td style="text-align:left;">TOTAL</td><td>' + totalC.toLocaleString('pt-BR') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + totalNp.toLocaleString('pt-BR') + '</td><td>100%</td><td>' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-') + '</td></tr>';
+        return '<tr><td style="text-align:left;">' + label + '</td><td>' + d.cursos.toLocaleString('en-US') + '</td><td>' + (totalC > 0 ? (d.cursos*100/totalC).toFixed(1) : 0) + '%</td><td>' + d.ies.size + '</td><td>' + d.ni.toLocaleString('en-US') + '</td><td>' + (totalNi > 0 ? (d.ni*100/totalNi).toFixed(1) : 0) + '%</td><td>' + d.np.toLocaleString('en-US') + '</td><td>' + (totalNp > 0 ? (d.np*100/totalNp).toFixed(1) : 0) + '%</td><td>' + taxa + '</td></tr>';
+    }).join('') + '<tr style="font-weight:700;background:#FFF3E0;"><td style="text-align:left;">TOTAL</td><td>' + totalC.toLocaleString('en-US') + '</td><td>100%</td><td>-</td><td>' + totalNi.toLocaleString('en-US') + '</td><td>100%</td><td>' + totalNp.toLocaleString('en-US') + '</td><td>100%</td><td>' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-') + '</td></tr>';
 }
 
 // === EXPORT CSV ===
 function exportCSV() {
     var f = getFilters();
     var cursos = filterCursos(f);
-    if (!cursos.length) { toast('Nada a exportar'); return; }
+    if (!cursos.length) { toast('Nothing to export'); return; }
 
     var header = ['grande_area','ano','sigla','ies','uf','regiao','municipio','area','nome_curso','faixa','cpc_cont','enade_cont','idd_pad','n_inscritos','n_participantes'];
     var rows = cursos.map(function(c) {
@@ -1023,7 +1027,7 @@ function exportCSV() {
     var pad = function(n) { return String(n).padStart(2, '0'); };
     var stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
 
-    var csv = '# MAPA-GR v' + VERSION + ' \u2014 Estat\u00edsticas \u2014 ' + d.toLocaleString('pt-BR') + '\n';
+    var csv = '# MAPA-GR v' + VERSION + ' \u2014 Statistics \u2014 ' + d.toLocaleString('en-US') + '\n';
     csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';
     csv += header.join(';') + '\n' + rows.join('\n');
 
@@ -1034,14 +1038,14 @@ function exportCSV() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    toast(cursos.length + ' registros exportados em CSV');
+    toast(cursos.length + ' records exported to CSV');
 }
 
 // === EXPORT REPORT TXT ===
 function exportReport() {
     var f = getFilters();
     var cursos = filterCursos(f);
-    if (!cursos.length) { toast('Nada a exportar'); return; }
+    if (!cursos.length) { toast('Nothing to export'); return; }
 
     var lines = [];
     var p = function(s) { lines.push(s); };
@@ -1049,22 +1053,22 @@ function exportReport() {
     var pad = function(n) { return String(n).padStart(2, '0'); };
 
     p('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
-    p('  MAPA-GR v' + VERSION + ' \u2014 RELAT\u00d3RIO DE ESTAT\u00cdSTICAS');
-    p('  Gerado em: ' + d.toLocaleString('pt-BR'));
+    p('  MAPA-GR v' + VERSION + ' \u2014 STATISTICS REPORT');
+    p('  Generated on: ' + d.toLocaleString('en-US'));
     p('\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550');
     p('');
 
     // Filtros
-    p('FILTROS APLICADOS:');
-    p('  Grandes \u00c1reas: ' + f.areas.length + '/' + AREA_ORDER.length + ' selecionadas');
+    p('FILTERS APPLIED:');
+    p('  Broad fields: ' + f.areas.length + '/' + AREA_ORDER.length + ' selecionadas');
     if (f.areas.length < AREA_ORDER.length) {
         f.areas.forEach(function(s) { p('    \u2022 ' + (META.grandes_areas[s] ? META.grandes_areas[s].label : s)); });
     }
-    p('  Ciclos: ' + f.ciclos.join(', '));
-    p('  Regi\u00f5es: ' + f.regs.map(function(r){ return REGIAO_LABELS[r]; }).join(', '));
-    p('  UFs: ' + f.ufs.length + '/27' + (f.ufs.length === 27 ? ' (todas)' : ''));
-    p('  Tipo de IES: ' + (f.tipos.length === 2 ? 'Pública e Privada' : f.tipos.map(function(t){ return t === 'pub' ? 'Pública' : 'Privada'; }).join(', ') || 'nenhum'));
-    if (f.searchOn && f.searchTerm) p('  Busca por sigla: "' + f.searchTerm + '"');
+    p('  Cycles: ' + f.ciclos.join(', '));
+    p('  Regions: ' + f.regs.map(function(r){ return REGIAO_LABELS[r]; }).join(', '));
+    p('  UFs: ' + f.ufs.length + '/27' + (f.ufs.length === 27 ? ' (all)' : ''));
+    p('  Institution type: ' + (f.tipos.length === 2 ? 'Public and private' : f.tipos.map(function(t){ return t === 'pub' ? 'Public' : 'Private'; }).join(', ') || 'nenhum'));
+    if (f.searchOn && f.searchTerm) p('  Acronym search: "' + f.searchTerm + '"');
     p('');
 
     // Totais
@@ -1073,17 +1077,17 @@ function exportReport() {
     var totalIES = new Set(cursos.map(function(c){ return c.ci || c.sg; })).size;
     var totalUFs = new Set(cursos.map(function(c){ return c.u; })).size;
 
-    p('TOTAIS GERAIS:');
-    p('  Cursos: ' + cursos.length.toLocaleString('pt-BR'));
-    p('  IES distintas: ' + totalIES.toLocaleString('pt-BR'));
+    p('OVERALL TOTALS:');
+    p('  Programmes: ' + cursos.length.toLocaleString('en-US'));
+    p('  Distinct institutions: ' + totalIES.toLocaleString('en-US'));
     p('  UFs: ' + totalUFs);
-    p('  Alunos inscritos: ' + totalNi.toLocaleString('pt-BR'));
-    p('  Participantes ENADE: ' + totalNp.toLocaleString('pt-BR'));
-    p('  Taxa de participa\u00e7\u00e3o: ' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-'));
+    p('  Students registered: ' + totalNi.toLocaleString('en-US'));
+    p('  ENADE participants: ' + totalNp.toLocaleString('en-US'));
+    p('  Turnout: ' + (totalNi > 0 ? (totalNp*100/totalNi).toFixed(1) + '%' : '-'));
     p('');
 
     // Por area
-    p('POR GRANDE \u00c1REA:');
+    p('BY BROAD FIELD:');
     p('  ' + padR('\u00c1rea', 35) + padL('Cursos', 10) + padL('%', 8) + padL('Inscritos', 14) + padL('%', 8) + padL('Particip.', 14) + padL('%', 8));
     p('  ' + '\u2500'.repeat(95));
     var byArea = {};
@@ -1097,12 +1101,12 @@ function exportReport() {
         if (!byArea[s]) return;
         var da = byArea[s];
         var label = META.grandes_areas[s] ? META.grandes_areas[s].label : s;
-        p('  ' + padR(label, 35) + padL(da.cursos.toLocaleString('pt-BR'), 10) + padL((da.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(da.ni.toLocaleString('pt-BR'), 14) + padL((totalNi > 0 ? (da.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(da.np.toLocaleString('pt-BR'), 14) + padL((totalNp > 0 ? (da.np*100/totalNp).toFixed(1) : 0) + '%', 8));
+        p('  ' + padR(label, 35) + padL(da.cursos.toLocaleString('en-US'), 10) + padL((da.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(da.ni.toLocaleString('en-US'), 14) + padL((totalNi > 0 ? (da.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(da.np.toLocaleString('en-US'), 14) + padL((totalNp > 0 ? (da.np*100/totalNp).toFixed(1) : 0) + '%', 8));
     });
     p('');
 
     // Por regiao
-    p('POR REGI\u00c3O:');
+    p('BY REGION:');
     p('  ' + padR('Regi\u00e3o', 20) + padL('Cursos', 10) + padL('%', 8) + padL('Inscritos', 14) + padL('%', 8) + padL('Particip.', 14));
     p('  ' + '\u2500'.repeat(75));
     var byReg = {};
@@ -1115,12 +1119,12 @@ function exportReport() {
     ['N','NE','CO','SE','S'].forEach(function(r) {
         if (!byReg[r]) return;
         var dr = byReg[r];
-        p('  ' + padR(REGIAO_LABELS[r], 20) + padL(dr.cursos.toLocaleString('pt-BR'), 10) + padL((dr.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(dr.ni.toLocaleString('pt-BR'), 14) + padL((totalNi > 0 ? (dr.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(dr.np.toLocaleString('pt-BR'), 14));
+        p('  ' + padR(REGIAO_LABELS[r], 20) + padL(dr.cursos.toLocaleString('en-US'), 10) + padL((dr.cursos*100/cursos.length).toFixed(1) + '%', 8) + padL(dr.ni.toLocaleString('en-US'), 14) + padL((totalNi > 0 ? (dr.ni*100/totalNi).toFixed(1) : 0) + '%', 8) + padL(dr.np.toLocaleString('en-US'), 14));
     });
     p('');
 
     // Por UF (top 10)
-    p('TOP 10 ESTADOS POR CURSOS:');
+    p('TOP 10 STATES BY PROGRAMMES:');
     var byUf = {};
     cursos.forEach(function(c) {
         if (!byUf[c.u]) byUf[c.u] = { cursos: 0, ni: 0, np: 0 };
@@ -1130,12 +1134,12 @@ function exportReport() {
     });
     var ufArr = Object.entries(byUf).sort(function(a,b){ return b[1].cursos - a[1].cursos; });
     ufArr.slice(0, 10).forEach(function(e, i) {
-        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(e[0] + ' (' + REGIAO_LABELS[UF_REGIAO[e[0]]] + ')', 22) + padL(e[1].cursos.toLocaleString('pt-BR') + ' cursos', 14) + '  ' + padL(e[1].ni.toLocaleString('pt-BR') + ' inscritos', 18));
+        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(e[0] + ' (' + REGIAO_LABELS[UF_REGIAO[e[0]]] + ')', 22) + padL(e[1].cursos.toLocaleString('en-US') + ' cursos', 14) + '  ' + padL(e[1].ni.toLocaleString('en-US') + ' registered', 18));
     });
     p('');
 
     // Por IES (top 10)
-    p('TOP 10 IES POR CURSOS:');
+    p('TOP 10 INSTITUTIONS BY PROGRAMMES:');
     var byIes = {};
     cursos.forEach(function(c) {
         var sg = c.sg || '?';
@@ -1149,12 +1153,12 @@ function exportReport() {
         return { sg: e[0], cursos: e[1].cursos, ni: e[1].ni, np: e[1].np, ufs: [...e[1].ufs] };
     }).sort(function(a,b){ return b.cursos - a.cursos; });
     iesArr.slice(0, 10).forEach(function(p2, i) {
-        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(p2.sg, 16) + padL(p2.cursos + ' cursos', 12) + '  ' + padL(p2.ni.toLocaleString('pt-BR') + ' inscritos', 18) + '  UFs: ' + p2.ufs.join('/'));
+        p('  ' + padL(String(i+1) + '.', 4) + ' ' + padR(p2.sg, 16) + padL(p2.cursos + ' cursos', 12) + '  ' + padL(p2.ni.toLocaleString('en-US') + ' registered', 18) + '  UFs: ' + p2.ufs.join('/'));
     });
     p('');
 
     // Por ciclo
-    p('POR CICLO ENADE:');
+    p('BY ENADE CYCLE:');
     var byCiclo = {};
     cursos.forEach(function(c) {
         if (!byCiclo[c.y]) byCiclo[c.y] = { cursos: 0, ni: 0, np: 0 };
@@ -1165,13 +1169,13 @@ function exportReport() {
     Object.keys(byCiclo).sort().forEach(function(y) {
         var dc = byCiclo[y];
         var taxa = dc.ni > 0 ? (dc.np*100/dc.ni).toFixed(1) + '%' : '-';
-        p('  ' + y + ': ' + dc.cursos.toLocaleString('pt-BR') + ' cursos | ' + dc.ni.toLocaleString('pt-BR') + ' inscritos | ' + dc.np.toLocaleString('pt-BR') + ' participantes | taxa: ' + taxa);
+        p('  ' + y + ': ' + dc.cursos.toLocaleString('en-US') + ' programmes | ' + dc.ni.toLocaleString('en-US') + ' inscritos | ' + dc.np.toLocaleString('en-US') + ' participantes | taxa: ' + taxa);
     });
     p('');
 
     p('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
     p('Prof. David L. Azevedo | MAPA-GR v' + VERSION);
-    p('Fonte: INEP \u2014 Indicadores de Qualidade da Educa\u00e7\u00e3o Superior');
+    p('Source: INEP \u2014 Higher Education Quality Indicators');
     p('Portal: https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos');
     p('\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500');
 
@@ -1185,7 +1189,7 @@ function exportReport() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
-    toast('Relat\u00f3rio salvo: ' + filename);
+    toast('Report saved: ' + filename);
 }
 
 function padR(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
@@ -1202,7 +1206,7 @@ function padL(s, n) { s = String(s); while (s.length < n) s = ' ' + s; return s;
 })();
 
 // Init
-document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US');
 loadAll();
 </script>
 
