@@ -1,0 +1,69 @@
+<!-- sha:1f25156d5765d1d4 -->
+<div class="card">
+    <h2>How to use MAPA-GR</h2>
+    <h3>1. Reference institution (after accepting the terms)</h3>
+    <p>Right after <strong>"I agree"</strong>, choose the <strong>reference institution</strong> — one of <strong>264 public institutions</strong>: 112 federal (universities, federal institutes and CEFETs), 117 state and 35 municipal. Use the <strong>search by acronym, name, state or sphere</strong> (e.g. <code>UEMA</code>, <code>UFMG</code>, "federal de minas", <code>estadual</code>, <code>MA</code>) and click <strong>OK</strong>. The chosen institution is then <strong>highlighted in pink (★)</strong> in every chart, in the table and in the report, against the other programmes in each field. <strong>Private institutions</strong> will be included in a future version.</p>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Changing the reference:</strong> use the <strong>"↺ Change reference institution"</strong> button at the top of the sidebar, at any time.</li>
+        <li><strong>Sphere tag:</strong> each option in the list shows whether the institution is <strong>federal</strong>, <strong>state</strong> or <strong>municipal</strong>. The 7 institutions with no acronym in INEP's register appear by name.</li>
+        <li><strong>Direct link:</strong> append <code>?ies=ACRONYM</code> to the URL (e.g. <code>?ies=UFMG</code>) to open with the reference already set, skipping the picker — handy for sharing. The <strong>INEP institution code</strong> also works (e.g. <code>?ies=568</code>), and it is the <strong>unambiguous</strong> form: the acronym <code>FATEC</code>, for instance, belongs to 5 different institutions, and by acronym the first of them is opened.</li>
+    </ul>
+    <h3>2. Tabs at the top</h3>
+    <p>Click any tab to load the data for that broad field. The default tab is <strong>Exact and Earth Sciences</strong>. Data are downloaded on demand (~200-600 KB gzipped) and cached for offline use.</p>
+    <h3>3. Filters (sidebar)</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Search (global):</strong> a text field that sweeps all <strong>9 broad fields</strong> (not just the current tab), <strong>accent-insensitive</strong>, matching <strong>institution acronym, actual programme name, ENADE field, institution name and municipality</strong>. Several terms separated by spaces combine with <strong>"AND"</strong>: <code>ufpe biomedica</code> finds exactly UFPE's Biomedical Engineering; <code>biomedica</code> alone lists them all. Programmes with no ENADE exam of their own (Biomedical Engineering, say, assessed under the generic field "ENGENHARIA") are found by name. Note that the data are in Portuguese. In search mode the <strong>Field, Cycle and State</strong> filters (which belong to the tab) do not apply.</li>
+        <li><strong>Field:</strong> multi-select of the <strong>ENADE assessment fields</strong> within the current broad field — this is INEP's <strong>unit of comparison</strong>. Programme names do not appear here (to find a programme by name, use the search above).</li>
+        <li><strong>Cycle:</strong> ENADE years available for the broad field</li>
+        <li><strong>Degree type:</strong> teaching degree, bachelor, technologist/other</li>
+        <li><strong>Delivery mode:</strong> on campus and/or distance learning</li>
+        <li><strong>Institution type:</strong> federal/state/municipal public, private for- or non-profit, special</li>
+        <li><strong>Band:</strong> 1 to 5 (CPC, or ENADE for cycles without a composite CPC)</li>
+        <li><strong>Region:</strong> North, Northeast, Central-West, Southeast, South</li>
+        <li><strong>Main metric:</strong> CPC, ENADE, IDD, % with doctorate, % with master's, contract type, infrastructure</li>
+    </ul>
+    <h3>4. Results and export</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Overview:</strong> totals and distribution across bands</li>
+        <li><strong>Programme name:</strong> each programme is shown by its <strong>actual name</strong> (INEP Census), with the <strong>ENADE assessment field</strong> as context — programmes without an exam of their own (Biomedical, Naval or Materials Engineering, for instance) appear under <code>ENADE: ENGENHARIA</code></li>
+        <li><strong>Reference highlight:</strong> programmes of the chosen institution appear in pink (★) — in the highlight card, in the table row, in the by-institution chart and in the report</li>
+        <li><strong>Ranking:</strong> sortable table (up to 500 visible rows)</li>
+        <li><strong>e-MEC codes (v2.6):</strong> the <strong>e-MEC inst. / progr.</strong> column carries both codes for each ranking row, in the form <code>2 / 1188880</code> — the first identifies the <strong>institution</strong>, the second the <strong>programme</strong>. In the CSV they come out in separate columns (<code>cod_ies_emec</code> and <code>cod_curso_emec</code>), and in the report and highlight card they are spelled out. See the caveat below.</li>
+        <li><strong>Charts:</strong> band, top institutions, programmes by state, trend over time</li>
+        <li><strong>Text report:</strong> a formatted summary</li>
+        <li><strong>CSV:</strong> export of the filtered programmes</li>
+    </ul>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>The e-MEC codes are a snapshot of the moment of ENADE registration</strong>, not the current state of the register. INEP says as much in the source spreadsheet: <em>"the name, acronym, academic organisation, administrative category and e-MEC code of the institution are published as each item stood at the moment of ENADE registration"</em>. That is why the code always appears <strong>next to the cycle year</strong> — and why it may differ from a query made in e-MEC today.
+        <br><br>
+        The divergence is neither rare nor an error: in the MAPA-GR base, <strong>214 programme codes</strong> appear under more than one institution across cycles, and <strong>339 institution codes</strong> appear with more than one acronym. The typical case is a split — programme code <code>1188880</code>, for example, appears under UFMT (<code>ci=1</code>) in one cycle and under UFR of Rondonópolis (<code>ci=25352</code>) in another, because the institution changed between one ENADE and the next. The pair shown is faithful to the cycle of that row.
+    </div>
+    <div class="info-box" style="text-align:justify;">
+        <strong>Why USP is not here.</strong> The University of São Paulo <strong>is not in the base</strong> — not through an omission of MAPA-GR, but because it is not in INEP's source files: the Quality Indicator spreadsheets do not carry a single row with USP's code. No participation in ENADE means no ENADE score, and without it there is no CPC or IDD to publish. The same holds for any programme whose students did not sit the exam.
+    </div>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>The 2018 cycle (Applied Social Sciences + Humanities):</strong> for ENADE 2018 (business, law, accounting, psychology and others), INEP <strong>did not publish the full composite CPC</strong> — only the ENADE score and the IDD. For those programmes MAPA-GR uses the ENADE band (1-5) as a proxy, and indicators such as % with doctorate, infrastructure and contract type <strong>are not available</strong>. The affected programmes are flagged "without a composite CPC".
+    </div>
+    <h3>5. The Comparator — what TOP 10 and TOP 27 mean</h3>
+    <p>The <strong>Comparator</strong> has two quick ranking modes, and what they mean <strong>depends on how many states you left ticked</strong> in the state filter.</p>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>TOP 27 has two meanings — and the difference is the state selection:</strong>
+        <ul style="padding-left:20px;margin-top:8px;line-height:1.8;">
+            <li><strong>With EVERY state ticked</strong> — the TOP 27 is <strong>“one per state”</strong>: it brings the best programme (or the lowest score) of <strong>each</strong> state, <strong>at most one per state</strong>, even where a single state holds several of the best in the country.</li>
+            <li><strong>With only SOME states ticked</strong> — the TOP 27 becomes the <strong>27 best-rated programmes (or those with the lowest scores) among the ticked states</strong>, and then <strong>the same state may appear more than once</strong> — all 27 from a single state, if that is where they are.</li>
+        </ul>
+        The <strong>TOP 10</strong> was never “one per state”: it is always the 10 of the selection — <strong>“TOP 10 best in the country”</strong> and <strong>“TOP lowest scores in the country”</strong> — so it honours the ticked states in the same way and may bring more than one institution from the same state.
+        <br><br>
+        To leave no doubt, the <strong>button label changes on its own</strong> with the selection — <strong>“TOP 27 — best per state”</strong> and <strong>“TOP 27 — lowest per state”</strong> when every state is ticked; <strong>“TOP 27 — best in the selection”</strong> and <strong>“TOP 27 — lowest in the selection”</strong> when they are not. The result always opens with a note saying which of the two rules was applied.
+    </div>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>Not every programme exists in every state — and that changes the count:</strong> a programme may not be offered in part of the country. States <strong>that do not offer</strong> it appear <strong>greyed out and cannot be ticked</strong>, and the filter panel says how many they are.
+        <br><br>
+        The practical consequence: <strong>a “per state” TOP 27 may legitimately return fewer than 27 rows</strong> — it returns as many as there are states offering the programme. If a programme exists in 14 states, the “per state” TOP 27 brings 14 programmes, and <strong>that is not a truncated result</strong>. The note at the top of the result spells out the number whenever it is below 27.
+        <br><br>
+        For the same reason, <strong>“every state” means every state that offers it</strong>, not all 27 of the federation: that is what the <strong>“All”</strong> button in the filter ticks, and it is the condition that switches on the “one per state” rule.
+    </div>
+    <div class="info-box" style="text-align:justify;">
+        <strong>The ordering criterion is the continuous value</strong>, not the 1–5 band: the list is ordered by <strong>continuous CPC → ENADE → IDD</strong>. That is why a <strong>band-5</strong> programme can be left out of a TOP 10 where ten programmes have a higher continuous CPC — including others also in band 5. In “one per state” mode, the programme for each state is chosen first by the <strong>most recent cycle</strong> available in that state, and only then by the continuous criterion.
+    </div>
+</div>

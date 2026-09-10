@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- en/ e subpasta: sem isto, dados, icones e Chart.js seriam
+     procurados em /Mapa-GR/en/ e nao existiriam la. -->
+<base href="../">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAPA-GR v2.8.2 — Documentation and Data Sources</title>
+<meta name="description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
+<meta name="robots" content="index, follow">
+<meta name="author" content="David L. Azevedo">
+<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/en/help-doc.html">
+<link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/help-doc.html">
+<link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/help-doc.html">
+<link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/help-doc.html">
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="MAPA-GR">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">
+<meta property="og:description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
+<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/en/help-doc.html">
+<meta property="og:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
+<!-- Twitter / X -->
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MAPA-GR — Documentação e Fontes de Dados">
+<meta name="twitter:description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
+<meta name="twitter:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
+<link rel="icon" type="image/png" href="mark-da-ciencia.png">
+<meta name="theme-color" content="#0F244A">
+<style>
+:root { --azul:#0F244A; --azul2:#113B8B; --azul3:#0B1B38; --accent:#E8145F;
+    --verde:#27AE60; --bg:#F5F7FA; --card:#FFF; --borda:#E0E4E8; --txt:#2C3E50; --txt2:#7F8C8D; }
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--txt);line-height:1.7;}
+.header{background:linear-gradient(135deg,var(--azul),var(--azul2));color:#fff;padding:14px 28px;
+    display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;
+    box-shadow:0 2px 8px rgba(0,0,0,.3);}
+.header .left{display:flex;align-items:center;gap:12px;min-width:0;}
+.header .brand{flex:none;line-height:0;}
+.header .brand img{display:block;height:34px;width:auto;}
+.header h1{font-size:22px;font-weight:700;letter-spacing:1px;}
+.header h1 em{color:var(--accent);font-style:normal;}
+.header .meta{text-align:right;font-size:12px;opacity:.85;line-height:1.5;}
+nav{background:var(--azul3);padding:8px 28px;display:flex;gap:16px;flex-wrap:wrap;}
+nav a{color:#9FB3D0;text-decoration:none;font-size:13px;font-weight:600;padding:4px 12px;border-radius:4px;transition:.2s;cursor:pointer;}
+nav a:hover,nav a.active{color:#fff;background:var(--accent);}
+.content{max-width:1100px;margin:24px auto;padding:0 20px;}
+.card{background:var(--card);border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:24px;margin-bottom:20px;}
+.card h2{font-size:18px;color:var(--azul);margin-bottom:14px;border-bottom:3px solid var(--accent);padding-bottom:6px;}
+.card h3{font-size:15px;color:var(--accent);margin:16px 0 8px;}
+.card p{text-align:justify;}
+.card li{text-align:justify;}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;}
+th{background:var(--azul);color:#fff;padding:8px 10px;text-align:left;font-weight:600;}
+td{padding:6px 10px;border-bottom:1px solid var(--borda);vertical-align:top;}
+tr:nth-child(even){background:#F8F9FA;}
+code{background:#E8EDF2;padding:2px 6px;border-radius:3px;font-size:12px;font-family:'Consolas','Courier New',monospace;}
+.info-box{border-left:4px solid #4CAF50;background:#E8F5E9;padding:12px;border-radius:4px;margin:12px 0;font-size:13px;text-align:justify;}
+.warn-box{border-left:4px solid #FF9800;background:#FFF8E1;padding:12px;border-radius:4px;margin:12px 0;font-size:13px;text-align:justify;}
+.section{display:none;} .section.active{display:block;}
+.contact{background:var(--azul3);color:#ccc;padding:12px 28px;font-size:12px;text-align:center;margin-top:24px;}
+.contact a{color:var(--accent);text-decoration:none;}
+a{color:#2563EB;}
+
+/* Alternador de idioma — um clique leva a versao em ingles (en/) e de volta.
+   Links de verdade: funcionam sem JS e o buscador os segue. O lado marcado e
+   virado por gerar_ingles.py; nao editar so de um lado. */
+.langsel { display:flex; align-items:center; gap:2px; font-size:10px; font-weight:700;
+    letter-spacing:.05em; background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.22); border-radius:999px; padding:2px;
+    margin-bottom:3px; align-self:flex-end; }
+.langsel a, .langsel .cur { padding:1px 7px; border-radius:999px; line-height:1.4;
+    text-decoration:none; }
+.langsel a { color:#BFD4F5; }
+.langsel a:hover { color:#fff; background:rgba(255,255,255,.18); }
+.langsel .cur { color:#fff; background:var(--accent, #E8145F); }
+</style>
+<!-- cf-web-analytics -->
+<!-- Contagem de acessos sem cookie e sem identificar pessoas (Cloudflare Web
+     Analytics). Inserido por aplicar_web_analytics.py — nao editar a mao. -->
+<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js"
+        data-cf-beacon='{"token": "7e53d7747ba7495f9dc1b67bb81e69f5"}'></script>
+<!-- /cf-web-analytics -->
+</head>
+<body>
+
+<div class="header">
+    <div class="left">
+        <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
+        <h1><em>MAPA-GR</em> — Documentation v2.8.2</h1>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;">
+        <div class="meta">
+            <div class="langsel"><a href="../help-doc.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
+            <div>Prof. David L. Azevedo</div>
+            <div>v2.8.2 — August 2026</div>
+        </div>
+        <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
+            style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
+            onmouseover="this.style.background='#C2185B'" onmouseout="this.style.background='var(--accent)'">
+            ← Back
+        </button>
+    </div>
+</div>
+
+<nav>
+    <a onclick="showSection('sec-sobre')" class="active" id="nav-sobre">About</a>
+    <a onclick="showSection('sec-areas')" id="nav-areas">Broad fields</a>
+    <a onclick="showSection('sec-uso')" id="nav-uso">How to use</a>
+    <a onclick="showSection('sec-indicadores')" id="nav-indicadores">SINAES indicators</a>
+    <a onclick="showSection('sec-cpc-censo')" id="nav-cpc-censo">CPC × Census</a>
+    <a onclick="showSection('sec-fontes')" id="nav-fontes">Data sources</a>
+    <a onclick="showSection('sec-stats')" id="nav-stats">Statistics</a>
+    <a onclick="showSection('sec-versoes')" id="nav-versoes">Versions</a>
+</nav>
+
+<div class="content">
+
+<!-- SOBRE -->
+<div class="section active" id="sec-sobre"><div class="card">
+    <h2>About MAPA-GR</h2>
+    <p><strong>MAPA-GR</strong> — <em>Monitoring and Analysis of Undergraduate Education</em> — is an interactive system for following Brazilian undergraduate programmes through the quality indicators published by INEP/MEC under SINAES, the national higher education assessment system.</p>
+    <p style="margin-top:12px;">Version 2.0 widened the scope enormously: while v1.0 covered Physics alone (518 programmes), v2.0 covers <strong>47,094 programmes</strong> organised into <strong>9 broad fields</strong>. You move between fields through the tabs at the top of the screen, and each tab loads its own data on demand (lazy loading).</p>
+    <p style="margin-top:12px;"><strong>Reference institution (v2.5):</strong> when you open the application you choose one of <strong>264 public institutions</strong> — 112 federal, 117 state and 35 municipal — as your reference. It is then <strong>highlighted in pink (★)</strong> against all other programmes in each field. See the <strong>How to use</strong> tab for details. (Private institutions in a future version.)</p>
+    <p style="margin-top:12px;text-align:justify;">The selector only decides <em>which institution is highlighted</em>. Programmes from <strong>every</strong> institution — public and private — always take part in the analysis, the ranking and the statistics, and can be narrowed at any moment through the <strong>Institution type</strong> filter in the sidebar.</p>
+    <h3>Author</h3>
+    <table>
+        <tr><td><strong>Author</strong></td><td>Prof. David Lima Azevedo, Full Professor</td></tr>
+        <tr><td><strong>Research group</strong></td><td>Dynamics and Ab Initio Group (GDAI)</td></tr>
+        <tr><td><strong>Unit</strong></td><td>Matter Structure Centre — Institute of Physics, University of Brasilia (UnB)</td></tr>
+        <tr><td><strong>Contact</strong></td><td><a href="mailto:contato@daciencia.org">contato@daciencia.org</a></td></tr>
+        <tr><td><strong>Project</strong></td><td><a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a> — d.a. ciência (data applied to science)</td></tr>
+        <tr><td><strong>ORCID</strong></td><td><a href="https://orcid.org/0000-0002-3456-554X" target="_blank">0000-0002-3456-554X</a></td></tr>
+        <tr><td><strong>Google Scholar</strong></td><td><a href="https://scholar.google.com.br/citations?hl=en&amp;user=o-qWsUAAAAAJ&amp;view_op=list_works&amp;sortby=pubdate" target="_blank">Publication profile</a></td></tr>
+        <tr><td><strong>Lattes CV</strong></td><td><a href="http://lattes.cnpq.br/3892893860696339" target="_blank">lattes.cnpq.br/3892893860696339</a></td></tr>
+        <tr><td><strong>Sister project</strong></td><td><a href="https://david888azv.github.io/Mapa-PG-UnB/" target="_blank">MAPA-PG</a> (graduate programmes)</td></tr>
+        <tr><td><strong>Outreach</strong></td><td>The <strong><a href="https://www.youtube.com/@da.ciencia" target="_blank">@da.ciencia</a></strong> channel on YouTube, plus <a href="https://www.facebook.com/da.ciencia" target="_blank">Facebook</a> and <a href="https://www.instagram.com/da.ciencia/" target="_blank">Instagram</a> (D.A. = <em>David Azevedo</em>)</td></tr>
+    </table>
+    <h3>How to cite</h3>
+    <div class="info-box" style="text-align:justify;">
+        AZEVEDO, D. L. <strong>MAPA-GR — um sistema interativo para monitoramento e análise da graduação brasileira: aplicação a dados do Censo e do ENADE com estudo de caso da UnB, das Ciências Exatas e da Física</strong> [in Portuguese].
+        <em>Physicae Organum</em>, Brasília, vol. 11, no. 1, 2026. DOI:
+        <a href="https://periodicos.unb.br/index.php/physicae/article/view/62165/45055" target="_blank">10.26512/2446-564X2026e62165</a>.
+    </div>
+    <div class="info-box" style="text-align:justify;">
+        <strong>Public data:</strong> all data come from the <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">INEP Open Data Portal</a>, part of the Brazilian federal government's transparency and freedom-of-information programme (Act no. 12.527/2011). Free and open data.
+    </div>
+    <div class="info-box" style="text-align:justify;border-left-color:#E91E63;background:#FCE4EC;">
+        <strong>📺 Release and outreach:</strong> this application (and its sister project MAPA-PG) is released and maintained on the author's <strong>@da.ciencia</strong> channel:
+        <ul style="margin-top:6px;padding-left:18px;">
+            <li><strong>YouTube:</strong> <a href="https://www.youtube.com/@da.ciencia" target="_blank"><strong>@da.ciencia</strong></a> — walkthroughs, tutorials and release notes</li>
+            <li><strong>Facebook:</strong> <a href="https://www.facebook.com/da.ciencia" target="_blank"><strong>@da.ciencia</strong></a> — new versions, releases and discussion of the quality indicators of Brazilian higher education</li>
+            <li><strong>Instagram:</strong> <a href="https://www.instagram.com/da.ciencia/" target="_blank"><strong>@da.ciencia</strong></a> — visual posts, short reels and highlights from the applications and analyses</li>
+        </ul>
+        <em>D.A.</em> are the author's initials: <strong>David Azevedo</strong>.
+    </div>
+    <div class="info-box" style="text-align:justify;border-left:4px solid #E91E63;">
+        <strong>A tailored edition for your institution.</strong>
+        Besides the public version, we can build a <strong>bespoke edition</strong> for your programme,
+        department or institution — public or private — aimed at a deeper, more detailed study of the indicators.
+        <br><br>
+        <strong>We are also available for consultancy on improving these indicators</strong>, grounded in
+        rigorous analysis of the official data. We use <strong>advanced statistical methods</strong>
+        — predictive, logistic and hierarchical models, among others — to <strong>identify and suggest the
+        points that can be improved</strong>, with the aim of achieving <strong>better assessment results</strong>.
+        <br><br>
+        Contact: <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> ·
+        learn about the project at <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>.
+    </div>
+</div>
+<div class="section" id="sec-areas"><div class="card">
+    <h2>The 9 broad fields</h2>
+    <p>INEP's assessment fields (~67 distinct names) were mapped onto 9 broad fields compatible with the CAPES/CNPq classification. Each tab at the top of the screen is one broad field. Field names are kept in Portuguese, as they appear in the official data.</p>
+    <table>
+        <tr><th>Tab</th><th>Broad field</th><th>INEP fields included</th><th>Cycles</th></tr>
+        <tr><td>🔬</td><td><strong>Exact and Earth Sciences</strong></td><td>Física (teaching/bachelor), Matemática (teaching/bachelor), Química (teaching/bachelor), Ciência da Computação (teaching/bachelor), Sistemas de Informação</td><td>2017, 2021</td></tr>
+        <tr><td>🌿</td><td><strong>Biological Sciences</strong></td><td>Ciências Biológicas (teaching/bachelor), Biomedicina</td><td>2017, 2021, 2023</td></tr>
+        <tr><td>⚙️</td><td><strong>Engineering</strong></td><td>Engenharia (several), Arquitetura e Urbanismo</td><td>2017, 2023</td></tr>
+        <tr><td>⚕️</td><td><strong>Health Sciences</strong></td><td>Medicina, Enfermagem, Farmácia, Fisioterapia, Fonoaudiologia, Nutrição, Odontologia, Psicologia, Educação Física (teaching/bachelor)</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+        <tr><td>🌾</td><td><strong>Agricultural Sciences</strong></td><td>Agronomia, Zootecnia, Medicina Veterinária</td><td>2023</td></tr>
+        <tr><td>💼</td><td><strong>Applied Social Sciences</strong></td><td>Administração, Direito, Ciências Contábeis, Ciências Econômicas, Jornalismo, Publicidade, Serviço Social, Relações Internacionais, Turismo, Design, Secretariado</td><td>2018, 2021, 2022</td></tr>
+        <tr><td>📚</td><td><strong>Humanities</strong></td><td>Pedagogia, História (teaching/bachelor), Geografia (teaching/bachelor), Filosofia (teaching/bachelor), Ciências Sociais (teaching/bachelor), Teologia</td><td>2017, 2018, 2021, 2022</td></tr>
+        <tr><td>🎨</td><td><strong>Linguistics, Literature and Arts</strong></td><td>Letras-Português (teaching/bachelor), Letras-Português-Espanhol, Letras-Português-Inglês, Letras-Inglês, Música, Artes Visuais</td><td>2017, 2021</td></tr>
+        <tr><td>🛠️</td><td><strong>Technologist programmes</strong></td><td>Every field whose name begins with "Tecnologia em..."</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+    </table>
+    <h3>Notes on the mapping</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Veterinary Medicine</strong> — Agricultural Sciences (consistent with CAPES/CNPq).</li>
+        <li><strong>Psychology</strong> — Health Sciences (consistent with CAPES broad field 4).</li>
+        <li><strong>Physical Education</strong> (teaching degree and bachelor) — Health Sciences.</li>
+        <li><strong>Architecture and Urbanism</strong> — Engineering (its indicators behave alike).</li>
+        <li><strong>Social Sciences (teaching/bachelor)</strong> — Humanities. "Applied Social Sciences" is the separate group with business, law and accounting.</li>
+        <li><strong>Technologist programmes</strong> — short vocational degrees, kept in a tab of their own.</li>
+    </ul>
+</div>
+<div class="section" id="sec-uso"><div class="card">
+    <h2>How to use MAPA-GR</h2>
+    <h3>1. Reference institution (after accepting the terms)</h3>
+    <p>Right after <strong>"I agree"</strong>, choose the <strong>reference institution</strong> — one of <strong>264 public institutions</strong>: 112 federal (universities, federal institutes and CEFETs), 117 state and 35 municipal. Use the <strong>search by acronym, name, state or sphere</strong> (e.g. <code>UEMA</code>, <code>UFMG</code>, "federal de minas", <code>estadual</code>, <code>MA</code>) and click <strong>OK</strong>. The chosen institution is then <strong>highlighted in pink (★)</strong> in every chart, in the table and in the report, against the other programmes in each field. <strong>Private institutions</strong> will be included in a future version.</p>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Changing the reference:</strong> use the <strong>"↺ Change reference institution"</strong> button at the top of the sidebar, at any time.</li>
+        <li><strong>Sphere tag:</strong> each option in the list shows whether the institution is <strong>federal</strong>, <strong>state</strong> or <strong>municipal</strong>. The 7 institutions with no acronym in INEP's register appear by name.</li>
+        <li><strong>Direct link:</strong> append <code>?ies=ACRONYM</code> to the URL (e.g. <code>?ies=UFMG</code>) to open with the reference already set, skipping the picker — handy for sharing. The <strong>INEP institution code</strong> also works (e.g. <code>?ies=568</code>), and it is the <strong>unambiguous</strong> form: the acronym <code>FATEC</code>, for instance, belongs to 5 different institutions, and by acronym the first of them is opened.</li>
+    </ul>
+    <h3>2. Tabs at the top</h3>
+    <p>Click any tab to load the data for that broad field. The default tab is <strong>Exact and Earth Sciences</strong>. Data are downloaded on demand (~200-600 KB gzipped) and cached for offline use.</p>
+    <h3>3. Filters (sidebar)</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Search (global):</strong> a text field that sweeps all <strong>9 broad fields</strong> (not just the current tab), <strong>accent-insensitive</strong>, matching <strong>institution acronym, actual programme name, ENADE field, institution name and municipality</strong>. Several terms separated by spaces combine with <strong>"AND"</strong>: <code>ufpe biomedica</code> finds exactly UFPE's Biomedical Engineering; <code>biomedica</code> alone lists them all. Programmes with no ENADE exam of their own (Biomedical Engineering, say, assessed under the generic field "ENGENHARIA") are found by name. Note that the data are in Portuguese. In search mode the <strong>Field, Cycle and State</strong> filters (which belong to the tab) do not apply.</li>
+        <li><strong>Field:</strong> multi-select of the <strong>ENADE assessment fields</strong> within the current broad field — this is INEP's <strong>unit of comparison</strong>. Programme names do not appear here (to find a programme by name, use the search above).</li>
+        <li><strong>Cycle:</strong> ENADE years available for the broad field</li>
+        <li><strong>Degree type:</strong> teaching degree, bachelor, technologist/other</li>
+        <li><strong>Delivery mode:</strong> on campus and/or distance learning</li>
+        <li><strong>Institution type:</strong> federal/state/municipal public, private for- or non-profit, special</li>
+        <li><strong>Band:</strong> 1 to 5 (CPC, or ENADE for cycles without a composite CPC)</li>
+        <li><strong>Region:</strong> North, Northeast, Central-West, Southeast, South</li>
+        <li><strong>Main metric:</strong> CPC, ENADE, IDD, % with doctorate, % with master's, contract type, infrastructure</li>
+    </ul>
+    <h3>4. Results and export</h3>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li><strong>Overview:</strong> totals and distribution across bands</li>
+        <li><strong>Programme name:</strong> each programme is shown by its <strong>actual name</strong> (INEP Census), with the <strong>ENADE assessment field</strong> as context — programmes without an exam of their own (Biomedical, Naval or Materials Engineering, for instance) appear under <code>ENADE: ENGENHARIA</code></li>
+        <li><strong>Reference highlight:</strong> programmes of the chosen institution appear in pink (★) — in the highlight card, in the table row, in the by-institution chart and in the report</li>
+        <li><strong>Ranking:</strong> sortable table (up to 500 visible rows)</li>
+        <li><strong>e-MEC codes (v2.6):</strong> the <strong>e-MEC inst. / progr.</strong> column carries both codes for each ranking row, in the form <code>2 / 1188880</code> — the first identifies the <strong>institution</strong>, the second the <strong>programme</strong>. In the CSV they come out in separate columns (<code>cod_ies_emec</code> and <code>cod_curso_emec</code>), and in the report and highlight card they are spelled out. See the caveat below.</li>
+        <li><strong>Charts:</strong> band, top institutions, programmes by state, trend over time</li>
+        <li><strong>Text report:</strong> a formatted summary</li>
+        <li><strong>CSV:</strong> export of the filtered programmes</li>
+    </ul>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>The e-MEC codes are a snapshot of the moment of ENADE registration</strong>, not the current state of the register. INEP says as much in the source spreadsheet: <em>"the name, acronym, academic organisation, administrative category and e-MEC code of the institution are published as each item stood at the moment of ENADE registration"</em>. That is why the code always appears <strong>next to the cycle year</strong> — and why it may differ from a query made in e-MEC today.
+        <br><br>
+        The divergence is neither rare nor an error: in the MAPA-GR base, <strong>214 programme codes</strong> appear under more than one institution across cycles, and <strong>339 institution codes</strong> appear with more than one acronym. The typical case is a split — programme code <code>1188880</code>, for example, appears under UFMT (<code>ci=1</code>) in one cycle and under UFR of Rondonópolis (<code>ci=25352</code>) in another, because the institution changed between one ENADE and the next. The pair shown is faithful to the cycle of that row.
+    </div>
+    <div class="info-box" style="text-align:justify;">
+        <strong>Why USP is not here.</strong> The University of São Paulo <strong>is not in the base</strong> — not through an omission of MAPA-GR, but because it is not in INEP's source files: the Quality Indicator spreadsheets do not carry a single row with USP's code. No participation in ENADE means no ENADE score, and without it there is no CPC or IDD to publish. The same holds for any programme whose students did not sit the exam.
+    </div>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>The 2018 cycle (Applied Social Sciences + Humanities):</strong> for ENADE 2018 (business, law, accounting, psychology and others), INEP <strong>did not publish the full composite CPC</strong> — only the ENADE score and the IDD. For those programmes MAPA-GR uses the ENADE band (1-5) as a proxy, and indicators such as % with doctorate, infrastructure and contract type <strong>are not available</strong>. The affected programmes are flagged "without a composite CPC".
+    </div>
+    <h3>5. The Comparator — what TOP 10 and TOP 27 mean</h3>
+    <p>The <strong>Comparator</strong> has two quick ranking modes, and what they mean <strong>depends on how many states you left ticked</strong> in the state filter.</p>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>TOP 27 has two meanings — and the difference is the state selection:</strong>
+        <ul style="padding-left:20px;margin-top:8px;line-height:1.8;">
+            <li><strong>With EVERY state ticked</strong> — the TOP 27 is <strong>“one per state”</strong>: it brings the best programme (or the lowest score) of <strong>each</strong> state, <strong>at most one per state</strong>, even where a single state holds several of the best in the country.</li>
+            <li><strong>With only SOME states ticked</strong> — the TOP 27 becomes the <strong>27 best-rated programmes (or those with the lowest scores) among the ticked states</strong>, and then <strong>the same state may appear more than once</strong> — all 27 from a single state, if that is where they are.</li>
+        </ul>
+        The <strong>TOP 10</strong> was never “one per state”: it is always the 10 of the selection — <strong>“TOP 10 best in the country”</strong> and <strong>“TOP lowest scores in the country”</strong> — so it honours the ticked states in the same way and may bring more than one institution from the same state.
+        <br><br>
+        To leave no doubt, the <strong>button label changes on its own</strong> with the selection — <strong>“TOP 27 — best per state”</strong> and <strong>“TOP 27 — lowest per state”</strong> when every state is ticked; <strong>“TOP 27 — best in the selection”</strong> and <strong>“TOP 27 — lowest in the selection”</strong> when they are not. The result always opens with a note saying which of the two rules was applied.
+    </div>
+    <div class="warn-box" style="text-align:justify;">
+        <strong>Not every programme exists in every state — and that changes the count:</strong> a programme may not be offered in part of the country. States <strong>that do not offer</strong> it appear <strong>greyed out and cannot be ticked</strong>, and the filter panel says how many they are.
+        <br><br>
+        The practical consequence: <strong>a “per state” TOP 27 may legitimately return fewer than 27 rows</strong> — it returns as many as there are states offering the programme. If a programme exists in 14 states, the “per state” TOP 27 brings 14 programmes, and <strong>that is not a truncated result</strong>. The note at the top of the result spells out the number whenever it is below 27.
+        <br><br>
+        For the same reason, <strong>“every state” means every state that offers it</strong>, not all 27 of the federation: that is what the <strong>“All”</strong> button in the filter ticks, and it is the condition that switches on the “one per state” rule.
+    </div>
+    <div class="info-box" style="text-align:justify;">
+        <strong>The ordering criterion is the continuous value</strong>, not the 1–5 band: the list is ordered by <strong>continuous CPC → ENADE → IDD</strong>. That is why a <strong>band-5</strong> programme can be left out of a TOP 10 where ten programmes have a higher continuous CPC — including others also in band 5. In “one per state” mode, the programme for each state is chosen first by the <strong>most recent cycle</strong> available in that state, and only then by the continuous criterion.
+    </div>
+</div>
+<div class="section" id="sec-indicadores"><div class="card">
+    <h2>SINAES indicators</h2>
+    <table>
+        <tr><th>Acronym</th><th>Name</th><th>What it measures</th></tr>
+        <tr><td><strong>ENADE</strong></td><td>National Student Performance Exam</td><td>A 1-5 score based on an exam sat by final-year students. Applied on a three-year cycle, by field.</td></tr>
+        <tr><td><strong>IDD</strong></td><td>Indicator of the Difference between Observed and Expected Performance</td><td>The "value added" by the programme: the gap between observed and expected performance (the latter predicted from the ENEM entrance exam).</td></tr>
+        <tr><td><strong>CPC</strong></td><td>Preliminary Programme Score</td><td>A composite: ENADE (20%) + IDD (35%) + faculty (30%: % with master's, % with doctorate, contract type) + infrastructure (15%). Scale 1-5.</td></tr>
+        <tr><td><strong>IGC</strong></td><td>General Programme Index</td><td>An institution-level indicator, the average of the CPCs of all programmes at that institution.</td></tr>
+    </table>
+    <h3>Reading the bands</h3>
+    <table>
+        <tr><th>Band</th><th>Meaning</th></tr>
+        <tr><td>1 or 2</td><td>Unsatisfactory</td></tr>
+        <tr><td>3</td><td>Satisfactory</td></tr>
+        <tr><td>4 or 5</td><td>Very good / excellent</td></tr>
+        <tr><td>SC</td><td>No score — insufficient participation in ENADE</td></tr>
+    </table>
+</div>
+<div class="card">
+    <h2>How ENADE and IDD are assessed</h2>
+    <p>Both indicators come from the same exam (ENADE), but they answer
+    different questions: <strong>ENADE</strong> measures the <strong>exit level</strong> of graduating students,
+    while the <strong>IDD</strong> measures the <strong>gain attributable to the programme</strong>,
+    net of the level at which students arrived.</p>
+    <h3>ENADE &#8212; National Student Performance Exam</h3>
+    <p><strong>What it measures:</strong> the <strong>absolute</strong> performance of graduating students
+    &#8212; it answers "how well does this programme educate?".</p>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li>An exam sat by the programme's <strong>final-year students</strong> (in the app, "registered/sat"
+        refer to those students, not to total enrolment).</li>
+        <li>Applied on a <strong>three-year cycle by field</strong> (in MAPA-GR: the 2017, 2018, 2021, 2022 and 2023 cycles).</li>
+        <li>The exam combines <strong>General Education (25%)</strong> and a <strong>Field-Specific Component (75%)</strong>.</li>
+        <li>Raw scores are <strong>standardised within the field</strong> (against the mean and standard
+        deviation of programmes in the same field), yielding a <strong>continuous score</strong> that is converted
+        into the <strong>1 to 5 band</strong> (the ENADE score).</li>
+        <li>Insufficient participation &#8594; <strong>SC (no score)</strong>.</li>
+    </ul>
+    <h3>IDD &#8212; Indicator of the Difference between Observed and Expected Performance</h3>
+    <p><strong>What it measures:</strong> the <strong>"value added"</strong> by the programme &#8212; how much it
+    <em>adds</em> to the student, controlling for the quality of those who enrolled. It separates the programme's
+    contribution from the selectivity of its intake.</p>
+    <ul style="padding-left:20px;font-size:13px;line-height:2;">
+        <li>For each graduating student, INEP estimates an <strong>expected ENADE performance</strong> from
+        their <strong>ENEM entrance-exam score</strong> (proficiency on arrival), through a regression model.</li>
+        <li><strong>IDD = observed ENADE performance &#8722; expected performance</strong> (the one predicted from ENEM).</li>
+        <li>Aggregated by programme, <strong>standardised within the field</strong> and converted into a
+        <strong>continuous score plus a 1 to 5 band</strong>.</li>
+        <li>How to read it: a high IDD means graduates came out <strong>better than their starting point predicted</strong>
+        &#8212; the programme "made the difference", whether its intake was strong or weak.</li>
+    </ul>
+    <div class="info-box">
+        <strong>In one sentence:</strong> <strong>ENADE</strong> measures the <em>exit level</em> of
+        graduating students; the <strong>IDD</strong> measures the <em>gain</em> attributable to the programme, net of the
+        entry level (ENEM). That is why the IDD carries the <strong>largest weight in the CPC (35%)</strong>,
+        above ENADE itself (20%).
+    </div>
+</div>
+<div class="section" id="sec-cpc-censo"><div class="card">
+    <h2>CPC × Census — two complementary indicators</h2>
+    <p>MAPA-GR offers <strong>two analysis pages</strong> fed by <strong>different INEP sources</strong>,
+    each answering a different question. Understanding the distinction prevents misreadings.</p>
+    <div class="info-box">
+        <strong>In one sentence:</strong><br>
+        <em><strong>CPC/ENADE</strong> answers "<strong>how well</strong> does this programme educate?" &#8212; it is a <strong>quality indicator</strong>.<br>
+        The <strong>Higher Education Census</strong> answers "<strong>how many</strong> are studying?" &#8212; it is a <strong>stock indicator</strong>.</em>
+    </div>
+    <table style="margin-top:14px;">
+        <tr><th>Aspect</th><th>CPC / ENADE (the <em>Statistics</em> page)</th><th>Census (the <em>Higher Education Census 2017-2023</em> page)</th></tr>
+        <tr>
+            <td><strong>What it measures</strong></td>
+            <td>Programme quality &#8212; final-year students' performance in the ENADE exam + IDD (value added) + faculty + infrastructure</td>
+            <td>Student stock &#8212; how many are enrolled, how many entered, how many graduated in a year</td>
+        </tr>
+        <tr>
+            <td><strong>Unit</strong></td>
+            <td>A 1 to 5 score per programme (the CPC band), or a continuous value (continuous CPC, continuous ENADE, IDD)</td>
+            <td>Absolute number of students (enrolments, entrants, graduates, suspended, and so on)</td>
+        </tr>
+        <tr>
+            <td><strong>Frequency</strong></td>
+            <td>Every three years, by field (the ENADE cycle)</td>
+            <td>Yearly (every institution reports in October/November)</td>
+        </tr>
+        <tr>
+            <td><strong>Coverage</strong></td>
+            <td>~47 thousand programmes that took part in ENADE in the 2017, 2018, 2021, 2022 and 2023 cycles</td>
+            <td>~670 thousand rows of programme×institution×mode (&#8776; 9.98 million enrolments in 2023)</td>
+        </tr>
+        <tr>
+            <td><strong>Useful granularity</strong></td>
+            <td>Programme by institution: comparing quality across universities</td>
+            <td>Year, state, field, mode, degree type, institution, gender, race, age, funding (FIES, PROUNI), quotas</td>
+        </tr>
+        <tr>
+            <td><strong>When to use it</strong></td>
+            <td>Deciding where to study, comparing quality across institutions, assessing a programme</td>
+            <td>Sizing demand, analysing growth, planning education policy, checking dropout</td>
+        </tr>
+        <tr>
+            <td><strong>Source</strong></td>
+            <td>INEP &#8212; Higher Education Quality Indicators</td>
+            <td>INEP &#8212; Higher Education Census microdata (2017-2023)</td>
+        </tr>
+    </table>
+    <h3>Why not put it all on a single page?</h3>
+    <p>Because <strong>quality and quantity are not comparable</strong>. A programme with CPC 5 and 50 students, and another with CPC 3 and 5,000 students
+    describe very different realities &#8212; they do not reduce to a single metric. Each indicator contributes one dimension of
+    Brazilian undergraduate education. Keeping the two pages apart avoids analytical confusion.</p>
+    <h3>Can enrolments be estimated from the CPC?</h3>
+    <p>In theory, yes: using <code>n_inscritos</code> (final-year students who sat ENADE) as a proxy and projecting to the total stock.
+    We tested that formula in detail (see the <a href="https://github.com/david888azv/Mapa-GR/tree/main/metodologia" target="_blank"><code>metodologia/</code> folder</a>
+    in the repository). The result:</p>
+    <div class="warn-box">
+        <strong>What the audit concluded:</strong> the formula <code>enrolments ≈ n_inscritos × duration × α / r</code>
+        is right in the <strong>national aggregate</strong> (error &#8776; &#177;2%), but errors by degree type, field and state
+        reach <strong>±150%</strong> &#8212; useless for fine-grained analysis. <strong>That is why we use the real Census</strong>, which INEP
+        publishes yearly. The full audit and the script are documented in the <code>metodologia/</code> folder.
+    </div>
+    <h3>Which page to open</h3>
+    <ul style="padding-left:22px;margin-top:6px;line-height:1.8;">
+        <li>Want to know <strong>where the best-rated programmes</strong> in your field are? → <a href="en/estatisticas.html" style="color:var(--accent);font-weight:700;">ENADE statistics</a></li>
+        <li>Want to know <strong>how many students there are</strong> and how that has grown? → <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a></li>
+        <li>Want to <strong>compare institutions and states by quality</strong>? → <a href="en/index.html" style="color:var(--accent);font-weight:700;">Main panel (CPC)</a> or the <a href="en/comparador.html" style="color:var(--accent);font-weight:700;">Comparator</a></li>
+    </ul>
+</div>
+<div class="section" id="sec-fontes">
+<div class="card">
+    <h2>Data sources — INEP</h2>
+    <div class="info-box">
+        <strong>Portal:</strong> <a href="https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos" target="_blank">gov.br/inep/pt-br/acesso-a-informacao/dados-abertos</a><br>
+        <strong>Licence:</strong> Open government data — Act no. 12.527/2011<br>
+        <strong>Total:</strong> 47,094 programmes across 9 broad fields
+    </div>
+</div>
+
+<div class="card">
+    <h2>CPC/ENADE files used (5 cycles)</h2>
+    <table>
+        <tr><th>Year</th><th>URL</th><th>Programmes</th><th>Coverage</th></tr>
+        <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">resultado_cpc_2017.xlsx</a></td><td>10,570</td><td>Teaching degrees + engineering, pre-COVID</td></tr>
+        <tr><td><strong>2018</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/legislacao/2019/resultados_conceito_enade_2018.xlsx" target="_blank" style="word-break:break-all;">resultados_conceito_enade_2018.xlsx</a></td><td>8,821</td><td>Business, law, accounting, psychology and others — <strong>no composite CPC</strong></td></tr>
+        <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx" target="_blank" style="word-break:break-all;">CPC_2021.xlsx</a></td><td>8,000</td><td>Teaching degrees, post-COVID</td></tr>
+        <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2022/cpc_2022.xlsx" target="_blank" style="word-break:break-all;">cpc_2022.xlsx</a></td><td>9,891</td><td>Applied social sciences, post-COVID, with a full CPC</td></tr>
+        <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2023/CPC_2023.xlsx" target="_blank" style="word-break:break-all;">CPC_2023.xlsx</a></td><td>9,812</td><td>Engineering, health, agricultural sciences</td></tr>
+    </table>
+</div>
+
+<div class="card">
+    <h2>Higher Education Census (microdata — 4 cycles)</h2>
+    <p>The source behind the <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a> page. INEP publishes microdata aggregated by programme×institution with ~200 columns (gender, colour/race, age, time of day, FIES, PROUNI, quotas, disability, enrolment status and so on).</p>
+    <table>
+        <tr><th>Year</th><th>URL</th><th>Rows (programme×institution)</th><th>Enrolments</th></tr>
+        <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2017.zip" target="_blank" style="word-break:break-all;">microdados_...2017.zip</a></td><td>119,798</td><td>8,290,911</td></tr>
+        <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2021.zip" target="_blank" style="word-break:break-all;">microdados_...2021.zip</a></td><td>444,786</td><td>8,987,120</td></tr>
+        <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2022.zip" target="_blank" style="word-break:break-all;">microdados_...2022.zip</a></td><td>573,019</td><td>9,444,116</td></tr>
+        <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2023.zip" target="_blank" style="word-break:break-all;">microdados_...2023.zip</a></td><td>671,610</td><td>9,977,217</td></tr>
+    </table>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">The raw microdata (~160 MB in total) are processed locally in Python/DuckDB to produce a light consolidated JSON (&#8776; 5 MB) that feeds the dashboard in the browser. The full pipeline is in the repository at <code>censo_sup/pipeline_censo.py</code>.</p>
+</div>
+</div>
+
+<!-- ESTATÍSTICAS RESUMO -->
+<div class="section" id="sec-stats">
+<div class="card">
+    <h2>MAPA-GR in numbers</h2>
+    <p>A summary of what the datasets contain (source: INEP Open Data). For full interactive analysis with charts and filters, open the <a href="en/estatisticas.html" style="color:var(--accent);font-weight:700;">Statistics page</a>.</p>
+
+    <h3>Overall totals</h3>
+    <table>
+        <tr><th>Metric</th><th>Value</th></tr>
+        <tr><td><strong>Programmes assessed</strong></td><td>47,091</td></tr>
+        <tr><td><strong>Distinct institutions</strong></td><td>2,417</td></tr>
+        <tr><td><strong>Students registered (ni)</strong></td><td>2,576,725</td></tr>
+        <tr><td><strong>Students who sat ENADE (np)</strong></td><td>2,026,112</td></tr>
+        <tr><td><strong>Broad fields</strong></td><td>9</td></tr>
+        <tr><td><strong>ENADE cycles</strong></td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+    </table>
+
+    <h3>Programmes and students by broad field</h3>
+    <table>
+        <tr><th>Field</th><th>Programmes</th><th>Registered</th><th>Sat</th></tr>
+        <tr><td>Applied Social Sciences</td><td>11,509</td><td>813,417</td><td>641,003</td></tr>
+        <tr><td>Technologist programmes</td><td>8,139</td><td>320,364</td><td>208,049</td></tr>
+        <tr><td>Engineering</td><td>7,066</td><td>310,425</td><td>265,058</td></tr>
+        <tr><td>Health Sciences</td><td>6,736</td><td>371,495</td><td>321,705</td></tr>
+        <tr><td>Humanities</td><td>4,925</td><td>450,293</td><td>346,138</td></tr>
+        <tr><td>Exact and Earth Sciences</td><td>3,893</td><td>116,768</td><td>89,665</td></tr>
+        <tr><td>Biological Sciences</td><td>1,985</td><td>71,661</td><td>57,858</td></tr>
+        <tr><td>Linguistics, Literature and Arts</td><td>1,951</td><td>81,124</td><td>59,747</td></tr>
+        <tr><td>Agricultural Sciences</td><td>887</td><td>41,178</td><td>36,889</td></tr>
+    </table>
+
+    <h3>By ENADE cycle</h3>
+    <table>
+        <tr><th>Cycle</th><th>Programmes</th><th>Institutions</th><th>Registered</th><th>Sat</th></tr>
+        <tr><td>2017</td><td>10,570</td><td>1,478</td><td>537,360</td><td>450,032</td></tr>
+        <tr><td>2018</td><td>8,821</td><td>1,762</td><td>550,845</td><td>462,242</td></tr>
+        <tr><td>2021</td><td>7,997</td><td>1,312</td><td>489,866</td><td>355,095</td></tr>
+        <tr><td>2022</td><td>9,891</td><td>1,747</td><td>592,360</td><td>412,015</td></tr>
+        <tr><td>2023</td><td>9,812</td><td>1,347</td><td>406,294</td><td>346,728</td></tr>
+    </table>
+
+    <div class="info-box">
+        <strong>Note:</strong> the fields "Registered" (ni) and "Sat" (np) refer to <strong>final-year</strong> students registered for, and who actually took, ENADE in each cycle — <strong>not</strong> to total enrolment at the institution. Totals accumulated over 5 cycles (2017–2023).
+    </div>
+
+    <p style="margin-top:16px;text-align:center;">
+        <a href="en/estatisticas.html" style="display:inline-block;background:var(--accent);color:#fff;padding:10px 28px;border-radius:6px;text-decoration:none;font-weight:700;font-size:14px;">Open the interactive statistics panel</a>
+    </p>
+</div>
+</div>
+
+<!-- VERSOES -->
+<div class="section" id="sec-versoes">
+<div class="info-box" style="border-left-color:#F39C12;background:#FFF8E1;">
+    <strong>In Portuguese.</strong> This section is the version history and is
+    kept in the original language.
+</div>
+
+<div class="card">
+    <h2>Histórico de Versões</h2>
+    <table>
+        <tr><th>Versão</th><th>Data</th><th>Alterações</th></tr>
+        <tr><td>v1.0</td><td>2026-04-13</td><td>Versão inicial — Graduação em Física (Licenciatura + Bacharelado), ciclos 2017 e 2021, 518 cursos.</td></tr>
+        <tr><td>v2.0</td><td>2026-04-13</td><td>Expansão para <strong>9 grandes áreas</strong> (Exatas, Biológicas, Engenharias, Saúde, Agrárias, Sociais, Humanas, Letras, Tecnólogos). <strong>47.094 cursos</strong>. 5 ciclos ENADE. Nova interface com abas e <strong>lazy-loading</strong>. Ciclo 2018 incluído com aviso de CPC parcial.</td></tr>
+        <tr><td>v2.1</td><td>2026-07-05</td><td>Contato unificado <strong>contato@daciencia.org</strong> + <strong>daciencia.org</strong>; bloco de consultoria; termos de uso (propriedade intelectual) e justificação de textos alinhados ao MAPA-PG.</td></tr>
+        <tr><td>v2.2</td><td>2026-07-05</td><td><strong>Seletor de instituição de referência</strong>: após o consentimento, o usuário escolhe entre as <strong>112 IFES públicas federais</strong> (busca por sigla/nome) a instituição destacada (★) na comparação, no lugar da UnB fixa. Botão "Trocar referência" e deep-link <code>?ies=SIGLA</code>. Privadas em versão futura.</td></tr>
+        <tr><td>v2.4.0</td><td>2026-07-20</td><td><strong>Nomes reais dos cursos</strong>: cada curso passa a exibir seu nome (Microdados do Censo) com a área de avaliação do ENADE como contexto. Cursos sem exame próprio — antes agrupados como "ENGENHARIA" genérica (ex.: Engenharia Biomédica, Naval, de Materiais) — ficam distinguíveis. Cobertura 99,7%; nome exibido em <strong>11.395 cursos</strong>. Coluna <code>nome_curso</code> nos exports CSV.</td></tr>
+        <tr><td>v2.4.1</td><td>2026-07-20</td><td><strong>Busca por nome do curso e área</strong>: o campo de busca da barra lateral passa a casar, além da sigla da IES, o <strong>nome do curso</strong> e a <strong>área ENADE</strong>, de forma acento-insensível (ex.: "Biomédica" acha a Engenharia Biomédica). O multiseletor de Área permanece por área ENADE.</td></tr>
+        <tr><td>v2.4.2</td><td>2026-07-20</td><td><strong>Busca global e termos combinados</strong>: o campo de busca passa a varrer as <strong>9 grandes áreas</strong> (não só a aba atual) e a aceitar <strong>vários termos com "E"</strong> (ex.: "ufpe biomedica" isola a Engenharia Biomédica da UFPE). Assim, digitar o nome do curso de qualquer aba o encontra. Casa também nome da IES e município.</td></tr>
+        <tr><td><strong>v2.5.0</strong></td><td>2026-08-08</td><td><strong>Estaduais e municipais no seletor de instituição de referência.</strong> Detalhamento na tabela abaixo.</td></tr>
+        <tr><td><strong>v2.6.0</strong></td><td>2026-08-08</td><td><strong>Códigos e-MEC da IES e do curso no ranqueamento</strong>: nova coluna <strong>e-MEC IES / curso</strong> na tabela (formato <code>2 / 1188880</code>), duas colunas separadas no CSV (<code>cod_ies_emec</code>, <code>cod_curso_emec</code>), e os dois códigos no relatório TXT e no card da instituição de referência. Cobertura de <strong>100% dos 47.091 cursos</strong> nos cinco ciclos — os campos já vinham do INEP e não eram exibidos. Documentada a ressalva de que o código é o vigente na inscrição do ENADE, e a ausência da USP na base de origem.</td></tr>
+        <tr><td><strong>v2.6.1</strong></td><td>2026-08-08</td><td><strong>Códigos e-MEC também no Comparador</strong>: a v2.6.0 alcançou só o painel principal. As duas tabelas do <strong>comparador</strong> (TOP 10/27 e comparação de cursos) ganham a mesma coluna <strong>e-MEC IES / curso</strong>, e os cards de <strong>Detalhes das Instituições</strong> — que traziam um <code>Código e-MEC</code> sem qualificação, exibindo apenas o do curso — passam a mostrar os dois, cada um com seu rótulo.</td></tr>
+        <tr><td><strong>v2.7.0</strong></td><td>2026-08-08</td><td><strong>TOP 27 sensível à seleção de UFs</strong>: com <strong>todas as UFs marcadas</strong>, o TOP 27 segue sendo <strong>um curso por estado</strong>; com um <strong>subconjunto de UFs</strong>, passa a ser os <strong>27 melhores (ou piores) dentre as UFs selecionadas</strong>, permitindo <strong>mais de um curso por estado</strong>. Antes, um recorte de 3 UFs devolvia 3 linhas. O rótulo do botão muda sozinho conforme a seleção e o resultado abre declarando qual regra foi aplicada. Documentada também a ressalva dos <strong>cursos sem oferta em todas as UFs</strong>: as UFs sem o curso ficam desabilitadas, “todas as UFs” significa “todas as que ofertam”, e um TOP 27 por estado pode devolver menos de 27 linhas sem estar truncado.</td></tr>
+        <tr><td><strong>v2.7.1</strong></td><td>2026-08-08</td><td><strong>Rótulos dos TOP de menores notas</strong>: “TOP 27 — pior por estado” passa a <strong>“TOP 27 — menores notas por UF”</strong> e “TOP 10 mais baixas do país” passa a <strong>“TOP menores notas do país”</strong>, com títulos e avisos de resultado alinhados ao mesmo vocabulário. Os rótulos dinâmicos do recorte parcial foram encurtados para <strong>“melhores no recorte”</strong> e <strong>“menores notas no recorte”</strong>: medido no painel de 320px, a forma longa ocupava 295px contra 267px úteis e quebrava o botão em duas linhas. A regra completa passou para o <em>tooltip</em> do botão.</td></tr>
+        <tr><td><strong>v2.8.0</strong></td><td>2026-08-09</td><td><strong>Botão “💡 Sugerir melhoria”</strong> na barra lateral das quatro telas (painel principal, Comparador, Estatísticas ENADE e Censo). Abre o formulário em <strong>daciencia.org/sugestao</strong>, onde se pede um ajuste, aponta-se um dado errado ou sugere-se uma melhoria — sigla da IES obrigatória, nome e e-mail opcionais, texto de até 250 palavras. No painel principal a <strong>sigla da instituição de referência vai pré-preenchida</strong>. O formulário fica fora do aplicativo de propósito: aqui dentro o envio seria uma requisição para outro domínio, e o texto ficaria preso ao cache do <em>service worker</em> a cada ajuste de redação.</td></tr>
+        <tr><td><strong>v2.8.1</strong></td><td>2026-08-10</td><td><strong>O link da citação passa a abrir o artigo</strong>: o <code>https://doi.org/…</code> do MAPA-GR não resolvia (o registro do DOI ainda não propagou), e o leitor que clicasse em “Como citar” caía num <em>DOI Not Found</em>. O <strong>texto do DOI continua exibido</strong> — é o identificador da publicação — mas o link agora aponta para o artigo na <strong>Physicae Organum</strong>. Mesma correção na documentação, no README, no <code>CITATION.cff</code> e na página do projeto.</td></tr>
+        <tr><td><strong>v2.8.2</strong></td><td>2026-08-13</td><td><strong>Grafia dos municípios do ciclo de 2018</strong>: a planilha do ENADE 2018 — única fonte do ciclo — grava o município em caixa alta e sem acento (<code>SAO ROQUE</code>), enquanto os demais ciclos gravam <code>São Roque</code>. O mesmo município aparecia, portanto, <strong>duas vezes</strong> nas listas e nas buscas, e quem procurasse pela grafia correta <strong>perdia o ciclo de 2018 inteiro</strong>. A correção usa o <strong>Código do Município (IBGE)</strong>, presente em todas as planilhas do INEP, para adotar a grafia dos ciclos que a trazem: <strong>8.821 registros</strong> corrigidos e <strong>734 municípios</strong> reunificados. O código também corrigiu <strong>13 erros de grafia da própria fonte</strong> (o INEP escrevia <code>ANGRA DO REIS</code>, <code>PALMEIRA DO INDIOS</code>, <code>PAU DO FERROS</code> e <code>MOGI-GUACU</code>, hoje <em>Angra dos Reis</em>, <em>Palmeira dos Índios</em>, <em>Pau dos Ferros</em> e <em>Mogi Guaçu</em>). Nenhum indicador foi alterado — a correção toca apenas o nome do município.</td></tr>
+    </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
+    <p style="text-align:justify;">Até a v2.4 o seletor de referência cobria apenas as <strong>112 instituições públicas federais</strong>. Os cursos das estaduais e municipais <em>já eram analisados e ranqueados normalmente</em> — o que estava limitado era só a escolha de qual instituição ficaria em destaque (★) na comparação. A v2.5.0 remove essa limitação e arruma o que ela escondia.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>264 instituições públicas</strong></td>
+            <td>O índice do seletor passa de 112 federais para <strong>264 IES públicas</strong>: <strong>112 federais</strong> (universidades, institutos federais e CEFETs), <strong>117 estaduais</strong> e <strong>35 municipais</strong>. A UEMA, a UNESP, a UERJ, as estaduais do interior e as municipais passam a ser escolhíveis como referência. Instituições <strong>privadas</strong> seguem para versão futura.</td>
+        </tr>
+        <tr>
+            <td><strong>Referência pelo código da IES</strong></td>
+            <td>A instituição de referência passou a ser identificada pelo <strong>código da IES do INEP</strong> (campo <code>ci</code>) e não mais pela sigla. Entre as públicas a sigla <code>FATEC</code> pertence a <strong>5 instituições distintas</strong>, <strong>7 instituições não têm sigla</strong> no cadastro e algumas variam a grafia entre ciclos: chavear por sigla fundia umas e sumia com outras (254 entradas para 264 instituições reais). A sigla continua sendo o rótulo exibido; as 7 sem sigla aparecem pelo nome.</td>
+        </tr>
+        <tr>
+            <td><strong>Destaque (★) corrigido</strong></td>
+            <td>Os <strong>6 pontos de comparação</strong> do aplicativo passam a decidir o destaque por uma regra única. Onde o dado é o curso — bloco da instituição na tela e no relatório, tabela de resultados e Top 20 de cursos — a comparação é feita <strong>pelo código da IES</strong>; antes, duas instituições de mesma sigla podiam receber o ★ trocado. Nos dois agregados cuja chave é a própria sigla (gráfico de IES e Top 10 de IES) a comparação segue por sigla, porque é assim que o INEP agrega esses totais.</td>
+        </tr>
+        <tr>
+            <td><strong>Busca por esfera e UF</strong></td>
+            <td>O campo do seletor casa <strong>sigla, nome, UF e esfera administrativa</strong>, ignorando acentos e caixa: <code>estadual</code> lista as estaduais, <code>MA</code> lista as do Maranhão, "federal de minas" chega à UFMG. Cada opção traz uma <strong>etiqueta colorida</strong> — federal, estadual ou municipal.</td>
+        </tr>
+        <tr>
+            <td><strong>Link direto por código</strong></td>
+            <td><code>?ies=</code> aceita a <strong>sigla</strong> (<code>?ies=UFMG</code>) ou o <strong>código INEP</strong> (<code>?ies=568</code>). O código é a forma não ambígua — é o que se deve usar para compartilhar uma referência cuja sigla é repetida.</td>
+        </tr>
+        <tr>
+            <td><strong>Versão offline</strong></td>
+            <td>Corrigido o <strong>seletor vazio na versão offline</strong>: o índice de IES públicas passou a ser embutido nas páginas autocontidas. O gerador da versão offline (<code>offline/gerar_offline.py</code>) foi versionado no repositório, para que a distribuição local possa ser regerada a cada atualização de dados.</td>
+        </tr>
+        <tr>
+            <td><strong>Cache e desempenho</strong></td>
+            <td>Service Worker em <code>mapa-gr-v2.5.0</code>, para que os clientes já instalados busquem o índice novo em vez do antigo. Custo: <strong>+23 KB (+3,9 KB comprimido)</strong> sobre ~17 MB de dados de curso. Não há impacto na análise — a referência nunca filtrou o universo comparado.</td>
+        </tr>
+        <tr>
+            <td><strong>Reprodutibilidade</strong></td>
+            <td>Novo gerador <code>build/gerar_ies_publicas.py</code> (substitui <code>gerar_ies_federais.py</code>): filtra as três categorias administrativas públicas do INEP, agrupa por código de IES e resolve as grafias variantes pela ocorrência mais frequente, com verificações de duplicidade. <code>CITATION.cff</code> e <code>.zenodo.json</code> atualizados para a v2.5.0.</td>
+        </tr>
+    </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.6.0 (8 de agosto de 2026)</h3>
+    <p style="text-align:justify;">Os códigos e-MEC da instituição e do curso <em>já vinham</em> nos arquivos do INEP e <em>já viajavam</em> para o navegador em todos os 47.091 cursos — mas não eram exibidos em lugar nenhum: nem na tabela, nem no relatório, nem no CSV. Eram usados só internamente (o código da IES decide o destaque ★ desde a v2.5). A v2.6.0 é de apresentação: nenhum dado novo foi coletado ou reprocessado.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>Coluna no ranking</strong></td>
+            <td>Nova coluna <strong>e-MEC IES / curso</strong> na tabela de ranqueamento, no formato compacto <code>2 / 1188880</code>. Optou-se por <strong>uma coluna e não duas</strong>: a tabela já tem doze colunas e cabe sem rolagem horizontal, invariante que duas colunas novas colocariam em risco.</td>
+        </tr>
+        <tr>
+            <td><strong>CSV com colunas separadas</strong></td>
+            <td>No CSV, onde não há custo de layout, os códigos saem em <strong>duas colunas próprias</strong>: <code>cod_ies_emec</code> e <code>cod_curso_emec</code>, logo após <code>ies</code>. É o formato que serve para cruzar a exportação com o e-MEC e com outras bases.</td>
+        </tr>
+        <tr>
+            <td><strong>Relatório e card de destaque</strong></td>
+            <td>O relatório TXT ganha a linha <code>e-MEC: IES … | curso …</code> em cada curso da instituição de referência, e o card de destaque (★) mostra o par abaixo do ciclo e do município.</td>
+        </tr>
+        <tr>
+            <td><strong>Cobertura</strong></td>
+            <td><strong>100% dos 47.091 cursos</strong> têm os dois códigos, nos cinco ciclos (2017, 2018, 2021, 2022 e 2023) — verificado registro a registro. Não há linha com código ausente.</td>
+        </tr>
+        <tr>
+            <td><strong>Ressalva documentada</strong></td>
+            <td>O código é o <strong>vigente na inscrição do ENADE</strong> daquele ciclo, não o do cadastro de hoje — declaração do próprio INEP na planilha de origem. Quantificado: 214 códigos de curso sob mais de uma IES e 339 códigos de IES com mais de uma sigla, ao longo dos ciclos. Ver a aba <strong>Como Usar</strong>.</td>
+        </tr>
+        <tr>
+            <td><strong>Ausência da USP</strong></td>
+            <td>Documentada na aba <strong>Como Usar</strong>: a USP não está na base porque não está nos arquivos do INEP — sem participação no ENADE não há Conceito ENADE, e sem ele não há CPC nem IDD. É uma ausência de origem, não do MAPA-GR.</td>
+        </tr>
+    </table>
+</div>
+</div>
+
+</div>
+
+<div class="contact">
+    <strong>MAPA-GR</strong> v2.8.2 | Prof. David L. Azevedo |
+    <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
+    <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
+</div>
+
+<script>
+function showSection(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(a => a.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    document.getElementById('nav-' + id.replace('sec-', '')).classList.add('active');
+}
+</script>
+</body>
+</html>

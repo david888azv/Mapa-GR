@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- en/ e subpasta: sem isto, dados, icones e Chart.js seriam
+     procurados em /Mapa-GR/en/ e nao existiriam la. -->
+<base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0F244A">
-<meta name="description" content="MAPA-GR — Comparador Especial de Cursos por UF. Compare até 10 cursos da mesma área em UFs diferentes.">
+<meta name="description" content="MAPA-GR — Special programme comparator by state. Compare up to 10 programmes in the same field across different Brazilian states.">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<title>MAPA-GR — Comparador Especial / TOP 10</title>
+<title>MAPA-GR — Special Comparator / TOP 10</title>
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
-<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/comparador.html">
+<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/en/comparador.html">
 <link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/comparador.html">
 <link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/comparador.html">
 <link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/comparador.html">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MAPA-GR">
-<meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="MAPA-GR — Comparador Especial / TOP 10">
-<meta property="og:description" content="Compare até 10 cursos da mesma área em UFs diferentes pelos indicadores do INEP/SINAES (CPC, ENADE, IDD).">
-<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/comparador.html">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
+<meta property="og:title" content="MAPA-GR — Special Comparator / TOP 10">
+<meta property="og:description" content="Compare up to 10 programmes in the same field across different states, using the INEP/SINAES indicators (CPC, ENADE, IDD).">
+<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/en/comparador.html">
 <meta property="og:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary">
@@ -175,19 +179,19 @@ tr:first-child td { font-weight: 700; }
 <div class="header">
     <div class="header-left">
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1 id="pageTitle"><span>MAPA-GR</span> — Comparador Especial (IFES por UFs)</h1>
+        <h1 id="pageTitle"><span>MAPA-GR</span> — Special Comparator (institutions by state)</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
-            <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/comparador.html" hreflang="en" lang="en">EN</a></div>
+            <div class="langsel"><a href="../comparador.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
             <div id="hdrDate"></div>
             <div>v1.0</div>
         </div>
-        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+        <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:#FFF;color:var(--roxo);border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
             onmouseover="this.style.background='#EDE7F6'" onmouseout="this.style.background='#FFF'">
-            ← Voltar
+            ← Back
         </button>
     </div>
 </div>
@@ -195,26 +199,26 @@ tr:first-child td { font-weight: 700; }
 <div class="container">
     <div class="sidebar">
         <div class="step">
-            <h3>1. Grande Área</h3>
-            <select id="grandeArea" class="select-full"><option value="">— escolha —</option></select>
+            <h3>1. Broad field</h3>
+            <select id="grandeArea" class="select-full"><option value="">— choose —</option></select>
         </div>
 
         <div class="step">
-            <h3>2. Curso / Área</h3>
-            <select id="areaSelect" class="select-full" disabled><option value="">— selecione a grande área —</option></select>
-            <p class="hint">Apenas um curso por comparação.</p>
+            <h3>2. Programme / field</h3>
+            <select id="areaSelect" class="select-full" disabled><option value="">— select the broad field —</option></select>
+            <p class="hint">One programme per comparison.</p>
         </div>
 
         <div class="step" id="stepUfs">
-            <h3>3. UFs (até 10)</h3>
+            <h3>3. States (up to 10)</h3>
             <div id="ufGrid" class="uf-grid">
-                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>
+                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>
             </div>
-            <p class="uf-count">Selecionadas: <strong id="ufCount">0</strong>/10</p>
+            <p class="uf-count">Selected: <strong id="ufCount">0</strong>/10</p>
         </div>
 
         <div class="step" id="stepThresholds">
-            <h3 id="stepThresholdsTitle">4. Faixas mínimas</h3>
+            <h3 id="stepThresholdsTitle">4. Minimum bands</h3>
             <div class="thresholds">
                 <div>
                     <label>CPC ≥</label>
@@ -229,78 +233,78 @@ tr:first-child td { font-weight: 700; }
                     <select id="iddMin"><option value="1">1</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5</option></select>
                 </div>
             </div>
-            <p class="hint" id="stepThresholdsHint">Filtros aplicados ao selecionar o melhor curso de cada UF.</p>
+            <p class="hint" id="stepThresholdsHint">Filters applied when picking the best programme in each state.</p>
         </div>
 
         <div class="step" id="stepTipo">
-            <h3 id="stepTipoTitle">5. Tipo de IES</h3>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPub" class="tipo-chk" value="pub" checked style="margin-right:6px;accent-color:var(--roxo);"> Pública</label>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPriv" class="tipo-chk" value="priv" checked style="margin-right:6px;accent-color:var(--roxo);"> Privada</label>
-            <p class="hint" id="stepTipoHint">Ambas marcadas: mostra a melhor pública <em>e</em> a melhor privada de cada UF. Só uma: a melhor daquele tipo por UF.</p>
+            <h3 id="stepTipoTitle">5. Institution type</h3>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPub" class="tipo-chk" value="pub" checked style="margin-right:6px;accent-color:var(--roxo);"> Public</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" id="tipoPriv" class="tipo-chk" value="priv" checked style="margin-right:6px;accent-color:var(--roxo);"> Private</label>
+            <p class="hint" id="stepTipoHint">Both ticked: shows the best public <em>and</em> the best private one in each state. Only one: the best of that type per state.</p>
         </div>
 
         <!-- ===== Filtros do modo TOP (Sigla / Região / UF) — só visíveis em modo top10 ===== -->
         <div class="step" id="stepSigla" style="display:none;">
-            <h3>🔍 Buscar por sigla da IES</h3>
-            <label style="font-size:12px;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="tSearchEnabled" style="margin-right:6px;accent-color:var(--roxo);"> Filtrar por sigla</label>
-            <input type="text" id="tSearchSigla" placeholder="ex: UNB, UF, IF" disabled
+            <h3>🔍 Search by institution acronym</h3>
+            <label style="font-size:12px;display:flex;align-items:center;cursor:pointer;"><input type="checkbox" id="tSearchEnabled" style="margin-right:6px;accent-color:var(--roxo);"> Filter by acronym</label>
+            <input type="text" id="tSearchSigla" placeholder="e.g.: UNB, UF, IF" disabled
                 style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
-            <p class="hint">Busca parcial: "UF" encontra UFMT, UFRJ, etc.</p>
+            <p class="hint">Partial match: "UF" finds UFMT, UFRJ, and so on.</p>
         </div>
 
         <div class="step" id="stepRegiao" style="display:none;">
-            <h3>Região</h3>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="N" checked style="margin-right:6px;accent-color:var(--roxo);"> Norte</label>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="NE" checked style="margin-right:6px;accent-color:var(--roxo);"> Nordeste</label>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="CO" checked style="margin-right:6px;accent-color:var(--roxo);"> Centro-Oeste</label>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="SE" checked style="margin-right:6px;accent-color:var(--roxo);"> Sudeste</label>
-            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="S" checked style="margin-right:6px;accent-color:var(--roxo);"> Sul</label>
+            <h3>Region</h3>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="N" checked style="margin-right:6px;accent-color:var(--roxo);"> North</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="NE" checked style="margin-right:6px;accent-color:var(--roxo);"> Northeast</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="CO" checked style="margin-right:6px;accent-color:var(--roxo);"> Central-West</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="SE" checked style="margin-right:6px;accent-color:var(--roxo);"> Southeast</label>
+            <label style="font-size:12px;display:block;cursor:pointer;"><input type="checkbox" class="treg-chk" value="S" checked style="margin-right:6px;accent-color:var(--roxo);"> South</label>
         </div>
 
         <div class="step" id="stepUfFilter" style="display:none;">
-            <h3>UF (Estado)</h3>
+            <h3>State (UF)</h3>
             <div style="display:flex;gap:4px;margin-bottom:6px;">
-                <button type="button" onclick="tufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
-                <button type="button" onclick="tufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+                <button type="button" onclick="tufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">All</button>
+                <button type="button" onclick="tufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">None</button>
             </div>
             <div id="tufGrid" class="uf-grid">
-                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>
+                <span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>
             </div>
-            <p class="hint">Padrão: todas as UFs com cursos marcadas.</p>
+            <p class="hint">By default, every state that offers the programme is ticked.</p>
         </div>
 
         <div id="stepTop10Info" class="step" style="display:none;background:#FFF8E1;border-radius:6px;padding:12px;border-left:4px solid #D4AF37;">
-            <h3 style="color:#D4AF37;border-bottom-color:#D4AF37;">🏆 Modos TOP</h3>
+            <h3 style="color:#D4AF37;border-bottom-color:#D4AF37;">🏆 TOP modes</h3>
             <p style="font-size:12px;color:var(--txt);line-height:1.6;">
-                Escolha a grande área e o curso, ajuste (opcional) os filtros de <strong>sigla</strong>, <strong>região</strong> e <strong>UF</strong> e clique no relatório desejado. A ordenação é sempre por <strong>CPC → ENADE → IDD</strong>.
+                Choose the broad field and the programme, optionally adjust the <strong>acronym</strong>, <strong>region</strong> and <strong>state</strong> filters, then click the report you want. Ordering is always by <strong>CPC → ENADE → IDD</strong>.
             </p>
             <ul style="font-size:11px;color:var(--txt2);margin:6px 0 0 16px;line-height:1.6;">
-                <li><strong>TOP 10 / TOP 10 mais baixas</strong>: os 10 cursos do país pelo CPC <em>contínuo</em> (não pela nota 1–5). Um curso nota 4 de uma UF pode não entrar se houver 10+ com CPC maior.</li>
-                <li><strong>TOP 27 / TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado — use este para ver o curso de uma UF específica.</li>
+                <li><strong>TOP 10 / bottom 10</strong>: the 10 programmes in the country by <em>continuous</em> CPC (not by the 1–5 band). A band-4 programme in one state may not make the list if 10 or more have a higher CPC.</li>
+                <li><strong>TOP 27 / bottom 27</strong>: one programme (best/worst) per state — use this to see the programme in a particular state.</li>
             </ul>
         </div>
 
-        <button id="btnCompare" class="btn btn-main" disabled>Comparar</button>
+        <button id="btnCompare" class="btn btn-main" disabled>Compare</button>
 
         <div id="topButtons" style="display:none;">
-            <button id="btnTop10High" class="btn btn-main" style="background:#D4AF37;">🏆 TOP 10 melhores do país</button>
-            <button id="btnTop27High" class="btn btn-main" style="background:#B8860B;">🗺️ TOP 27 — melhor por estado</button>
-            <button id="btnTop10Low" class="btn btn-main" style="background:#C0392B;">🔻 TOP menores notas do país</button>
-            <button id="btnTop27Low" class="btn btn-main" style="background:#922B21;">🔻 TOP 27 — menores notas por UF</button>
+            <button id="btnTop10High" class="btn btn-main" style="background:#D4AF37;">🏆 TOP 10 best in the country</button>
+            <button id="btnTop27High" class="btn btn-main" style="background:#B8860B;">🗺️ TOP 27 — best per state</button>
+            <button id="btnTop10Low" class="btn btn-main" style="background:#C0392B;">🔻 TOP lowest scores in the country</button>
+            <button id="btnTop27Low" class="btn btn-main" style="background:#922B21;">🔻 TOP 27 — lowest per state</button>
         </div>
 
-        <button id="btnReset" class="btn btn-reset">Limpar seleção</button>
+        <button id="btnReset" class="btn btn-reset">Clear selection</button>
 
-        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Pedir um ajuste, apontar um dado errado ou sugerir uma melhoria">💡 Sugerir melhoria</button>
+        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Ask for a change, report wrong data or suggest an improvement">💡 Suggest an improvement</button>
     </div>
 
     <div class="main" id="main">
         <div class="empty-state" id="emptyState">
             <div class="icon">⚔️</div>
-            <h2 style="color:var(--roxo);margin-bottom:8px;">Comparador Especial de Cursos</h2>
-            <p>Compare o <strong>mesmo curso</strong> em até <strong>10 Unidades da Federação</strong> diferentes.</p>
-            <p style="margin-top:12px;font-size:12px;">O app seleciona automaticamente o <strong>melhor curso</strong> (por CPC, ENADE e IDD) de cada UF dentro dos filtros escolhidos.</p>
-            <p style="margin-top:8px;font-size:12px;">Siga os passos 1 → 2 → 3 → 4 na barra lateral e clique em <strong>Comparar</strong>.</p>
+            <h2 style="color:var(--roxo);margin-bottom:8px;">Special Programme Comparator</h2>
+            <p>Compare the <strong>same programme</strong> across up to <strong>10 different states</strong>.</p>
+            <p style="margin-top:12px;font-size:12px;">The app automatically picks the <strong>best programme</strong> (by CPC, ENADE and IDD) in each state, within the filters you choose.</p>
+            <p style="margin-top:8px;font-size:12px;">Follow steps 1 → 2 → 3 → 4 in the sidebar and click <strong>Compare</strong>.</p>
         </div>
     </div>
 </div>
@@ -332,21 +336,21 @@ let CHART_REF = null;
 
 const EMPTY_HTML_MANUAL = `<div class="empty-state" id="emptyState">
     <div class="icon">⚔️</div>
-    <h2 style="color:var(--roxo);margin-bottom:8px;">Comparador Especial de Cursos</h2>
-    <p>Compare o <strong>mesmo curso</strong> em até <strong>10 Unidades da Federação</strong> diferentes.</p>
-    <p style="margin-top:12px;font-size:12px;">O app seleciona automaticamente o <strong>melhor curso</strong> (por CPC, ENADE e IDD) de cada UF dentro dos filtros escolhidos.</p>
-    <p style="margin-top:8px;font-size:12px;">Siga os passos 1 → 2 → 3 → 4 na barra lateral e clique em <strong>Comparar</strong>.</p>
+    <h2 style="color:var(--roxo);margin-bottom:8px;">Special Programme Comparator</h2>
+    <p>Compare the <strong>same programme</strong> across up to <strong>10 different states</strong>.</p>
+    <p style="margin-top:12px;font-size:12px;">The app automatically picks the <strong>best programme</strong> (by CPC, ENADE and IDD) in each state, within the filters you choose.</p>
+    <p style="margin-top:8px;font-size:12px;">Follow steps 1 → 2 → 3 → 4 in the sidebar and click <strong>Compare</strong>.</p>
 </div>`;
 
 const EMPTY_HTML_TOP10 = `<div class="empty-state" id="emptyState">
     <div class="icon">🏆</div>
-    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP Cursos — melhores e mais baixas</h2>
-    <p>Gere o ranking dos cursos do Brasil para o curso escolhido, ordenado por <strong>CPC → ENADE → IDD</strong>.</p>
+    <h2 style="color:#D4AF37;margin-bottom:8px;">TOP programmes — best and lowest</h2>
+    <p>Generate the nationwide ranking for the chosen programme, ordered by <strong>CPC → ENADE → IDD</strong>.</p>
     <p style="margin-top:12px;font-size:12px;">
-        <strong>🏆 TOP 10</strong> / <strong>🔻 TOP 10 mais baixas</strong>: os 10 cursos do país.<br>
-        <strong>🗺️ TOP 27</strong> / <strong>🔻 TOP 27 mais baixas</strong>: 1 curso (melhor/pior) por estado.
+        <strong>🏆 TOP 10</strong> / <strong>🔻 bottom 10</strong>: the 10 programmes in the country.<br>
+        <strong>🗺️ TOP 27</strong> / <strong>🔻 bottom 27</strong>: one programme (best/worst) per state.
     </p>
-    <p style="margin-top:8px;font-size:12px;">Escolha a <strong>grande área</strong> e o <strong>curso</strong>; ajuste (opcional) os filtros de <strong>sigla</strong>, <strong>região</strong> e <strong>UF</strong> — por padrão todos marcados = país inteiro.</p>
+    <p style="margin-top:8px;font-size:12px;">Choose the <strong>broad field</strong> and the <strong>programme</strong>; optionally adjust the <strong>acronym</strong>, <strong>region</strong> and <strong>state</strong> filters — everything ticked, the default, means the whole country.</p>
 </div>`;
 
 const EMPTY_HTML = MODE === 'top10' ? EMPTY_HTML_TOP10 : EMPTY_HTML_MANUAL;
@@ -380,11 +384,11 @@ async function loadMeta() {
             if (!m) return;
             const opt = document.createElement('option');
             opt.value = slug;
-            opt.textContent = `${m.icon} ${m.label} (${m.n_cursos.toLocaleString('pt-BR')} cursos)`;
+            opt.textContent = `${m.icon} ${m.label} (${m.n_cursos.toLocaleString('en-US')} programmes)`;
             sel.appendChild(opt);
         });
     } catch (e) {
-        toast('Erro ao carregar metadata: ' + e.message);
+        toast('Failed to load metadata: ' + e.message);
     }
 }
 
@@ -401,7 +405,7 @@ async function loadArea(slug) {
 // ===== Popular dropdown de áreas =====
 function populateAreas() {
     const sel = $('areaSelect');
-    sel.innerHTML = '<option value="">— escolha o curso —</option>';
+    sel.innerHTML = '<option value="">— choose the programme —</option>';
     if (!CURRENT_DATA) { sel.disabled = true; return; }
     const sorted = [...CURRENT_DATA.areas].sort();
     sorted.forEach(a => {
@@ -428,7 +432,7 @@ function populateUFs() {
     // Sempre limpa tudo
     grid.innerHTML = '';
     if (!area || !CURRENT_DATA) {
-        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>';
         updateUFCount();
         return;
     }
@@ -443,7 +447,7 @@ function populateUFs() {
         UFS_POR_REGIAO[r].forEach(u => {
             const hasData = ufsComCursos.has(u);
             const disabled = hasData ? '' : ' disabled';
-            const title = hasData ? '' : ` title="Sem cursos disponíveis para ${area}"`;
+            const title = hasData ? '' : ` title="No programmes available for ${area}"`;
             html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="uf-chk" value="${u}" data-region="${r}"${disabled}>${u}</label>`;
         });
     });
@@ -472,7 +476,7 @@ function onRegionToggle(e) {
             if (document.querySelectorAll('.uf-chk:checked').length >= MAX_UFS) { capped = true; break; }
             cb.checked = true;
         }
-        if (capped) toast(`Máximo ${MAX_UFS} UFs — nem todos os estados da região foram marcados`);
+        if (capped) toast(`At most ${MAX_UFS} states — not every state in the region was ticked`);
     } else {
         boxes.forEach(cb => { cb.checked = false; });
     }
@@ -496,7 +500,7 @@ function onUfChange(e) {
     const checked = [...document.querySelectorAll('.uf-chk:checked')];
     if (checked.length > MAX_UFS) {
         e.target.checked = false;
-        toast(`Máximo ${MAX_UFS} UFs por comparação`);
+        toast(`At most ${MAX_UFS} states per comparison`);
     }
     // Sincroniza os checkboxes de região e atualiza contador/botão
     syncRegionToggles();
@@ -575,7 +579,7 @@ function populateTopUFs() {
     const grid = $('tufGrid');
     grid.innerHTML = '';
     if (!area || !CURRENT_DATA) {
-        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        grid.innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>';
         return;
     }
     const ufsComCursos = new Set(CURRENT_DATA.cursos.filter(c => c.ar === area && c.u).map(c => c.u));
@@ -587,17 +591,17 @@ function populateTopUFs() {
     if (semOferta > 0) {
         html += `<div style="grid-column:1/-1;font-size:10px;line-height:1.45;color:var(--txt2);
             background:#FFF8E1;border-left:3px solid #D4AF37;padding:6px 8px;margin-bottom:6px;border-radius:3px;">
-            <strong>${ufsComCursos.size} de ${TODAS_UFS.length} UFs</strong> ofertam este curso.
-            As <strong>${semOferta}</strong> sem oferta aparecem esmaecidas e não podem ser marcadas —
-            por isso o <strong>TOP 27 “por estado”</strong> devolve, no máximo,
-            <strong>${ufsComCursos.size} linha(s)</strong>.
+            <strong>${ufsComCursos.size} of ${TODAS_UFS.length} states</strong> offer this programme.
+            The <strong>${semOferta}</strong> that do not are greyed out and cannot be ticked —
+            which is why the <strong>“per state” TOP 27</strong> returns at most
+            <strong>${ufsComCursos.size} row(s)</strong>.
         </div>`;
     }
     REGION_ORDER.forEach(r => {
         html += `<div class="uf-region-label">${REGION_LABELS[r].toUpperCase()}</div>`;
         UFS_POR_REGIAO[r].forEach(u => {
             const hasData = ufsComCursos.has(u);
-            const title = hasData ? '' : ` title="Sem cursos disponíveis para ${area}"`;
+            const title = hasData ? '' : ` title="No programmes available for ${area}"`;
             html += `<label class="${hasData?'':'disabled'}"${title}><input type="checkbox" class="tuf-chk" value="${u}"${hasData?' checked':' disabled'}>${u}</label>`;
         });
     });
@@ -626,16 +630,16 @@ function updateTopButtons() {
     // marcadas" dá 295px contra 267px úteis e quebra em duas linhas. A regra completa
     // fica no title e, por extenso, no aviso que abre o resultado.
     const dica = porEstado
-        ? 'Todas as UFs com oferta estão marcadas: no máximo um curso por estado.'
-        : 'Só parte das UFs está marcada: os 27 do recorte, podendo repetir estado.';
+        ? 'Every state that offers it is ticked: at most one programme per state.'
+        : 'Only some states are ticked: the 27 of the selection, states may repeat.';
     if (alta) {
         alta.textContent = porEstado ? '🗺️ TOP 27 — melhor por estado'
-                                     : '🗺️ TOP 27 — melhores no recorte';
+                                     : '🗺️ TOP 27 — best in the selection';
         alta.title = dica;
     }
     if (baixa) {
         baixa.textContent = porEstado ? '🔻 TOP 27 — menores notas por UF'
-                                      : '🔻 TOP 27 — menores notas no recorte';
+                                      : '🔻 TOP 27 — lowest in the selection';
         baixa.title = dica;
     }
 }
@@ -712,20 +716,20 @@ function runTop(perState, worst) {
     clearMain();
     const slug = $('grandeArea').value;
     const area = $('areaSelect').value;
-    if (!slug || !area) { toast('Selecione grande área e curso'); return; }
+    if (!slug || !area) { toast('Select a broad field and a programme'); return; }
 
     if (!$('tipoPub').checked && !$('tipoPriv').checked) {
-        toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return;
+        toast('Select at least one institution type (public/private)'); return;
     }
 
     let filt;
     try {
         filt = topFilterCursos(area);
     } catch (err) {
-        toast('Erro ao filtrar: ' + err.message); return;
+        toast('Filtering error: ' + err.message); return;
     }
     if (!filt.cursos.length) {
-        toast('Nenhum curso encontrado com os filtros atuais (tipo/sigla/região/UF)');
+        toast('No programme found with the current filters (type/acronym/region/state)');
         return;
     }
 
@@ -750,7 +754,7 @@ function runTop(perState, worst) {
         renderTopResults(picks, area, slug, { perState, umPorEstado, worst, N, filt });
     } catch (err) {
         console.error('Erro em renderTopResults:', err);
-        toast('Erro ao renderizar: ' + err.message);
+        toast('Rendering error: ' + err.message);
         clearMain();
     }
 }
@@ -765,77 +769,76 @@ function renderTopResults(picks, area, slug, cfg) {
 
     const icon = worst ? '🔻' : (perState ? '🗺️' : '🏆');
     const accent = worst ? 'var(--vermelho)' : '#D4AF37';
-    const qual = worst ? 'com as menores notas' : 'mais bem avaliados';
+    const qual = worst ? 'with the lowest scores' : 'best rated';
     let titleText;
-    if (umPorEstado && worst)     titleText = `TOP ${picks.length} — Menores notas por UF (uma por estado)`;
-    else if (umPorEstado)         titleText = `TOP ${picks.length} — Melhor curso por estado (um por UF)`;
-    else if (perState)            titleText = `TOP ${picks.length} — Cursos ${qual} em ${nUfs} UF(s) selecionada(s)`;
-    else if (worst)               titleText = `TOP ${picks.length} — Cursos com as menores notas`
-                                      + (ehPaisInteiro(filt) ? ' (nacional)' : ` em ${nUfs} UF(s)`);
-    else                          titleText = `TOP ${picks.length} — Cursos mais bem avaliados`
-                                      + (ehPaisInteiro(filt) ? ' (nacional)' : ` em ${nUfs} UF(s)`);
+    if (umPorEstado && worst)     titleText = `TOP ${picks.length} — Lowest scores by state (one per state)`;
+    else if (umPorEstado)         titleText = `TOP ${picks.length} — Best programme per state (one per state)`;
+    else if (perState)            titleText = `TOP ${picks.length} — Programmes ${qual} in ${nUfs} selected state(s)`;
+    else if (worst)               titleText = `TOP ${picks.length} — Programmes with the lowest scores`
+                                      + (ehPaisInteiro(filt) ? ' (nationwide)' : ` in ${nUfs} state(s)`);
+    else                          titleText = `TOP ${picks.length} — Best rated programmes`
+                                      + (ehPaisInteiro(filt) ? ' (nationwide)' : ` in ${nUfs} state(s)`);
 
     // Resumo dos filtros ativos
     const totUfs = TODAS_UFS.length;
-    const regTxt = filt.regs.length === REGION_ORDER.length ? 'todas as regiões'
-        : 'regiões: ' + filt.regs.map(r => REGION_LABELS[r]).join(', ');
-    const ufTxt = filt.ufs.length >= totUfs ? 'todas as UFs' : `${filt.ufs.length} UF(s)`;
-    const sigTxt = (filt.searchOn && filt.searchTerm) ? ` · sigla contém "${filt.searchTerm}"` : '';
+    const regTxt = filt.regs.length === REGION_ORDER.length ? 'all regions'
+        : 'regions: ' + filt.regs.map(r => REGION_LABELS[r]).join(', ');
+    const ufTxt = filt.ufs.length >= totUfs ? 'all states' : `${filt.ufs.length} state(s)`;
+    const sigTxt = (filt.searchOn && filt.searchTerm) ? ` · acronym contains "${filt.searchTerm}"` : '';
     const tipoTxt = (filt.tipos && filt.tipos.length === 1)
-        ? (filt.tipos[0] === 'pub' ? 'somente públicas' : 'somente privadas')
-        : 'públicas e privadas';
-    const ordTxt = worst ? 'ordenação ascendente por CPC → ENADE → IDD (mais baixas primeiro)'
-                         : 'ordenação por CPC → ENADE → IDD (melhores primeiro)';
+        ? (filt.tipos[0] === 'pub' ? 'public only' : 'private only')
+        : 'public and private';
+    const ordTxt = worst ? 'ascending order by CPC → ENADE → IDD (lowest first)'
+                         : 'ordered by CPC → ENADE → IDD (best first)';
 
     let html = `<div class="card" style="border-top:4px solid ${accent};">
         <h2 style="color:${accent};">${icon} ${titleText}
-            <small>Curso: <strong>${area}</strong> · ${gaMeta.label}</small>
+            <small>Programme: <strong>${area}</strong> · ${gaMeta.label}</small>
         </h2>
         <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
-            ${picks.length} de ${filt.cursos.length} curso(s) no recorte · ${ordTxt}
-            <br>Filtros: ${tipoTxt} · ${regTxt} · ${ufTxt}${sigTxt}
+            ${picks.length} of ${filt.cursos.length} programme(s) in the selection · ${ordTxt}
+            <br>Filters: ${tipoTxt} · ${regTxt} · ${ufTxt}${sigTxt}
         </p>`;
 
-    const escopoTxt = ehPaisInteiro(filt) ? 'em todo o país' : `nas ${nUfs} UF(s) selecionada(s)`;
+    const escopoTxt = ehPaisInteiro(filt) ? 'across the whole country' : `in the ${nUfs} selected state(s)`;
 
     if (!perState) {
         html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
-            ℹ️ <strong>Como é definido este TOP ${N}:</strong> são os ${picks.length} cursos ${worst ? 'com os menores' : 'com os maiores'} valores
-            <strong>contínuos</strong> de CPC → ENADE → IDD ${escopoTxt}${(filt.tipos && filt.tipos.length === 1) ? ` (${tipoTxt})` : ''},
-            independentemente da UF — <strong>pode haver mais de um curso do mesmo estado</strong>.
-            A classificação usa o <strong>valor contínuo</strong>, não a faixa/nota (1–5):
-            um curso com <strong>nota 4</strong> pode ficar de fora se houver ao menos ${N} outros com CPC contínuo
-            ${worst ? 'menor' : 'maior'} — inclusive outros também com nota 4 ou 5.
-            Para ver ${worst ? 'a menor nota' : 'o melhor curso'} de <strong>cada estado</strong>, marque <strong>todas as UFs</strong> e use o <strong>TOP 27</strong>.
+            ℹ️ <strong>How this TOP ${N} is defined:</strong> these are the ${picks.length} programmes ${worst ? 'with the lowest' : 'with the highest'} 
+            <strong>continuous</strong> CPC → ENADE → IDD values ${escopoTxt}${(filt.tipos && filt.tipos.length === 1) ? ` (${tipoTxt})` : ''},
+            regardless of state — <strong>the same state may appear more than once</strong>.
+            The ranking uses the <strong>continuous value</strong>, not the 1–5 band:
+            a <strong>band-4</strong> programme may be left out if at least ${N} others have a ${worst ? 'menor' : 'maior'} continuous CPC — including others also in band 4 or 5.
+            To see ${worst ? 'the lowest score' : 'the best programme'} in <strong>each state</strong>, tick <strong>every state</strong> and use the <strong>TOP 27</strong>.
         </div>`;
     } else if (umPorEstado) {
         html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
-            ℹ️ <strong>Este TOP 27 é “um por estado”:</strong> com <strong>todas as ${cob.habilitadas} UF(s) com oferta deste curso</strong>
-            selecionadas, a lista traz ${worst ? 'a menor nota' : 'o melhor curso'} de <strong>cada</strong> unidade da federação — no máximo
-            um por estado, mesmo que um mesmo estado tenha vários cursos ${worst ? 'entre as menores notas' : 'entre os melhores'}.
-            ${cob.habilitadas < TODAS_UFS.length ? `<br><br><strong>Por que são ${picks.length} e não 27:</strong> este curso é ofertado
-            em <strong>${cob.habilitadas} das ${TODAS_UFS.length} UFs</strong>. As demais não têm curso a indicar, então não entram
-            na lista — o resultado não está truncado.` : ''}
+            ℹ️ <strong>This TOP 27 really is “one per state”:</strong> with <strong>all ${cob.habilitadas} state(s) that offer this programme</strong>
+            selected, the list brings ${worst ? 'the lowest score' : 'the best programme'} of <strong>each</strong> state — at most
+            one per state, even where a single state has several programmes ${worst ? 'among the lowest scores' : 'among the best'}.
+            ${cob.habilitadas < TODAS_UFS.length ? `<br><br><strong>Why ${picks.length} and not 27:</strong> this programme is offered
+            in <strong>${cob.habilitadas} of the ${TODAS_UFS.length} states</strong>. The others have nothing to contribute, so they are
+            not on the list — the result is not truncated.` : ''}
             <br><br>
-            <strong>Se você desmarcar qualquer UF, esta opção muda de significado:</strong> passa a listar os
-            <strong>27 cursos ${worst ? 'com as menores notas' : 'mais bem avaliados'} dentre as UFs marcadas</strong>, e aí
-            <strong>pode haver mais de um curso do mesmo estado</strong>.
+            <strong>Untick any state and this option changes meaning:</strong> it then lists the
+            <strong>27 programmes ${worst ? 'with the lowest scores' : 'best rated'} among the ticked states</strong>, and then
+            <strong>the same state may appear more than once</strong>.
         </div>`;
     } else {
         html += `<div class="warn-box" style="background:#FFF8E1;border-left-color:#D4AF37;">
-            ℹ️ <strong>Atenção — este TOP 27 NÃO é “um por estado”:</strong> como <strong>${nUfs} de ${cob.habilitadas} UF(s)</strong>
-            com oferta estão selecionadas, a lista traz até <strong>27 cursos ${worst ? 'com as menores notas' : 'mais bem avaliados'} dentre essas UFs</strong>,
-            e <strong>pode haver mais de um curso do mesmo estado</strong> — inclusive todos de um só, se for lá que estão.
-            ${picks.length < N ? `<br><br><strong>São ${picks.length} e não 27</strong> porque esse é o total de cursos no recorte:
-            as ${nUfs} UF(s) selecionadas têm ${filt.cursos.length} curso(s) com CPC contínuo.` : ''}
+            ℹ️ <strong>Careful — this TOP 27 is NOT “one per state”:</strong> since <strong>${nUfs} of ${cob.habilitadas} state(s)</strong>
+            that offer it are selected, the list brings up to <strong>27 programmes ${worst ? 'with the lowest scores' : 'best rated'} among those states</strong>,
+            and <strong>the same state may appear more than once</strong> — all of them from a single state, if that is where they are.
+            ${picks.length < N ? `<br><br><strong>There are ${picks.length} and not 27</strong> because that is the total in the selection:
+            the ${nUfs} selected state(s) have ${filt.cursos.length} programme(s) with a continuous CPC.` : ''}
             <br><br>
-            Para obter ${worst ? 'a menor nota' : 'o melhor curso'} de <strong>cada</strong> estado, <strong>marque todas as UFs</strong>
-            (botão “Todos” no filtro de UF): aí o TOP 27 devolve no máximo um curso por unidade da federação.
+            To get ${worst ? 'the lowest score' : 'the best programme'} in <strong>each</strong> state, <strong>tick every state</strong>
+            (the “All” button in the state filter): the TOP 27 then returns at most one programme per state.
         </div>`;
     }
 
     if (!sameYear) {
-        html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.filter(y=>y!=null).sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
+        html += `<div class="warn-box">ℹ️ These programmes were assessed in different ENADE cycles: <strong>${years.filter(y=>y!=null).sort().join(', ')}</strong>. Direct comparison should take that time gap into account.</div>`;
     }
 
     html += `<div class="chart-container"><canvas id="chartCompare"></canvas></div>
@@ -843,12 +846,12 @@ function renderTopResults(picks, area, slug, cfg) {
 
     // Tabela
     html += `<div class="card">
-        <h2>Tabela de indicadores
-            <small>Todos os 8 componentes do CPC por curso</small>
+        <h2>Indicator table
+            <small>All 8 CPC components for each programme</small>
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
             <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
-            <th title="Código e-MEC da IES e do curso, como divulgados pelo INEP">e-MEC<br>IES / curso</th>
+            <th title="e-MEC code of the institution and of the programme, as published by INEP">e-MEC<br>IES / curso</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -857,14 +860,14 @@ function renderTopResults(picks, area, slug, cfg) {
     picks.forEach((c, i) => {
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
         const pub = isPublica(c.ct);
-        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Pública':'Privada'}</td>`;
+        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Public':'Private'}</td>`;
         html += `<tr>
             <td><strong>${i+1}º</strong></td>
             <td><strong>${c.u||'—'}</strong></td>
             <td><strong>${c.sg||'—'}</strong></td>
             ${tipoCell}
             <td>${c.y||'—'}</td>
-            <td style="font-size:11px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
+            <td style="font-size:11px;white-space:nowrap;" title="e-MEC codes in force at ENADE ${c.y} registration">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -878,13 +881,13 @@ function renderTopResults(picks, area, slug, cfg) {
     });
     html += `</tbody></table></div>
     <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
-        f = faixa (1-5). Tipo: Pública (Federal/Estadual/Municipal) ou Privada (demais categorias). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+        f = band (1-5). Type: public (federal/state/municipal) or private (all other categories). %Dr/Ms/Contract/Infra/Teach.org are standardised CPC component scores.
     </p></div>`;
 
     // Detalhes IES
     html += `<div class="card">
-        <h2>Detalhes das Instituições
-            <small>Informações institucionais de cada curso ranqueado</small>
+        <h2>Institution details
+            <small>Institutional information for each ranked programme</small>
         </h2>
         <div class="details-grid">`;
     picks.forEach((c, i) => {
@@ -897,9 +900,9 @@ function renderTopResults(picks, area, slug, cfg) {
                 ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
                 ${c.o ? `📚 ${c.o}<br>` : ''}
                 ${c.m ? `💻 ${c.m}<br>` : ''}
-                Código e-MEC da IES: ${c.ci != null ? c.ci : 'n/d'}<br>
-                Código e-MEC do curso: ${c.cc != null ? c.cc : 'n/d'}<br>
-                Ano da avaliação: ${c.y || 'n/d'}
+                e-MEC institution code: ${c.ci != null ? c.ci : 'n/d'}<br>
+                e-MEC programme code: ${c.cc != null ? c.cc : 'n/d'}<br>
+                Assessment year: ${c.y || 'n/d'}
             </div>
         </div>`;
     });
@@ -916,7 +919,7 @@ async function compare() {
 
     const slug = $('grandeArea').value;
     const area = $('areaSelect').value;
-    if (!slug || !area) { toast('Selecione grande área e curso'); return; }
+    if (!slug || !area) { toast('Select a broad field and a programme'); return; }
 
     let ufs;
     let cpcMin, enadeMin, iddMin;
@@ -928,16 +931,16 @@ async function compare() {
         cpcMin = 1; enadeMin = 1; iddMin = 1;
         wantPub = $('tipoPub').checked;
         wantPriv = $('tipoPriv').checked;
-        if (!wantPub && !wantPriv) { toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return; }
+        if (!wantPub && !wantPriv) { toast('Select at least one institution type (public/private)'); return; }
     } else {
         ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
-        if (ufs.length < 2) { toast('Selecione pelo menos 2 UFs'); return; }
+        if (ufs.length < 2) { toast('Select at least 2 states'); return; }
         cpcMin = +$('cpcMin').value;
         enadeMin = +$('enadeMin').value;
         iddMin = +$('iddMin').value;
         wantPub = $('tipoPub').checked;
         wantPriv = $('tipoPriv').checked;
-        if (!wantPub && !wantPriv) { toast('Selecione ao menos um tipo de IES (Pública/Privada)'); return; }
+        if (!wantPub && !wantPriv) { toast('Select at least one institution type (public/private)'); return; }
     }
 
     // picks/missing são LOCAIS — começam vazios em toda chamada
@@ -967,14 +970,14 @@ async function compare() {
         });
     } catch (err) {
         console.error('Erro em pickBestForUF:', err);
-        toast('Erro ao selecionar cursos: ' + err.message);
+        toast('Error while selecting programmes: ' + err.message);
         return;
     }
 
     if (!picks.length) {
         toast(MODE === 'top10'
-            ? `Nenhum curso encontrado para "${area}" em nenhuma UF`
-            : `Nenhum curso encontrado com os filtros (UFs sem dados: ${missing.join(', ')})`);
+            ? `No programme found for "${area}" in any state`
+            : `No programme found with these filters (states without data: ${missing.join(', ')})`);
         return;
     }
 
@@ -992,7 +995,7 @@ async function compare() {
         renderResults(finalPicks, missing, area, slug, { cpcMin, enadeMin, iddMin });
     } catch (err) {
         console.error('Erro em renderResults:', err);
-        toast('Erro ao renderizar: ' + err.message);
+        toast('Rendering error: ' + err.message);
         clearMain();
     }
 }
@@ -1004,7 +1007,7 @@ function renderResults(picks, missing, area, slug, thresholds) {
     const isTop10 = MODE === 'top10';
 
     let titleIcon = isTop10 ? '🏆' : gaMeta.icon;
-    let titleText = isTop10 ? `TOP ${picks.length} Nacional — ${gaMeta.label}` : gaMeta.label;
+    let titleText = isTop10 ? `TOP ${picks.length} nationwide — ${gaMeta.label}` : gaMeta.label;
 
     let html = `<div class="card">
         <h2>${titleIcon} ${titleText}
@@ -1012,17 +1015,17 @@ function renderResults(picks, missing, area, slug, thresholds) {
         </h2>
         <p style="font-size:12px;color:var(--txt2);margin-top:4px;">
             ${picks.length} curso${picks.length>1?'s':''} · ordenação por CPC → ENADE → IDD
-            ${isTop10 ? ' · um por UF, varredura nacional das 27 unidades da federação' : ` · faixas mínimas: CPC≥${thresholds.cpcMin}, ENADE≥${thresholds.enadeMin}, IDD≥${thresholds.iddMin}`}
+            ${isTop10 ? ' · one per state, nationwide sweep of all 27 states' : ` · minimum bands: CPC≥${thresholds.cpcMin}, ENADE≥${thresholds.enadeMin}, IDD≥${thresholds.iddMin}`}
         </p>`;
 
     if (!isTop10 && missing.length) {
-        html += `<div class="warn-box">⚠️ Nenhum curso encontrado para as UFs: <strong>${missing.join(', ')}</strong> com os filtros atuais. Tente reduzir as faixas mínimas.</div>`;
+        html += `<div class="warn-box">⚠️ No programme found for these states: <strong>${missing.join(', ')}</strong> with the current filters. Try lowering the minimum bands.</div>`;
     }
     if (isTop10 && missing.length > 17) {
-        html += `<div class="warn-box">ℹ️ ${27 - missing.length} UFs tinham cursos disponíveis (de 27 totais). Outras UFs não oferecem esse curso.</div>`;
+        html += `<div class="warn-box">ℹ️ ${27 - missing.length} states had programmes available (out of 27). The other states do not offer this programme.</div>`;
     }
     if (!sameYear) {
-        html += `<div class="warn-box">ℹ️ Os cursos foram avaliados em ciclos ENADE diferentes: <strong>${years.sort().join(', ')}</strong>. A comparação direta deve considerar essa diferença temporal.</div>`;
+        html += `<div class="warn-box">ℹ️ These programmes were assessed in different ENADE cycles: <strong>${years.sort().join(', ')}</strong>. Direct comparison should take that time gap into account.</div>`;
     }
 
     html += `<div class="chart-container"><canvas id="chartCompare"></canvas></div>
@@ -1030,12 +1033,12 @@ function renderResults(picks, missing, area, slug, thresholds) {
 
     // Tabela
     html += `<div class="card">
-        <h2>Tabela de indicadores
-            <small>Todos os 8 componentes do CPC por curso</small>
+        <h2>Indicator table
+            <small>All 8 CPC components for each programme</small>
         </h2>
         <div class="tbl-wrap"><table><thead><tr>
             <th>#</th><th>UF</th><th>Sigla</th><th>Tipo</th><th>Ano</th>
-            <th title="Código e-MEC da IES e do curso, como divulgados pelo INEP">e-MEC<br>IES / curso</th>
+            <th title="e-MEC code of the institution and of the programme, as published by INEP">e-MEC<br>IES / curso</th>
             <th>CPC (f)</th><th>CPC cont</th>
             <th>ENADE</th><th>IDD</th>
             <th>%Dr</th><th>%Ms</th><th>Regime</th>
@@ -1044,14 +1047,14 @@ function renderResults(picks, missing, area, slug, thresholds) {
     picks.forEach((c, i) => {
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
         const pub = isPublica(c.ct);
-        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Pública':'Privada'}</td>`;
+        const tipoCell = `<td style="color:${pub?'#1B5E20':'#5B2C6F'};font-weight:600;">${pub?'Public':'Private'}</td>`;
         html += `<tr>
             <td><strong>${i+1}º</strong></td>
             <td><strong>${c.u||'—'}</strong></td>
             <td><strong>${c.sg||'—'}</strong></td>
             ${tipoCell}
             <td>${c.y||'—'}</td>
-            <td style="font-size:11px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
+            <td style="font-size:11px;white-space:nowrap;" title="e-MEC codes in force at ENADE ${c.y} registration">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
             <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
@@ -1065,13 +1068,13 @@ function renderResults(picks, missing, area, slug, thresholds) {
     });
     html += `</tbody></table></div>
     <p style="font-size:10px;color:var(--txt2);margin-top:6px;">
-        f = faixa (1-5). Tipo: Pública (Federal/Estadual/Municipal) ou Privada (demais categorias). %Dr/Ms/Regime/Infra/Org.Ped são notas padronizadas do CPC.
+        f = band (1-5). Type: public (federal/state/municipal) or private (all other categories). %Dr/Ms/Contract/Infra/Teach.org are standardised CPC component scores.
     </p></div>`;
 
     // Detalhes IES
     html += `<div class="card">
-        <h2>Detalhes das Instituições
-            <small>Informações institucionais de cada curso comparado</small>
+        <h2>Institution details
+            <small>Institutional information for each compared programme</small>
         </h2>
         <div class="details-grid">`;
     picks.forEach((c, i) => {
@@ -1084,10 +1087,10 @@ function renderResults(picks, missing, area, slug, thresholds) {
                 ${c.ct ? `🏛️ ${c.ct}<br>` : ''}
                 ${c.o ? `📚 ${c.o}<br>` : ''}
                 ${c.m ? `💻 ${c.m}<br>` : ''}
-                Código e-MEC da IES: ${c.ci != null ? c.ci : 'n/d'}<br>
-                Código e-MEC do curso: ${c.cc != null ? c.cc : 'n/d'}<br>
-                Ano da avaliação: ${c.y || 'n/d'}<br>
-                Ano de fundação: n/d
+                e-MEC institution code: ${c.ci != null ? c.ci : 'n/d'}<br>
+                e-MEC programme code: ${c.cc != null ? c.cc : 'n/d'}<br>
+                Assessment year: ${c.y || 'n/d'}<br>
+                Year founded: n/a
             </div>
         </div>`;
     });
@@ -1114,9 +1117,9 @@ function renderChart(picks, area, sameYear) {
         data: {
             labels: labels,
             datasets: [
-                { label: 'IDD (cont)', backgroundColor: '#E74C3C', data: iddData, borderColor:'#C0392B', borderWidth:1 },
-                { label: 'ENADE (cont)', backgroundColor: '#3498DB', data: enadeData, borderColor:'#2874A6', borderWidth:1 },
-                { label: 'CPC (cont)', backgroundColor: '#27AE60', data: cpcData, borderColor:'#1E8449', borderWidth:1 }
+                { label: 'IDD (cont.)', backgroundColor: '#E74C3C', data: iddData, borderColor:'#C0392B', borderWidth:1 },
+                { label: 'ENADE (cont.)', backgroundColor: '#3498DB', data: enadeData, borderColor:'#2874A6', borderWidth:1 },
+                { label: 'CPC (cont.)', backgroundColor: '#27AE60', data: cpcData, borderColor:'#1E8449', borderWidth:1 }
             ]
         },
         options: {
@@ -1136,23 +1139,23 @@ function renderChart(picks, area, sameYear) {
                             const c = picks[i];
                             return [
                                 '',
-                                `IES: ${c.ie || '—'}`,
-                                `Município: ${c.mu || '—'}`,
-                                `Faixa CPC: ${c.pf || '—'}`,
-                                `Categoria: ${c.ct || '—'}`
+                                `Institution: ${c.ie || '—'}`,
+                                `Municipality: ${c.mu || '—'}`,
+                                `CPC band: ${c.pf || '—'}`,
+                                `Type: ${c.ct || '—'}`
                             ];
                         }
                     }
                 },
                 title: {
                     display: true,
-                    text: `Comparativo: ${area}`,
+                    text: `Comparison: ${area}`,
                     font: { size: 14, weight: 'bold' },
                     padding: { bottom: 10 }
                 },
                 subtitle: {
                     display: !sameYear,
-                    text: '⚠ Ciclos ENADE diferentes entre os cursos — veja legenda abaixo do gráfico',
+                    text: '⚠ Different ENADE cycles across programmes — see the note below the chart',
                     color: '#F39C12',
                     font: { size: 10, style: 'italic' }
                 }
@@ -1160,12 +1163,12 @@ function renderChart(picks, area, sameYear) {
             scales: {
                 x: {
                     stacked: true,
-                    title: { display: true, text: 'Curso (SIGLA / UF / ano de avaliação)', font: { size: 11 } }
+                    title: { display: true, text: 'Programme (ACRONYM / state / assessment year)', font: { size: 11 } }
                 },
                 y: {
                     stacked: true,
                     beginAtZero: true,
-                    title: { display: true, text: 'Pontuação acumulada (CPC + ENADE + IDD)', font: { size: 11 } }
+                    title: { display: true, text: 'Cumulative score (CPC + ENADE + IDD)', font: { size: 11 } }
                 }
             }
         }
@@ -1179,9 +1182,9 @@ function resetAll() {
     // Zera todos os controles
     CURRENT_DATA = null;
     $('grandeArea').value = '';
-    $('areaSelect').innerHTML = '<option value="">— selecione a grande área —</option>';
+    $('areaSelect').innerHTML = '<option value="">— select the broad field —</option>';
     $('areaSelect').disabled = true;
-    $('ufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+    $('ufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>';
     $('cpcMin').value = '3';
     $('enadeMin').value = '3';
     $('iddMin').value = '3';
@@ -1194,10 +1197,10 @@ function resetAll() {
         $('tSearchEnabled').checked = false;
         $('tSearchSigla').value = '';
         $('tSearchSigla').disabled = true;
-        $('tufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Selecione o curso primeiro</span>';
+        $('tufGrid').innerHTML = '<span style="grid-column:1/-1;font-size:11px;color:#999;text-align:center;padding:20px 4px;">Select the programme first</span>';
         updateTopButtons();
     }
-    toast('Seleção limpa');
+    toast('Selection cleared');
 }
 
 // ===== Wire up =====
@@ -1212,7 +1215,7 @@ $('grandeArea').addEventListener('change', async (e) => {
         populateTopUFs();
         updateTopButtons();
     } catch (err) {
-        toast('Erro ao carregar dados: ' + err.message);
+        toast('Failed to load data: ' + err.message);
     }
 });
 $('areaSelect').addEventListener('change', () => {
@@ -1260,8 +1263,8 @@ $('btnTop27Low').addEventListener('click',  () => runTop(true,  true));
 function applyMode() {
     if (MODE === 'top10') {
         // Header
-        document.title = 'MAPA-GR — TOP Cursos (melhores / mais baixas)';
-        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP Cursos — melhores e mais baixas';
+        document.title = 'MAPA-GR — TOP programmes (best / lowest)';
+        $('pageTitle').innerHTML = '<span>MAPA-GR</span> — 🏆 TOP programmes — best and lowest';
         // Muda cor do header para dourado
         document.querySelector('.header').style.background = 'linear-gradient(135deg, #D4AF37, #B8860B)';
         // Esconde os passos do modo manual (UF até 10 / faixas / botão Comparar)
@@ -1270,8 +1273,8 @@ function applyMode() {
         $('btnCompare').style.display = 'none';
         // Mostra os filtros do painel TOP + info + botões
         $('stepTipo').style.display = 'block';
-        $('stepTipoTitle').textContent = 'Tipo de IES';
-        $('stepTipoHint').innerHTML = 'Ambas marcadas: ranking com todas as IES. Só uma: TOP apenas entre instituições daquele tipo.';
+        $('stepTipoTitle').textContent = 'Institution type';
+        $('stepTipoHint').innerHTML = 'Both ticked: ranking with every institution. Only one: TOP among institutions of that type only.';
         $('stepSigla').style.display = 'block';
         $('stepRegiao').style.display = 'block';
         $('stepUfFilter').style.display = 'block';
@@ -1284,7 +1287,7 @@ function applyMode() {
 }
 
 applyMode();
-$('hdrDate').textContent = new Date().toLocaleDateString('pt-BR');
+$('hdrDate').textContent = new Date().toLocaleDateString('en-US');
 loadMeta();
 
 // Service worker

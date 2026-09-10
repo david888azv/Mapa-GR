@@ -8,6 +8,9 @@
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
 <link rel="canonical" href="https://david888azv.github.io/Mapa-GR/help-doc.html">
+<link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/help-doc.html">
+<link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/help-doc.html">
+<link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/help-doc.html">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MAPA-GR">
@@ -57,6 +60,19 @@ code{background:#E8EDF2;padding:2px 6px;border-radius:3px;font-size:12px;font-fa
 .contact{background:var(--azul3);color:#ccc;padding:12px 28px;font-size:12px;text-align:center;margin-top:24px;}
 .contact a{color:var(--accent);text-decoration:none;}
 a{color:#2563EB;}
+
+/* Alternador de idioma — um clique leva a versao em ingles (en/) e de volta.
+   Links de verdade: funcionam sem JS e o buscador os segue. O lado marcado e
+   virado por gerar_ingles.py; nao editar so de um lado. */
+.langsel { display:flex; align-items:center; gap:2px; font-size:10px; font-weight:700;
+    letter-spacing:.05em; background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.22); border-radius:999px; padding:2px;
+    margin-bottom:3px; align-self:flex-end; }
+.langsel a, .langsel .cur { padding:1px 7px; border-radius:999px; line-height:1.4;
+    text-decoration:none; }
+.langsel a { color:#BFD4F5; }
+.langsel a:hover { color:#fff; background:rgba(255,255,255,.18); }
+.langsel .cur { color:#fff; background:var(--accent, #E8145F); }
 </style>
 <!-- cf-web-analytics -->
 <!-- Contagem de acessos sem cookie e sem identificar pessoas (Cloudflare Web
@@ -74,6 +90,7 @@ a{color:#2563EB;}
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
+            <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/help-doc.html" hreflang="en" lang="en">EN</a></div>
             <div>Prof. David L. Azevedo</div>
             <div>v2.8.2 — Agosto 2026</div>
         </div>

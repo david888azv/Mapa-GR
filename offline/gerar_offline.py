@@ -119,6 +119,11 @@ def transform(html, src_dir, chart_js, icon_uri, data_paths):
     html = re.sub(r'\s*<!-- cf-web-analytics -->.*?<!-- /cf-web-analytics -->', '',
                   html, flags=re.S)
 
+    # 7. Remover o alternador de idioma PT|EN. A versao offline e um arquivo
+    #    solto: o link para en/ nao levaria a lugar nenhum. O ingles online
+    #    continua existindo; aqui ele so nao tem para onde apontar.
+    html = re.sub(r'\s*<div class="langsel">.*?</div>', '', html, flags=re.S)
+
     return html
 
 

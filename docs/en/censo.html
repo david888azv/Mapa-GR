@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
+<!-- en/ e subpasta: sem isto, dados, icones e Chart.js seriam
+     procurados em /Mapa-GR/en/ e nao existiriam la. -->
+<base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0F244A">
-<title>MAPA-GR — Censo da Educação Superior 2017-2023</title>
+<title>MAPA-GR — Higher Education Census 2017-2023</title>
 <meta name="description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2023.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
-<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/censo.html">
+<link rel="canonical" href="https://david888azv.github.io/Mapa-GR/en/censo.html">
 <link rel="alternate" hreflang="pt-BR" href="https://david888azv.github.io/Mapa-GR/censo.html">
 <link rel="alternate" hreflang="en" href="https://david888azv.github.io/Mapa-GR/en/censo.html">
 <link rel="alternate" hreflang="x-default" href="https://david888azv.github.io/Mapa-GR/censo.html">
 <!-- Open Graph -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MAPA-GR">
-<meta property="og:locale" content="pt_BR">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="pt_BR">
 <meta property="og:title" content="MAPA-GR — Censo da Educação Superior 2017-2023">
 <meta property="og:description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2023.">
-<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/censo.html">
+<meta property="og:url" content="https://david888azv.github.io/Mapa-GR/en/censo.html">
 <meta property="og:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary">
@@ -188,20 +192,20 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 
 <div class="header">
     <div class="header-left">
-        <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">&#9776;</button>
+        <button class="menu-toggle" id="menuToggle" aria-label="Open filters">&#9776;</button>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2023</h1>
+        <h1><span>MAPA-GR</span> &#8212; Higher Education Census 2017-2023</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
-            <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/censo.html" hreflang="en" lang="en">EN</a></div>
+            <div class="langsel"><a href="../censo.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
             <div id="headerDate"></div>
         </div>
-        <button onclick="window.close(); if(!window.closed) window.location.href='index.html';"
+        <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:#FFF;color:var(--censo1);border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
             onmouseover="this.style.background='#E3F2FD'" onmouseout="this.style.background='#FFF'">
-            &#8592; Voltar
+            &#8592; Back
         </button>
     </div>
 </div>
@@ -211,111 +215,111 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 <div class="container">
     <div class="sidebar" id="sidebar">
         <div class="filter-group">
-            <h3>&#128196; Censo INEP</h3>
-            <p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Fonte: <strong>Portal INEP &#8212; Microdados do Censo da Educa&#231;&#227;o Superior</strong> (2017, 2021, 2022, 2023). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>
+            <h3>&#128196; INEP Census</h3>
+            <p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Source: <strong>INEP portal &#8212; Higher Education Census microdata</strong> (2017, 2021, 2022, 2023). Aggregated nationally and by region, state, field and institution.</p>
         </div>
 
         <div class="filter-group">
-            <h3>Ano de refer&#234;ncia</h3>
-            <label><input type="radio" name="ano" value="2023" checked> 2023 (mais recente)</label>
+            <h3>Reference year</h3>
+            <label><input type="radio" name="ano" value="2023" checked> 2023 (most recent)</label>
             <label><input type="radio" name="ano" value="2022"> 2022</label>
             <label><input type="radio" name="ano" value="2021"> 2021</label>
             <label><input type="radio" name="ano" value="2017"> 2017</label>
-            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">Na aba <em>Evolu&#231;&#227;o</em> todos os anos s&#227;o exibidos simultaneamente.</p>
+            <p style="font-size:10px;color:var(--txt2);margin-top:4px;">The <em>Trend</em> tab shows every year at once.</p>
         </div>
 
         <div class="filter-group">
-            <h3>M&#233;trica principal</h3>
+            <h3>Main metric</h3>
             <select id="selMetrica">
-                <option value="mat" selected>Matr&#237;culas ativas</option>
-                <option value="ing">Ingressantes</option>
-                <option value="con">Concluintes</option>
-                <option value="vg">Vagas ofertadas</option>
-                <option value="insc">Inscritos no processo seletivo</option>
-                <option value="mat_pcd">Matr&#237;culas &#8212; PCD</option>
-                <option value="mat_fies">Matr&#237;culas &#8212; FIES</option>
-                <option value="mat_prouni_i">Matr&#237;culas &#8212; PROUNI Integral</option>
-                <option value="mat_prouni_p">Matr&#237;culas &#8212; PROUNI Parcial</option>
-                <option value="mat_rv">Matr&#237;culas &#8212; Reserva de vagas (cotas)</option>
-                <option value="sit_tra">Situa&#231;&#227;o &#8212; Trancada</option>
-                <option value="sit_des">Situa&#231;&#227;o &#8212; Desvinculada</option>
+                <option value="mat" selected>Active enrolments</option>
+                <option value="ing">New entrants</option>
+                <option value="con">Graduates</option>
+                <option value="vg">Places offered</option>
+                <option value="insc">Applicants</option>
+                <option value="mat_pcd">Enrolments &#8212; students with disabilities</option>
+                <option value="mat_fies">Enrolments &#8212; FIES student loan</option>
+                <option value="mat_prouni_i">Enrolments &#8212; PROUNI full scholarship</option>
+                <option value="mat_prouni_p">Enrolments &#8212; PROUNI partial scholarship</option>
+                <option value="mat_rv">Enrolments &#8212; affirmative-action quotas</option>
+                <option value="sit_tra">Status &#8212; suspended</option>
+                <option value="sit_des">Status &#8212; dropped out</option>
             </select>
         </div>
 
         <div class="filter-group">
-            <h3>Grande &#193;rea</h3>
+            <h3>Broad field</h3>
             <div id="areaFilter"></div>
         </div>
 
         <div class="filter-group">
-            <h3>Modalidade</h3>
-            <label><input type="checkbox" class="mod-chk" value="1" checked> Presencial</label>
-            <label><input type="checkbox" class="mod-chk" value="2" checked> EAD</label>
+            <h3>Delivery mode</h3>
+            <label><input type="checkbox" class="mod-chk" value="1" checked> On campus</label>
+            <label><input type="checkbox" class="mod-chk" value="2" checked> Distance learning</label>
         </div>
 
         <div class="filter-group">
-            <h3>Grau Acad&#234;mico</h3>
-            <label><input type="checkbox" class="grau-chk" value="1" checked> Bacharelado</label>
-            <label><input type="checkbox" class="grau-chk" value="2" checked> Licenciatura</label>
-            <label><input type="checkbox" class="grau-chk" value="3" checked> Tecnol&#243;gico</label>
-            <label><input type="checkbox" class="grau-chk" value="4" checked> &#193;rea b&#225;sica</label>
+            <h3>Degree type</h3>
+            <label><input type="checkbox" class="grau-chk" value="1" checked> Bachelor</label>
+            <label><input type="checkbox" class="grau-chk" value="2" checked> Teaching degree</label>
+            <label><input type="checkbox" class="grau-chk" value="3" checked> Technologist</label>
+            <label><input type="checkbox" class="grau-chk" value="4" checked> Basic-cycle programme</label>
         </div>
 
         <div class="filter-group">
-            <h3>Regi&#227;o</h3>
-            <label><input type="checkbox" class="reg-chk" value="N" checked> Norte</label>
-            <label><input type="checkbox" class="reg-chk" value="NE" checked> Nordeste</label>
-            <label><input type="checkbox" class="reg-chk" value="CO" checked> Centro-Oeste</label>
-            <label><input type="checkbox" class="reg-chk" value="SE" checked> Sudeste</label>
-            <label><input type="checkbox" class="reg-chk" value="S" checked> Sul</label>
+            <h3>Region</h3>
+            <label><input type="checkbox" class="reg-chk" value="N" checked> North</label>
+            <label><input type="checkbox" class="reg-chk" value="NE" checked> Northeast</label>
+            <label><input type="checkbox" class="reg-chk" value="CO" checked> Central-West</label>
+            <label><input type="checkbox" class="reg-chk" value="SE" checked> Southeast</label>
+            <label><input type="checkbox" class="reg-chk" value="S" checked> South</label>
         </div>
 
         <div class="filter-group">
             <h3>UF</h3>
             <div style="display:flex;gap:4px;margin-bottom:6px;">
-                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
-                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+                <button type="button" onclick="ufAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">All</button>
+                <button type="button" onclick="ufAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">None</button>
             </div>
             <div id="ufFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
         <div class="filter-group">
-            <h3>Categoria Administrativa</h3>
-            <label><input type="checkbox" class="cat-chk" value="1" checked> P&#250;blica Federal</label>
-            <label><input type="checkbox" class="cat-chk" value="2" checked> P&#250;blica Estadual</label>
-            <label><input type="checkbox" class="cat-chk" value="3" checked> P&#250;blica Municipal</label>
-            <label><input type="checkbox" class="cat-chk" value="4" checked> Privada c/ fins</label>
-            <label><input type="checkbox" class="cat-chk" value="5" checked> Privada s/ fins</label>
-            <label><input type="checkbox" class="cat-chk" value="7" checked> Especial</label>
+            <h3>Administrative category</h3>
+            <label><input type="checkbox" class="cat-chk" value="1" checked> Federal public</label>
+            <label><input type="checkbox" class="cat-chk" value="2" checked> State public</label>
+            <label><input type="checkbox" class="cat-chk" value="3" checked> Municipal public</label>
+            <label><input type="checkbox" class="cat-chk" value="4" checked> Private for-profit</label>
+            <label><input type="checkbox" class="cat-chk" value="5" checked> Private non-profit</label>
+            <label><input type="checkbox" class="cat-chk" value="7" checked> Special</label>
         </div>
 
         <div class="filter-group">
-            <h3>&#128269; Buscar por sigla da IES</h3>
-            <label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>
-            <input type="text" id="searchSigla" placeholder="ex: USP, UFRJ, UNB" disabled
+            <h3>&#128269; Search by institution acronym</h3>
+            <label><input type="checkbox" id="searchEnabled"> Filter by acronym</label>
+            <input type="text" id="searchSigla" placeholder="e.g.: USP, UFRJ, UNB" disabled
                 style="width:100%;padding:6px;margin-top:4px;border:1px solid var(--borda);border-radius:4px;font-size:12px;text-transform:uppercase;">
         </div>
 
-        <button class="btn btn-primary" onclick="atualizar()">Atualizar Estat&#237;sticas</button>
-        <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
-        <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
+        <button class="btn btn-primary" onclick="atualizar()">Update statistics</button>
+        <button class="btn btn-secondary" onclick="marcarTodos()">Select all</button>
+        <button class="btn btn-secondary" onclick="desmarcarTodos()">Clear all</button>
 
         <div style="margin-top:16px;border-top:2px solid var(--borda);padding-top:12px;">
-            <div class="filter-group"><h3>&#128230; Exportar</h3></div>
-            <button class="btn btn-export" onclick="exportCSV()">Exportar CSV</button>
-            <button class="btn btn-export" onclick="exportReport()">Relat&#243;rio TXT</button>
-            <button class="btn btn-export" onclick="exportPNGs()" style="background:#FF9800;">Gr&#225;ficos PNG</button>
+            <div class="filter-group"><h3>&#128230; Export</h3></div>
+            <button class="btn btn-export" onclick="exportCSV()">Export CSV</button>
+            <button class="btn btn-export" onclick="exportReport()">TXT report</button>
+            <button class="btn btn-export" onclick="exportPNGs()" style="background:#FF9800;">Charts as PNG</button>
         </div>
 
-        <button class="btn" onclick="window.open('index.html','_self')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Painel Principal</button>
-        <button class="btn" onclick="window.open('help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documenta&#231;&#227;o</button>
-        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Pedir um ajuste, apontar um dado errado ou sugerir uma melhoria">&#128161; Sugerir melhoria</button>
+        <button class="btn" onclick="window.open('en/index.html','_self')" style="background:var(--azul);color:#fff;margin-top:16px;">&#128200; Main panel</button>
+        <button class="btn" onclick="window.open('en/help-doc.html','_blank')" style="background:#607D8B;color:#fff;margin-top:4px;">? Help / Documentation</button>
+        <button class="btn" onclick="window.open('https://daciencia.org/sugestao?app=mapa-gr','_blank','noopener')" style="background:#00897B;color:#fff;margin-top:16px;" title="Ask for a change, report wrong data or suggest an improvement">&#128161; Suggest an improvement</button>
     </div>
 
     <div class="main" id="main">
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p id="loadingMsg">Carregando dados do Censo da Educa&#231;&#227;o Superior...</p>
+            <p id="loadingMsg">Loading Higher Education Census data...</p>
         </div>
         <div id="results" style="display:none;"></div>
     </div>
@@ -347,11 +351,11 @@ const AREA_CORES = {
     sociais:'#8E44AD', humanas:'#F39C12', letras:'#2ECC71', servicos:'#95A5A6'
 };
 
-const GRAU_LABEL = {'1':'Bacharelado','2':'Licenciatura','3':'Tecnol\u00f3gico','4':'\u00c1rea b\u00e1sica'};
+const GRAU_LABEL = {'1':'Bacharelado','2':'Licenciatura','3':'Tecnol\u00f3gico','4':'Basic-cycle programme'};
 const MOD_LABEL  = {'1':'Presencial','2':'EAD'};
 const CAT_LABEL = {
-    '1':'P\u00fablica Federal', '2':'P\u00fablica Estadual', '3':'P\u00fablica Municipal',
-    '4':'Privada c/ fins lucrativos', '5':'Privada s/ fins lucrativos', '7':'Especial'
+    '1':'Federal public', '2':'State public', '3':'Municipal public',
+    '4':'Private for-profit', '5':'Private non-profit', '7':'Especial'
 };
 const CAT_CORES = {
     '1':'#1B5E20', '2':'#388E3C', '3':'#66BB6A',
@@ -359,15 +363,15 @@ const CAT_CORES = {
 };
 
 const METRICA_LABEL = {
-    mat:'Matr\u00edculas ativas', ing:'Ingressantes', con:'Concluintes',
-    vg:'Vagas ofertadas', insc:'Inscritos',
-    mat_pcd:'Matr\u00edculas \u2014 PCD', mat_fies:'Matr\u00edculas \u2014 FIES',
-    mat_prouni_i:'Matr\u00edculas \u2014 PROUNI Integral',
-    mat_prouni_p:'Matr\u00edculas \u2014 PROUNI Parcial',
-    mat_rv:'Matr\u00edculas \u2014 Reserva de vagas',
-    sit_tra:'Situa\u00e7\u00e3o \u2014 Trancada',
-    sit_des:'Situa\u00e7\u00e3o \u2014 Desvinculada',
-    mat_60m:'Matr\u00edculas \u2014 60+ anos'
+    mat:'Active enrolments', ing:'Ingressantes', con:'Concluintes',
+    vg:'Places offered', insc:'Inscritos',
+    mat_pcd:'Enrolments — with disabilities', mat_fies:'Enrolments — FIES',
+    mat_prouni_i:'Enrolments — PROUNI full',
+    mat_prouni_p:'Enrolments — PROUNI partial',
+    mat_rv:'Enrolments — quotas',
+    sit_tra:'Status — suspended',
+    sit_des:'Status — dropped out',
+    mat_60m:'Enrolments — aged 60+'
 };
 
 let DATA = null;
@@ -380,7 +384,7 @@ function toast(msg) {
     t.textContent = msg; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2500);
 }
-function fmt(n) { if (n==null) return '\u2014'; return Number(n).toLocaleString('pt-BR'); }
+function fmt(n) { if (n==null) return '\u2014'; return Number(n).toLocaleString('en-US'); }
 function fmtPct(n, digits=1) { if (n==null) return '\u2014'; return (n>=0?'+':'') + n.toFixed(digits) + '%'; }
 
 async function loadAll() {
@@ -507,8 +511,8 @@ function atualizar() {
 
     const main = document.getElementById('results');
     if (recsMain.length === 0 && recsIes.length === 0) {
-        main.innerHTML = '<div class="card"><h2>Nenhum dado encontrado</h2><p>Ajuste os filtros na barra lateral.</p></div>';
-        setStatus('Filtro vazio'); return;
+        main.innerHTML = '<div class="card"><h2>No data found</h2><p>Adjust the filters in the sidebar.</p></div>';
+        setStatus('No results'); return;
     }
 
     // Totals for the primary metric
@@ -524,44 +528,44 @@ function atualizar() {
     let html = '';
 
     // Summary card
-    html += '<div class="card"><h2>Vis\u00e3o Geral &#8212; Censo ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Overview &#8212; Census ' + f.ano + '</h2>';
     html += '<div class="stats-row">';
-    html += '<div class="stat-box"><div class="value">' + fmt(totalMat) + '</div><div class="label">Matr\u00edculas</div></div>';
-    html += '<div class="stat-box"><div class="value">' + fmt(totalIng) + '</div><div class="label">Ingressantes</div></div>';
-    html += '<div class="stat-box"><div class="value">' + fmt(totalCon) + '</div><div class="label">Concluintes</div></div>';
-    html += '<div class="stat-box"><div class="value">' + fmt(totalVg) + '</div><div class="label">Vagas</div></div>';
-    html += '<div class="stat-box"><div class="value">' + fmt(totalInsc) + '</div><div class="label">Inscritos</div></div>';
-    html += '<div class="stat-box highlight"><div class="value">' + fmt(totalMainMetric) + '</div><div class="label">' + mLabel + ' (filtro)</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalMat) + '</div><div class="label">Enrolments</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalIng) + '</div><div class="label">New entrants</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalCon) + '</div><div class="label">Graduates</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalVg) + '</div><div class="label">Places</div></div>';
+    html += '<div class="stat-box"><div class="value">' + fmt(totalInsc) + '</div><div class="label">Applicants</div></div>';
+    html += '<div class="stat-box highlight"><div class="value">' + fmt(totalMainMetric) + '</div><div class="label">' + mLabel + ' (filtered)</div></div>';
     html += '</div>';
-    html += '<p style="font-size:11px;color:var(--txt2);margin-top:6px;">Fonte: INEP — Microdados do Censo da Educa\u00e7\u00e3o Superior, gerado em ' + (DATA.gerado_em||'\u2014') + '. Ano de refer\u00eancia: <strong>' + f.ano + '</strong>.</p>';
+    html += '<p style="font-size:11px;color:var(--txt2);margin-top:6px;">Fonte: INEP — Microdados do Censo da Educa\u00e7\u00e3o Superior, gerado em ' + (DATA.gerado_em||'\u2014') + '. Reference year: <strong>' + f.ano + '</strong>.</p>';
     html += '</div>';
 
     // Tabs
     html += '<div class="tabs-section">';
-    html += '<div class="tab-sec active" data-sec="sec-evol" onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o 2017-2023</div>';
-    html += '<div class="tab-sec" data-sec="sec-area" onclick="switchSection(this)">Por \u00c1rea</div>';
-    html += '<div class="tab-sec" data-sec="sec-reg"  onclick="switchSection(this)">Por Regi\u00e3o / UF</div>';
-    html += '<div class="tab-sec" data-sec="sec-gm"   onclick="switchSection(this)">Grau / Modalidade</div>';
-    html += '<div class="tab-sec" data-sec="sec-demo" onclick="switchSection(this)">Demografia</div>';
-    html += '<div class="tab-sec" data-sec="sec-incl" onclick="switchSection(this)">Inclus\u00e3o / Financiamento</div>';
+    html += '<div class="tab-sec active" data-sec="sec-evol" onclick="switchSection(this)">&#128200; Trend 2017-2023</div>';
+    html += '<div class="tab-sec" data-sec="sec-area" onclick="switchSection(this)">By field</div>';
+    html += '<div class="tab-sec" data-sec="sec-reg"  onclick="switchSection(this)">By region / state</div>';
+    html += '<div class="tab-sec" data-sec="sec-gm"   onclick="switchSection(this)">Degree / mode</div>';
+    html += '<div class="tab-sec" data-sec="sec-demo" onclick="switchSection(this)">Demographics</div>';
+    html += '<div class="tab-sec" data-sec="sec-incl" onclick="switchSection(this)">Inclusion / funding</div>';
     html += '<div class="tab-sec" data-sec="sec-ies"  onclick="switchSection(this)">Top IES</div>';
-    html += '<div class="tab-sec" data-sec="sec-cat"  onclick="switchSection(this)">Cat. Administrativa</div>';
+    html += '<div class="tab-sec" data-sec="sec-cat"  onclick="switchSection(this)">Admin. category</div>';
     html += '</div>';
 
     // SEC EVOL
     html += '<div class="section-panel active" id="sec-evol">';
-    html += '<div class="card"><h2>Evolu\u00e7\u00e3o nacional &#8212; ' + mLabel + '</h2>';
+    html += '<div class="card"><h2>National trend &#8212; ' + mLabel + '</h2>';
     html += '<p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Filtros aplicados: \u00e1reas, modalidade, grau, regi\u00e3o, UF e categoria administrativa. Eixo Y reflete a m\u00e9trica selecionada.</p>';
     html += '<div class="chart-container"><canvas id="chartEvol"></canvas></div></div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Crescimento total 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Total growth 2017→2023 (main metrics)</h2>';
     html += '<div class="chart-container"><canvas id="chartVarTotal"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>CAGR 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>CAGR 2017→2023 (main metrics)</h2>';
     html += '<div class="chart-container"><canvas id="chartCagr"></canvas></div></div></div>';
     html += '</div>';
 
-    html += '<div class="card"><h2>Totais nacionais por ano</h2>';
+    html += '<div class="card"><h2>National totals by year</h2>';
     html += '<div class="chart-container" style="height:340px;"><canvas id="chartTotais"></canvas></div>';
     html += '<table class="data-table" style="margin-top:10px;"><thead><tr><th>Ano</th><th class="num">Matr\u00edculas</th><th class="num">Ingress.</th><th class="num">Concluintes</th><th class="num">Vagas</th><th class="num">Inscritos</th></tr></thead><tbody id="tbodyEvol"></tbody></table></div>';
     html += '</div>';
@@ -571,102 +575,102 @@ function atualizar() {
     html += '<div style="margin-bottom:8px;">';
     html += '<span style="font-size:11px;font-weight:600;color:var(--txt2);margin-right:8px;">Gr\u00e1fico:</span>';
     html += '<div class="chip-toggle">';
-    html += '<button class="active" onclick="setChartType(\'pie\', this)">Pizza</button>';
-    html += '<button onclick="setChartType(\'bar\', this)">Barras</button>';
-    html += '<button onclick="setChartType(\'doughnut\', this)">Rosca</button>';
+    html += '<button class="active" onclick="setChartType(\'pie\', this)">Pie</button>';
+    html += '<button onclick="setChartType(\'bar\', this)">Bars</button>';
+    html += '<button onclick="setChartType(\'doughnut\', this)">Doughnut</button>';
     html += '</div></div>';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Grande \u00c1rea</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' by broad field</h2>';
     html += '<div class="chart-container"><canvas id="chartArea"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Crescimento 2017\u21922023 por Grande \u00c1rea (matr\u00edculas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Growth 2017→2023 by broad field (enrolments)</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaGrowth"></canvas></div></div></div>';
     html += '</div>';
-    html += '<div class="card"><h2>Detalhamento por Grande \u00c1rea &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Breakdown by broad field &#8212; ' + f.ano + '</h2>';
     html += '<table class="data-table"><thead><tr><th>\u00c1rea</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">Vagas</th><th class="num">Taxa Ocup.</th></tr></thead><tbody id="tbodyArea"></tbody></table></div>';
     html += '</div>';
 
     // SEC REG
     html += '<div class="section-panel" id="sec-reg">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Regi\u00e3o</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' by region</h2>';
     html += '<div class="chart-container"><canvas id="chartReg"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por UF</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' by state</h2>';
     html += '<div class="chart-container"><canvas id="chartUf"></canvas></div></div></div>';
     html += '</div>';
-    html += '<div class="card"><h2>Detalhamento por Regi\u00e3o &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Breakdown by region &#8212; ' + f.ano + '</h2>';
     html += '<table class="data-table"><thead><tr><th>Regi\u00e3o</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">Cresc. 17\u219223</th></tr></thead><tbody id="tbodyReg"></tbody></table></div>';
-    html += '<div class="card"><h2>Detalhamento por UF &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Breakdown by state &#8212; ' + f.ano + '</h2>';
     html += '<table class="data-table"><thead><tr><th>UF</th><th>Regi\u00e3o</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyUf"></tbody></table></div>';
     html += '</div>';
 
     // SEC GRAU / MODALIDADE
     html += '<div class="section-panel" id="sec-gm">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Modalidade</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' by delivery mode</h2>';
     html += '<div class="chart-container"><canvas id="chartMod"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Grau</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' by degree type</h2>';
     html += '<div class="chart-container"><canvas id="chartGrau"></canvas></div></div></div>';
     html += '</div>';
-    html += '<div class="card"><h2>Evolu\u00e7\u00e3o Presencial vs EAD (matr\u00edculas)</h2>';
+    html += '<div class="card"><h2>On campus vs. distance learning (enrolments)</h2>';
     html += '<div class="chart-container"><canvas id="chartModEvol"></canvas></div></div>';
-    html += '<div class="card"><h2>Grau \u00d7 Modalidade &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Degree × mode &#8212; ' + f.ano + '</h2>';
     html += '<table class="data-table"><thead><tr><th>Grau</th><th>Modalidade</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyGm"></tbody></table></div>';
     html += '</div>';
 
     // SEC DEMO
     html += '<div class="section-panel" id="sec-demo">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>G\u00eanero (matr\u00edculas ativas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Gender (active enrolments)</h2>';
     html += '<div class="chart-container"><canvas id="chartGender"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Cor / Ra\u00e7a (matr\u00edculas ativas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Colour / race (active enrolments)</h2>';
     html += '<div class="chart-container"><canvas id="chartRace"></canvas></div></div></div>';
     html += '</div>';
-    html += '<div class="card"><h2>Faixa et\u00e1ria das matr\u00edculas ativas</h2>';
+    html += '<div class="card"><h2>Age range of active enrolments</h2>';
     html += '<div class="chart-container"><canvas id="chartAge"></canvas></div></div>';
-    html += '<div class="card"><h2>Matr\u00edculas por turno (presencial)</h2>';
+    html += '<div class="card"><h2>Enrolments by time of day (on campus)</h2>';
     html += '<div class="chart-container" style="height:260px;"><canvas id="chartTurno"></canvas></div></div>';
     html += '</div>';
 
     // SEC INCL
     html += '<div class="section-panel" id="sec-incl">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>FIES trend &#8212; enrolments 2017→2023</h2>';
     html += '<div class="chart-container"><canvas id="chartFies"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>PROUNI trend &#8212; enrolments 2017→2023</h2>';
     html += '<div class="chart-container"><canvas id="chartProuni"></canvas></div></div></div>';
     html += '</div>';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Reserva de vagas (cotas) por tipo &#8212; ' + f.ano + '</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Affirmative-action quotas by type &#8212; ' + f.ano + '</h2>';
     html += '<div class="chart-container"><canvas id="chartRv"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas PCD 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Enrolments of students with disabilities 2017→2023</h2>';
     html += '<div class="chart-container"><canvas id="chartPcd"></canvas></div></div></div>';
     html += '</div>';
     html += '</div>';
 
     // SEC IES
     html += '<div class="section-panel" id="sec-ies">';
-    html += '<div class="card"><h2>Top 30 IES por matr\u00edculas &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Top 30 institutions by enrolments &#8212; ' + f.ano + '</h2>';
     html += '<div class="chart-container" style="height:500px;"><canvas id="chartIes"></canvas></div></div>';
-    html += '<div class="card"><h2>Detalhamento Top 50 IES</h2>';
+    html += '<div class="card"><h2>Breakdown of the top 50 institutions</h2>';
     html += '<table class="data-table"><thead><tr><th>#</th><th>Sigla</th><th>UF</th><th>Cat.Adm</th><th class="num">Matr\u00edculas</th><th class="num">Ingress.</th><th class="num">Concl.</th></tr></thead><tbody id="tbodyIes"></tbody></table></div>';
     html += '</div>';
 
     // SEC CATEGORIA
     html += '<div class="section-panel" id="sec-cat">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas por Categoria Administrativa</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Enrolments by administrative category</h2>';
     html += '<div class="chart-container"><canvas id="chartCat"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Public vs. private 2017→2023</h2>';
     html += '<div class="chart-container"><canvas id="chartPubPriv"></canvas></div></div></div>';
     html += '</div>';
-    html += '<div class="card"><h2>Detalhamento por Categoria &#8212; ' + f.ano + '</h2>';
+    html += '<div class="card"><h2>Breakdown by category &#8212; ' + f.ano + '</h2>';
     html += '<table class="data-table"><thead><tr><th>Categoria</th><th class="num">Matr\u00edculas</th><th class="num">%</th><th class="num">Ingress.</th><th class="num">Concl.</th><th class="num">FIES</th><th class="num">PROUNI-I</th></tr></thead><tbody id="tbodyCat"></tbody></table></div>';
     html += '</div>';
 
     main.innerHTML = html;
 
     setTimeout(() => { renderAll(f); }, 30);
-    setStatus(fmt(totalMat) + ' matr\u00edculas | ' + fmt(totalIng) + ' ingress. | ' + fmt(totalCon) + ' concl.');
+    setStatus(fmt(totalMat) + ' enrolments | ' + fmt(totalIng) + ' entrants | ' + fmt(totalCon) + ' graduates');
 }
 
 function switchSection(el) {
@@ -784,7 +788,7 @@ function renderEvol(f) {
             data: {
                 labels: metricasPrincipais.map(m => METRICA_LABEL[m] || m),
                 datasets: [{
-                    label:'Varia\u00e7\u00e3o total (%)',
+                    label:'Total change (%)',
                     data: metricasPrincipais.map(m => varData[m] != null ? +varData[m].toFixed(1) : 0),
                     backgroundColor: metricasPrincipais.map(m => (varData[m]||0) >= 0 ? '#2E7D32' : '#C62828')
                 }]
@@ -804,7 +808,7 @@ function renderEvol(f) {
             data: {
                 labels: metricasPrincipais.map(m => METRICA_LABEL[m] || m),
                 datasets: [{
-                    label:'CAGR (% a.a.)',
+                    label:'CAGR (% p.a.)',
                     data: metricasPrincipais.map(m => cagrData[m] != null ? +cagrData[m].toFixed(2) : 0),
                     backgroundColor: metricasPrincipais.map(m => (cagrData[m]||0) >= 0 ? '#1565C0' : '#D84315')
                 }]
@@ -1180,8 +1184,8 @@ function renderIncl(f) {
         _charts.prouni = new Chart(elP, {
             type: 'line',
             data: { labels: anos, datasets:[
-                { label:'PROUNI Integral', data: anos.map(y => sumKey(y,'mat_prouni_i')), borderColor:'#1976D2', backgroundColor:'rgba(25,118,210,0.15)', fill:true, tension:0.25, pointRadius:5 },
-                { label:'PROUNI Parcial',  data: anos.map(y => sumKey(y,'mat_prouni_p')), borderColor:'#FFA000', backgroundColor:'rgba(255,160,0,0.15)', fill:true, tension:0.25, pointRadius:5 }
+                { label:'PROUNI full', data: anos.map(y => sumKey(y,'mat_prouni_i')), borderColor:'#1976D2', backgroundColor:'rgba(25,118,210,0.15)', fill:true, tension:0.25, pointRadius:5 },
+                { label:'PROUNI partial',  data: anos.map(y => sumKey(y,'mat_prouni_p')), borderColor:'#FFA000', backgroundColor:'rgba(255,160,0,0.15)', fill:true, tension:0.25, pointRadius:5 }
             ]},
             options: { responsive:true, maintainAspectRatio:false,
                 plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
@@ -1196,7 +1200,7 @@ function renderIncl(f) {
         const sumRV = (k) => rows.reduce((s,r) => s + (r[k]||0), 0);
         _charts.rv = new Chart(elR, {
             type: 'doughnut',
-            data: { labels: ['Cotas \u00c9tnico-raciais','Escola P\u00fablica','Social / Renda','Outras'],
+            data: { labels: ['Ethnic/racial quotas','State-school quota','Social / income quota','Outras'],
                 datasets: [{ data: [sumRV('mat_rv_etn'), sumRV('mat_rv_ep'), sumRV('mat_rv_sr'), Math.max(sumRV('mat_rv') - sumRV('mat_rv_etn') - sumRV('mat_rv_ep') - sumRV('mat_rv_sr'), 0)],
                     backgroundColor:['#8E24AA','#43A047','#E53935','#607D8B'] }] },
             options: { responsive:true, maintainAspectRatio:false,
@@ -1208,7 +1212,7 @@ function renderIncl(f) {
     if (elD) {
         _charts.pcd = new Chart(elD, {
             type: 'line',
-            data: { labels: anos, datasets:[{ label:'Matr\u00edculas PCD', data: anos.map(y => sumKey(y,'mat_pcd')),
+            data: { labels: anos, datasets:[{ label:'Enrolments with disabilities', data: anos.map(y => sumKey(y,'mat_pcd')),
                 borderColor:'#2E7D32', backgroundColor:'rgba(46,125,50,0.15)', fill:true, tension:0.25, pointRadius:5 }] },
             options: { responsive:true, maintainAspectRatio:false,
                 plugins: { legend:{ display:true }, tooltip: tooltipSimple() },
@@ -1262,8 +1266,8 @@ function renderIes(f) {
                     tooltip: { callbacks: { label: ctx => {
                         const p = top30[ctx.dataIndex];
                         return [p.sg + ': ' + fmt(p.mat) + ' matr\u00edculas',
-                                'Ingressantes: ' + fmt(p.ing),
-                                'Concluintes: ' + fmt(p.con),
+                                'New entrants: ' + fmt(p.ing),
+                                'Graduates: ' + fmt(p.con),
                                 'UF: ' + p.uf + ' | Cat: ' + (CAT_LABEL[String(p.cat)] || '?')];
                     } } } },
                 scales: { x:{ beginAtZero:true } }
@@ -1364,7 +1368,7 @@ function renderCat(f) {
 function exportCSV() {
     const f = getFilters();
     const rows = filterAgg(DATA.agregacoes_por_ano.por_uf_ga_mod_grau[f.ano] || [], f);
-    if (!rows.length) { toast('Nada a exportar'); return; }
+    if (!rows.length) { toast('Nothing to export'); return; }
     const keysAll = new Set();
     rows.forEach(r => Object.keys(r).forEach(k => keysAll.add(k)));
     const keys = [...keysAll];
@@ -1373,7 +1377,7 @@ function exportCSV() {
     const d = new Date();
     const pad = n => String(n).padStart(2,'0');
     const stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
-    let csv = '# MAPA-GR Censo v' + VERSION + ' — ' + d.toLocaleString('pt-BR') + '\n';
+    let csv = '# MAPA-GR Censo v' + VERSION + ' — ' + d.toLocaleString('en-US') + '\n';
     csv += '# Fonte: INEP — Microdados do Censo da Educação Superior\n';
     csv += '# Ano de referência: ' + f.ano + '\n';
     csv += header + '\n' + lines.join('\n');
@@ -1382,7 +1386,7 @@ function exportCSV() {
     a.href = URL.createObjectURL(blob);
     a.download = 'censo-MAPA-GR-' + f.ano + '-' + stamp + '.csv';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    toast(rows.length + ' linhas exportadas');
+    toast(rows.length + ' rows exported');
 }
 
 function padR(s, n) { s = String(s); while (s.length < n) s += ' '; return s; }
@@ -1392,27 +1396,27 @@ function exportReport() {
     const f = getFilters();
     const ag = DATA.agregacoes_por_ano.por_uf_ga_mod_grau;
     const rows = filterAgg(ag[f.ano] || [], f);
-    if (!rows.length) { toast('Nada a exportar'); return; }
+    if (!rows.length) { toast('Nothing to export'); return; }
 
     const lines = []; const p = s => lines.push(s);
     const d = new Date();
 
     p('═'.repeat(66));
-    p('  MAPA-GR — CENSO DA EDUCAÇÃO SUPERIOR');
-    p('  Gerado em: ' + d.toLocaleString('pt-BR'));
-    p('  Fonte: INEP — Microdados (download.inep.gov.br)');
+    p('  MAPA-GR — HIGHER EDUCATION CENSUS');
+    p('  Generated on: ' + d.toLocaleString('en-US'));
+    p('  Source: INEP — microdata (download.inep.gov.br)');
     p('═'.repeat(66));
     p('');
-    p('FILTROS APLICADOS:');
-    p('  Ano: ' + f.ano);
-    p('  Métrica principal: ' + METRICA_LABEL[f.metrica]);
-    p('  Grandes áreas: ' + f.areas.join(', '));
-    p('  Modalidades: ' + f.mods.map(m => MOD_LABEL[m]).join(', '));
-    p('  Graus: ' + f.graus.map(g => GRAU_LABEL[g]).join(', '));
-    p('  Regiões: ' + f.regs.map(r => REGIAO_LABEL[r]).join(', '));
-    p('  UFs: ' + f.ufs.length + ' selecionada(s)');
-    p('  Categorias administrativas: ' + f.cats.map(c => CAT_LABEL[c]).join(', '));
-    if (f.searchOn && f.searchTerm) p('  Busca IES: "' + f.searchTerm + '"');
+    p('FILTERS APPLIED:');
+    p('  Year: ' + f.ano);
+    p('  Main metric: ' + METRICA_LABEL[f.metrica]);
+    p('  Broad fields: ' + f.areas.join(', '));
+    p('  Delivery modes: ' + f.mods.map(m => MOD_LABEL[m]).join(', '));
+    p('  Degree types: ' + f.graus.map(g => GRAU_LABEL[g]).join(', '));
+    p('  Regions: ' + f.regs.map(r => REGIAO_LABEL[r]).join(', '));
+    p('  UFs: ' + f.ufs.length + ' selected');
+    p('  Administrative categories: ' + f.cats.map(c => CAT_LABEL[c]).join(', '));
+    if (f.searchOn && f.searchTerm) p('  Institution search: "' + f.searchTerm + '"');
     p('');
 
     const totMat = rows.reduce((s,r) => s + (r.mat||0), 0);
@@ -1420,16 +1424,16 @@ function exportReport() {
     const totCon = rows.reduce((s,r) => s + (r.con||0), 0);
     const totVg  = rows.reduce((s,r) => s + (r.vg||0), 0);
     const totInsc= rows.reduce((s,r) => s + (r.insc||0), 0);
-    p('TOTAIS (FILTRO):');
-    p('  Matrículas: ' + fmt(totMat));
-    p('  Ingressantes: ' + fmt(totIng));
-    p('  Concluintes: ' + fmt(totCon));
-    p('  Vagas ofertadas: ' + fmt(totVg));
-    p('  Inscritos: ' + fmt(totInsc));
+    p('TOTALS (FILTERED):');
+    p('  Enrolments: ' + fmt(totMat));
+    p('  New entrants: ' + fmt(totIng));
+    p('  Graduates: ' + fmt(totCon));
+    p('  Places offered: ' + fmt(totVg));
+    p('  Applicants: ' + fmt(totInsc));
     p('');
 
     // Totais nacionais ano a ano
-    p('TOTAIS NACIONAIS POR ANO (sem filtros):');
+    p('NATIONAL TOTALS BY YEAR (unfiltered):');
     p('  ' + padR('Ano',6) + padL('Matrículas',14) + padL('Ingres.',14) + padL('Concluintes',14));
     p('  ' + '─'.repeat(48));
     DATA.anos.forEach(y => {
@@ -1443,18 +1447,18 @@ function exportReport() {
     const cagrKey = 'cagr_pct_2017_2023';
     const varData = DATA[varKey] || {};
     const cagrData = DATA[cagrKey] || {};
-    p('CRESCIMENTO 2017 → 2023 (totais nacionais):');
+    p('GROWTH 2017 → 2023 (national totals):');
     ['mat','ing','con','vg','mat_fies','mat_prouni_i','mat_pcd','mat_rv','sit_tra','sit_des'].forEach(m => {
         const v = varData[m], c = cagrData[m];
         if (v == null && c == null) return;
         p('  ' + padR(METRICA_LABEL[m] || m, 30) +
           padL(v != null ? fmtPct(v) : '—', 10) +
-          '   ' + padL(c != null ? fmtPct(c) + ' a.a.' : '—', 14));
+          '   ' + padL(c != null ? fmtPct(c) + ' p.a.' : '—', 14));
     });
     p('');
 
     // Por grande área
-    p('POR GRANDE ÁREA (' + f.ano + '):');
+    p('BY BROAD FIELD (' + f.ano + '):');
     const byArea = {};
     rows.forEach(r => {
         if (!byArea[r.ga]) byArea[r.ga] = { mat:0, ing:0, con:0 };
@@ -1473,7 +1477,7 @@ function exportReport() {
     p('');
 
     // Por região
-    p('POR REGIÃO (' + f.ano + '):');
+    p('BY REGION (' + f.ano + '):');
     const byReg = {};
     rows.forEach(r => {
         if (!byReg[r.regiao]) byReg[r.regiao] = { mat:0, ing:0, con:0 };
@@ -1490,7 +1494,7 @@ function exportReport() {
     p('');
 
     // Top 10 UFs
-    p('TOP 10 UFs POR MATRÍCULAS (' + f.ano + '):');
+    p('TOP 10 STATES BY ENROLMENTS (' + f.ano + '):');
     const byUf = {};
     rows.forEach(r => {
         if (!byUf[r.uf]) byUf[r.uf] = 0;
@@ -1502,23 +1506,23 @@ function exportReport() {
     p('');
 
     // Demografia resumida
-    p('DEMOGRAFIA (' + f.ano + '):');
+    p('DEMOGRAPHICS (' + f.ano + '):');
     const sumK = k => rows.reduce((s,r) => s + (r[k]||0), 0);
-    p('  Gênero — F: ' + fmt(sumK('mat_f')) + ' | M: ' + fmt(sumK('mat_m')));
-    p('  Cor/Raça:');
-    p('    Branca:    ' + fmt(sumK('mat_br')));
-    p('    Preta:     ' + fmt(sumK('mat_pr')));
-    p('    Parda:     ' + fmt(sumK('mat_pa')));
-    p('    Amarela:   ' + fmt(sumK('mat_am')));
-    p('    Indígena:  ' + fmt(sumK('mat_ind')));
+    p('  Gender — F: ' + fmt(sumK('mat_f')) + ' | M: ' + fmt(sumK('mat_m')));
+    p('  Colour/race:');
+    p('    White:     ' + fmt(sumK('mat_br')));
+    p('    Black:     ' + fmt(sumK('mat_pr')));
+    p('    Mixed:     ' + fmt(sumK('mat_pa')));
+    p('    Asian:     ' + fmt(sumK('mat_am')));
+    p('    Indigenous:' + fmt(sumK('mat_ind')));
     p('  PCD: ' + fmt(sumK('mat_pcd')));
     p('  FIES: ' + fmt(sumK('mat_fies')) + ' | PROUNI Integral: ' + fmt(sumK('mat_prouni_i')) + ' | PROUNI Parcial: ' + fmt(sumK('mat_prouni_p')));
-    p('  Reserva de vagas (cotas): ' + fmt(sumK('mat_rv')));
+    p('  Affirmative-action quotas: ' + fmt(sumK('mat_rv')));
     p('');
 
     p('─'.repeat(66));
     p('Prof. David L. Azevedo | MAPA-GR Censo v' + VERSION);
-    p('Fonte: INEP — Portal de Dados Abertos');
+    p('Source: INEP — Open Data Portal');
     p('URL: https://www.gov.br/inep/pt-br/acesso-a-informacao/dados-abertos');
     p('─'.repeat(66));
 
@@ -1530,12 +1534,12 @@ function exportReport() {
     a.href = URL.createObjectURL(blob);
     a.download = 'censo-MAPA-GR-relatorio-' + f.ano + '-' + stamp + '.txt';
     document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    toast('Relatório TXT salvo');
+    toast('TXT report saved');
 }
 
 function exportPNGs() {
     const canvases = document.querySelectorAll('#results canvas');
-    if (!canvases.length) { toast('Nenhum gráfico para exportar'); return; }
+    if (!canvases.length) { toast('No chart to export'); return; }
     const d = new Date();
     const pad = n => String(n).padStart(2,'0');
     const stamp = d.getFullYear() + pad(d.getMonth()+1) + pad(d.getDate()) + '-' + pad(d.getHours()) + pad(d.getMinutes()) + pad(d.getSeconds());
@@ -1547,7 +1551,7 @@ function exportPNGs() {
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }, 'image/png');
     });
-    toast(canvases.length + ' gráficos exportados');
+    toast(canvases.length + ' charts exported');
 }
 
 // Mobile sidebar toggle
@@ -1562,7 +1566,7 @@ function exportPNGs() {
     overlay.addEventListener('click', close);
 })();
 
-document.getElementById('headerDate').textContent = new Date().toLocaleDateString('pt-BR');
+document.getElementById('headerDate').textContent = new Date().toLocaleDateString('en-US');
 loadAll();
 </script>
 </body>
