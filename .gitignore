@@ -8,3 +8,7 @@ __pycache__/
 *.pyc
 .venv/
 /tmp/
+
+# Estado local dos vigias de dados abertos (build/vigia_inep_dados.py)
+build/vigia_inep_estado.json
+build/vigia_inep.log
