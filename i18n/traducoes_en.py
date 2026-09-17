@@ -1302,7 +1302,7 @@ HELP_DOC = [
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
     ("<h1><em>MAPA-GR</em> — Documentação v2.9.1</h1>",
      "<h1><em>MAPA-GR</em> — Documentation v2.9.1</h1>"),
-    ("<div>v2.9.0 — Setembro 2026</div>", "<div>v2.9.0 — September 2026</div>"),
+    ("<div>v2.9.1 — Setembro 2026</div>", "<div>v2.9.1 — September 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
