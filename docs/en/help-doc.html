@@ -581,6 +581,52 @@ a{color:#2563EB;}
             <td>Documentada na aba <strong>Como Usar</strong>: a USP não está na base porque não está nos arquivos do INEP — sem participação no ENADE não há Conceito ENADE, e sem ele não há CPC nem IDD. É uma ausência de origem, não do MAPA-GR.</td>
         </tr>
     </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.9.0 (16 de setembro de 2026)</h3>
+    <p style="text-align:justify;">A v2.9.0 traz os dois conjuntos que o INEP publicou em 2026 e que o aplicativo ainda não tinha: o <strong>Conceito Enade 2025</strong> das licenciaturas (26/05/2026) e da Medicina (07/07/2026), e os <strong>microdados do Censo da Educação Superior 2024</strong> (10/07/2026). O Enade 2025 chega num <strong>modelo novo</strong>, e boa parte do trabalho foi fazer o aplicativo mostrar esse ciclo sem misturá-lo, em silêncio, com os anteriores.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>Atualização — Enade 2025</strong></td>
+            <td><strong>5.299 cursos</strong> novos — 4.948 licenciaturas (17 áreas) e 351 cursos de Medicina —, levando o aplicativo a <strong>52.390 cursos</strong> em seis ciclos. Os cursos aparecem nas abas de Exatas, Biológicas, Saúde, Humanas e Letras, com o ciclo <strong>2025</strong> no filtro de ciclos.</td>
+        </tr>
+        <tr>
+            <td><strong>O modelo novo, explicado na tela</strong></td>
+            <td>Em 2025 o INEP deixou de publicar nota contínua para essas áreas: o Conceito Enade sai do <strong>percentual de concluintes igual ou acima do padrão de proficiência</strong>, e não há CPC nem IDD. Os cursos entram como <strong>ciclo parcial</strong> e ganham um <strong>aviso metodológico próprio</strong>, separado do aviso de 2018, dizendo que a faixa de 2025 <strong>não é diretamente comparável</strong> às anteriores.</td>
+        </tr>
+        <tr>
+            <td><strong>Facilidade — ranquear pelo Enade 2025</strong></td>
+            <td>Nova métrica <strong>% concl. ≥ padrão (Enade 2025)</strong> no seletor de métrica principal: ordena o ranking, o Top 15 IES e a evolução por esse percentual. Na tabela, o percentual aparece na coluna <strong>ENADE</strong> com o sinal <strong>%</strong> (e explicação ao passar o mouse); no relatório, como <code>% ≥ padrão (modelo 2025)</code>; no CSV, na coluna nova <code>pct_concl_acima_padrao_2025</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Melhoria — Comparador protegido</strong></td>
+            <td>O Comparador escolhe, por UF, o ciclo mais recente de cada curso e ordena por CPC → ENADE → IDD. Com 2025 na base, toda licenciatura e a Medicina teriam passado a ser ordenadas por um CPC que não existe. Agora cada curso é representado pelo <strong>ciclo mais recente com CPC</strong> (2021 nas licenciaturas, 2023 na Medicina); o ciclo parcial só entra quando o curso não tem outro. Vale para o modo Comparar e para os TOP 10 / TOP 27.</td>
+        </tr>
+        <tr>
+            <td><strong>USP na base</strong></td>
+            <td>A <strong>USP</strong>, ausente de todos os ciclos anteriores por não participar do ENADE, aparece pela primeira vez: <strong>29 cursos</strong> no Enade 2025. O seletor de instituição de referência passa de 264 para <strong>269 IES públicas</strong> — entram USP, UEPA, UFNT, Colégio Pedro II e UnDF.</td>
+        </tr>
+        <tr>
+            <td><strong>Atualização — Censo 2024</strong></td>
+            <td>A página <strong>Censo Ed. Superior</strong> ganha <strong>2024</strong> — 720.349 linhas de curso, <strong>10.227.266 matrículas</strong>, 5.010.613 ingressantes e 1.333.988 concluintes — e passa a abrir nele. Os totais de 2017 a 2023 foram reprocessados e conferem com os anteriores.</td>
+        </tr>
+        <tr>
+            <td><strong>Melhoria — período automático</strong></td>
+            <td>Os gráficos e o relatório de crescimento traziam “2017→2023” escrito no código. Agora o período sai dos próprios dados (<strong>2017→2024</strong>): o próximo Censo entra sem editar a página.</td>
+        </tr>
+        <tr>
+            <td><strong>Cotas étnico-raciais em 2024</strong></td>
+            <td>O INEP descontinuou a coluna de reserva de vagas “de cunho étnico” e passou a separá-la em pretos, pardos e indígenas, quilombolas e povos tradicionais. Sem tratamento, o gráfico de cotas de 2024 mostraria <strong>zero</strong> em étnico-raciais. O MAPA-GR usa a soma das três (310.049 matrículas em 2024, contra 306.423 em 2023) e registra a quebra nos dados.</td>
+        </tr>
+        <tr>
+            <td><strong>Nomes dos cursos</strong></td>
+            <td>O nome real de cada curso (usado nas áreas genéricas, como “Engenharia”) passa a consultar também o Censo 2024; 97 cursos renomeados tiveram o nome atualizado. Nenhum indicador dos ciclos anteriores mudou.</td>
+        </tr>
+        <tr>
+            <td><strong>Inglês, offline e cache</strong></td>
+            <td>Os avisos e a métrica nova têm versão em inglês (o aviso de 2018, que seguia em português na página inglesa, também foi traduzido); a versão offline foi regenerada; o Service Worker vai para <code>mapa-gr-v2.9.0</code>, para que quem já instalou o aplicativo receba os dados novos.</td>
+        </tr>
+    </table>
 </div>
 </div>
 
