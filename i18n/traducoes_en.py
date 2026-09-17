@@ -1292,16 +1292,16 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.9.0 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.9.0 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.9.1 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.9.1 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.9.0</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.9.0</h1>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.9.1</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.9.1</h1>"),
     ("<div>v2.9.0 — Setembro 2026</div>", "<div>v2.9.0 — September 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
