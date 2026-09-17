@@ -1,4 +1,4 @@
-<!-- sha:169869f01adc1e74 -->
+<!-- sha:33522dd4380ed3f5 -->
 
 <div class="card">
     <h2>Data sources — INEP</h2>
@@ -10,7 +10,7 @@
 </div>
 
 <div class="card">
-    <h2>CPC/ENADE files used (5 cycles)</h2>
+    <h2>CPC/ENADE files used (6 cycles)</h2>
     <table>
         <tr><th>Year</th><th>URL</th><th>Programmes</th><th>Coverage</th></tr>
         <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">resultado_cpc_2017.xlsx</a></td><td>10,570</td><td>Teaching degrees + engineering, pre-COVID</td></tr>
@@ -18,20 +18,23 @@
         <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx" target="_blank" style="word-break:break-all;">CPC_2021.xlsx</a></td><td>8,000</td><td>Teaching degrees, post-COVID</td></tr>
         <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2022/cpc_2022.xlsx" target="_blank" style="word-break:break-all;">cpc_2022.xlsx</a></td><td>9,891</td><td>Applied social sciences, post-COVID, with a full CPC</td></tr>
         <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2023/CPC_2023.xlsx" target="_blank" style="word-break:break-all;">CPC_2023.xlsx</a></td><td>9,812</td><td>Engineering, health, agricultural sciences</td></tr>
+        <tr><td><strong>2025</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2025/conceito_enade_licenciaturas.xlsx" target="_blank" style="word-break:break-all;">conceito_enade_licenciaturas.xlsx</a><br><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2025/conceito_enade_medicina_2025.xlsx" target="_blank" style="word-break:break-all;">conceito_enade_medicina_2025.xlsx</a></td><td>5,299</td><td>Teacher-education degrees (4,948) and Medicine (351) — Enade Concept under the new model, <strong>no CPC or IDD</strong></td></tr>
     </table>
 </div>
 
 <div class="card">
-    <h2>Higher Education Census (microdata — 4 cycles)</h2>
-    <p>The source behind the <a href="censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a> page. INEP publishes microdata aggregated by programme×institution with ~200 columns (gender, colour/race, age, time of day, FIES, PROUNI, quotas, disability, enrolment status and so on).</p>
+    <h2>Higher Education Census (microdata — 5 cycles)</h2>
+    <p>The source behind the <a href="censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2024</a> page. INEP publishes microdata aggregated by programme×institution with ~200 columns (gender, colour/race, age, time of day, FIES, PROUNI, quotas, disability, enrolment status and so on).</p>
     <table>
         <tr><th>Year</th><th>URL</th><th>Rows (programme×institution)</th><th>Enrolments</th></tr>
         <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2017.zip" target="_blank" style="word-break:break-all;">microdados_...2017.zip</a></td><td>119,798</td><td>8,290,911</td></tr>
         <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2021.zip" target="_blank" style="word-break:break-all;">microdados_...2021.zip</a></td><td>444,786</td><td>8,987,120</td></tr>
         <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2022.zip" target="_blank" style="word-break:break-all;">microdados_...2022.zip</a></td><td>573,019</td><td>9,444,116</td></tr>
         <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2023.zip" target="_blank" style="word-break:break-all;">microdados_...2023.zip</a></td><td>671,610</td><td>9,977,217</td></tr>
+        <tr><td><strong>2024</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2024.zip" target="_blank" style="word-break:break-all;">microdados_...2024.zip</a></td><td>720,349</td><td>10,227,266</td></tr>
     </table>
-    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">The raw microdata (~160 MB in total) are processed locally in Python/DuckDB to produce a light consolidated JSON (&#8776; 5 MB) that feeds the dashboard in the browser. The full pipeline is in the repository at <code>censo_sup/pipeline_censo.py</code>.</p>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;"><strong>Ethnic-racial quotas in 2024:</strong> INEP discontinued the column for places reserved "on ethnic grounds" (valid from 2009 to 2023) and now splits it into Black, mixed-race and Indigenous (PPI), quilombola, and traditional peoples and communities. To keep the series, MAPA-GR uses the sum of the three in 2024 — 310,049 enrolments, against 306,423 in the old column in 2023.</p>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">The raw microdata (~570 MB in total, 457 MB for 2024 alone) are processed locally in Python/DuckDB to produce a light consolidated JSON (&#8776; 7 MB) that feeds the dashboard in the browser. The full pipeline is in the repository at <code>censo_sup/pipeline_censo.py</code>.</p>
 </div>
 </div>
 

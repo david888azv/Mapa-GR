@@ -33,8 +33,8 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 CENSO_CACHE = os.path.join(BASE, '..', 'censo_sup', 'cache')
 OUT = os.path.join(BASE, 'dados_inep', 'cc_nome.json')
 
-# Ordem crescente: o ultimo (2023) sobrescreve os anteriores em caso de renomeacao.
-ANOS = ['2017', '2021', '2022', '2023']
+# Ordem crescente: o ultimo (2024) sobrescreve os anteriores em caso de renomeacao.
+ANOS = ['2017', '2021', '2022', '2023', '2024']
 
 # Conectivos que ficam em minuscula no meio do nome (Title Case pt-BR).
 _MINUS = {'de', 'da', 'do', 'das', 'dos', 'e', 'em', 'a', 'o', 'as', 'os',

@@ -6,7 +6,7 @@
      procurados em /Mapa-GR/en/ e nao existiriam la. -->
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.8.2 — Documentation and Data Sources</title>
+<title>MAPA-GR v2.9.0 — Documentation and Data Sources</title>
 <meta name="description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -90,13 +90,13 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentation v2.8.2</h1>
+        <h1><em>MAPA-GR</em> — Documentation v2.9.0</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div class="langsel"><a href="../help-doc.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
-            <div>v2.8.2 — August 2026</div>
+            <div>v2.9.0 — September 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -124,7 +124,7 @@ a{color:#2563EB;}
     <h2>About MAPA-GR</h2>
     <p><strong>MAPA-GR</strong> — <em>Monitoring and Analysis of Undergraduate Education</em> — is an interactive system for following Brazilian undergraduate programmes through the quality indicators published by INEP/MEC under SINAES, the national higher education assessment system.</p>
     <p style="margin-top:12px;">Version 2.0 widened the scope enormously: while v1.0 covered Physics alone (518 programmes), v2.0 covers <strong>47,094 programmes</strong> organised into <strong>9 broad fields</strong>. You move between fields through the tabs at the top of the screen, and each tab loads its own data on demand (lazy loading).</p>
-    <p style="margin-top:12px;"><strong>Reference institution (v2.5):</strong> when you open the application you choose one of <strong>264 public institutions</strong> — 112 federal, 117 state and 35 municipal — as your reference. It is then <strong>highlighted in pink (★)</strong> against all other programmes in each field. See the <strong>How to use</strong> tab for details. (Private institutions in a future version.)</p>
+    <p style="margin-top:12px;"><strong>Reference institution (v2.5):</strong> when you open the application you choose one of <strong>269 public institutions</strong> — 114 federal, 120 state and 35 municipal — as your reference. It is then <strong>highlighted in pink (★)</strong> against all other programmes in each field. See the <strong>How to use</strong> tab for details. (Private institutions in a future version.)</p>
     <p style="margin-top:12px;text-align:justify;">The selector only decides <em>which institution is highlighted</em>. Programmes from <strong>every</strong> institution — public and private — always take part in the analysis, the ranking and the statistics, and can be narrowed at any moment through the <strong>Institution type</strong> filter in the sidebar.</p>
     <h3>Author</h3>
     <table>
@@ -176,16 +176,17 @@ a{color:#2563EB;}
     <p>INEP's assessment fields (~67 distinct names) were mapped onto 9 broad fields compatible with the CAPES/CNPq classification. Each tab at the top of the screen is one broad field. Field names are kept in Portuguese, as they appear in the official data.</p>
     <table>
         <tr><th>Tab</th><th>Broad field</th><th>INEP fields included</th><th>Cycles</th></tr>
-        <tr><td>🔬</td><td><strong>Exact and Earth Sciences</strong></td><td>Física (teaching/bachelor), Matemática (teaching/bachelor), Química (teaching/bachelor), Ciência da Computação (teaching/bachelor), Sistemas de Informação</td><td>2017, 2021</td></tr>
-        <tr><td>🌿</td><td><strong>Biological Sciences</strong></td><td>Ciências Biológicas (teaching/bachelor), Biomedicina</td><td>2017, 2021, 2023</td></tr>
+        <tr><td>🔬</td><td><strong>Exact and Earth Sciences</strong></td><td>Física (teaching/bachelor), Matemática (teaching/bachelor), Química (teaching/bachelor), Ciência da Computação (teaching/bachelor), Sistemas de Informação</td><td>2017, 2021, 2025*</td></tr>
+        <tr><td>🌿</td><td><strong>Biological Sciences</strong></td><td>Ciências Biológicas (teaching/bachelor), Biomedicina</td><td>2017, 2021, 2023, 2025*</td></tr>
         <tr><td>⚙️</td><td><strong>Engineering</strong></td><td>Engenharia (several), Arquitetura e Urbanismo</td><td>2017, 2023</td></tr>
-        <tr><td>⚕️</td><td><strong>Health Sciences</strong></td><td>Medicina, Enfermagem, Farmácia, Fisioterapia, Fonoaudiologia, Nutrição, Odontologia, Psicologia, Educação Física (teaching/bachelor)</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+        <tr><td>⚕️</td><td><strong>Health Sciences</strong></td><td>Medicina, Enfermagem, Farmácia, Fisioterapia, Fonoaudiologia, Nutrição, Odontologia, Psicologia, Educação Física (teaching/bachelor)</td><td>2017, 2018, 2021, 2022, 2023, 2025*</td></tr>
         <tr><td>🌾</td><td><strong>Agricultural Sciences</strong></td><td>Agronomia, Zootecnia, Medicina Veterinária</td><td>2023</td></tr>
         <tr><td>💼</td><td><strong>Applied Social Sciences</strong></td><td>Administração, Direito, Ciências Contábeis, Ciências Econômicas, Jornalismo, Publicidade, Serviço Social, Relações Internacionais, Turismo, Design, Secretariado</td><td>2018, 2021, 2022</td></tr>
-        <tr><td>📚</td><td><strong>Humanities</strong></td><td>Pedagogia, História (teaching/bachelor), Geografia (teaching/bachelor), Filosofia (teaching/bachelor), Ciências Sociais (teaching/bachelor), Teologia</td><td>2017, 2018, 2021, 2022</td></tr>
-        <tr><td>🎨</td><td><strong>Linguistics, Literature and Arts</strong></td><td>Letras-Português (teaching/bachelor), Letras-Português-Espanhol, Letras-Português-Inglês, Letras-Inglês, Música, Artes Visuais</td><td>2017, 2021</td></tr>
+        <tr><td>📚</td><td><strong>Humanities</strong></td><td>Pedagogia, História (teaching/bachelor), Geografia (teaching/bachelor), Filosofia (teaching/bachelor), Ciências Sociais (teaching/bachelor), Teologia</td><td>2017, 2018, 2021, 2022, 2025*</td></tr>
+        <tr><td>🎨</td><td><strong>Linguistics, Literature and Arts</strong></td><td>Letras-Português (teaching/bachelor), Letras-Português-Espanhol, Letras-Português-Inglês, Letras-Inglês, Música, Artes Visuais</td><td>2017, 2021, 2025*</td></tr>
         <tr><td>🛠️</td><td><strong>Technologist programmes</strong></td><td>Every field whose name begins with "Tecnologia em..."</td><td>2017, 2018, 2021, 2022, 2023</td></tr>
     </table>
+    <p style="font-size:12px;color:var(--txt2);">* 2025: only the <strong>teacher-education degrees</strong> (licenciaturas) and <strong>Medicine</strong>, with the Enade Concept under the new model and no CPC — see the note below.</p>
     <h3>Notes on the mapping</h3>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li><strong>Veterinary Medicine</strong> — Agricultural Sciences (consistent with CAPES/CNPq).</li>
@@ -199,7 +200,7 @@ a{color:#2563EB;}
 <div class="section" id="sec-uso"><div class="card">
     <h2>How to use MAPA-GR</h2>
     <h3>1. Reference institution (after accepting the terms)</h3>
-    <p>Right after <strong>"I agree"</strong>, choose the <strong>reference institution</strong> — one of <strong>264 public institutions</strong>: 112 federal (universities, federal institutes and CEFETs), 117 state and 35 municipal. Use the <strong>search by acronym, name, state or sphere</strong> (e.g. <code>UEMA</code>, <code>UFMG</code>, "federal de minas", <code>estadual</code>, <code>MA</code>) and click <strong>OK</strong>. The chosen institution is then <strong>highlighted in pink (★)</strong> in every chart, in the table and in the report, against the other programmes in each field. <strong>Private institutions</strong> will be included in a future version.</p>
+    <p>Right after <strong>"I agree"</strong>, choose the <strong>reference institution</strong> — one of <strong>269 public institutions</strong>: 114 federal (universities, federal institutes and CEFETs), 120 state and 35 municipal. Use the <strong>search by acronym, name, state or sphere</strong> (e.g. <code>UEMA</code>, <code>UFMG</code>, "federal de minas", <code>estadual</code>, <code>MA</code>) and click <strong>OK</strong>. The chosen institution is then <strong>highlighted in pink (★)</strong> in every chart, in the table and in the report, against the other programmes in each field. <strong>Private institutions</strong> will be included in a future version.</p>
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li><strong>Changing the reference:</strong> use the <strong>"↺ Change reference institution"</strong> button at the top of the sidebar, at any time.</li>
         <li><strong>Sphere tag:</strong> each option in the list shows whether the institution is <strong>federal</strong>, <strong>state</strong> or <strong>municipal</strong>. The 7 institutions with no acronym in INEP's register appear by name.</li>
@@ -236,10 +237,14 @@ a{color:#2563EB;}
         The divergence is neither rare nor an error: in the MAPA-GR base, <strong>214 programme codes</strong> appear under more than one institution across cycles, and <strong>339 institution codes</strong> appear with more than one acronym. The typical case is a split — programme code <code>1188880</code>, for example, appears under UFMT (<code>ci=1</code>) in one cycle and under UFR of Rondonópolis (<code>ci=25352</code>) in another, because the institution changed between one ENADE and the next. The pair shown is faithful to the cycle of that row.
     </div>
     <div class="info-box" style="text-align:justify;">
-        <strong>Why USP is not here.</strong> The University of São Paulo <strong>is not in the base</strong> — not through an omission of MAPA-GR, but because it is not in INEP's source files: the Quality Indicator spreadsheets do not carry a single row with USP's code. No participation in ENADE means no ENADE score, and without it there is no CPC or IDD to publish. The same holds for any programme whose students did not sit the exam.
+        <strong>Why USP only appears in 2025.</strong> In the 2017 to 2023 cycles the University of São Paulo <strong>is not in the base</strong> — not through an omission of MAPA-GR, but because it is not in INEP's source files: the Quality Indicator spreadsheets for those cycles do not carry a single row with USP's code. No participation in ENADE means no ENADE score, and without it there is no CPC or IDD to publish. The same holds for any programme whose students did not sit the exam. In the <strong>2025 Enade</strong> for teacher-education degrees and Medicine, USP is included, with <strong>29 programmes</strong> (e-MEC code 55).
     </div>
     <div class="warn-box" style="text-align:justify;">
         <strong>The 2018 cycle (Applied Social Sciences + Humanities):</strong> for ENADE 2018 (business, law, accounting, psychology and others), INEP <strong>did not publish the full composite CPC</strong> — only the ENADE score and the IDD. For those programmes MAPA-GR uses the ENADE band (1-5) as a proxy, and indicators such as % with doctorate, infrastructure and contract type <strong>are not available</strong>. The affected programmes are flagged "without a composite CPC".
+    </div>
+
+    <div class="warn-box" style="text-align:justify;">
+        <strong>The 2025 cycle (teacher-education degrees + Medicine) — the new Enade model:</strong> in 2025 INEP changed the Enade for these fields. The Enade Concept <strong>no longer comes from a continuous score</strong> (General Education + Specific Component): it comes from the <strong>percentage of graduates at or above the proficiency standard</strong>, and that percentage — plus the 1-to-5 band — is what INEP publishes. <strong>CPC and IDD for 2025 have not been released yet.</strong> In MAPA-GR these 5,299 programmes enter as a partial cycle, flagged "without a composite CPC"; the percentage appears in the ENADE column with a <strong>%</strong> sign and can be chosen as the ranking metric (<em>% graduates ≥ standard (Enade 2025)</em>). Two caveats: (1) the <strong>2025 band is not directly comparable</strong> with earlier cycles, because it measures something else; (2) in the <strong>Comparator</strong>, which ranks by CPC→ENADE→IDD, each programme is still represented by its <strong>most recent cycle with a CPC</strong> (2021 for teacher-education degrees, 2023 for Medicine) — the 2025 cycle is used only when the programme has no other. Two Medicine programmes have their result <em>sub judice</em> and appear without a band, as in the INEP spreadsheet.
     </div>
     <h3>5. The Comparator — what TOP 10 and TOP 27 mean</h3>
     <p>The <strong>Comparator</strong> has two quick ranking modes, and what they mean <strong>depends on how many states you left ticked</strong> in the state filter.</p>
@@ -294,7 +299,7 @@ a{color:#2563EB;}
     <ul style="padding-left:20px;font-size:13px;line-height:2;">
         <li>An exam sat by the programme's <strong>final-year students</strong> (in the app, "registered/sat"
         refer to those students, not to total enrolment).</li>
-        <li>Applied on a <strong>three-year cycle by field</strong> (in MAPA-GR: the 2017, 2018, 2021, 2022 and 2023 cycles).</li>
+        <li>Applied on a <strong>three-year cycle by field</strong> (in MAPA-GR: the 2017, 2018, 2021, 2022, 2023 and 2025 cycles).</li>
         <li>The exam combines <strong>General Education (25%)</strong> and a <strong>Field-Specific Component (75%)</strong>.</li>
         <li>Raw scores are <strong>standardised within the field</strong> (against the mean and standard
         deviation of programmes in the same field), yielding a <strong>continuous score</strong> that is converted
@@ -331,7 +336,7 @@ a{color:#2563EB;}
         The <strong>Higher Education Census</strong> answers "<strong>how many</strong> are studying?" &#8212; it is a <strong>stock indicator</strong>.</em>
     </div>
     <table style="margin-top:14px;">
-        <tr><th>Aspect</th><th>CPC / ENADE (the <em>Statistics</em> page)</th><th>Census (the <em>Higher Education Census 2017-2023</em> page)</th></tr>
+        <tr><th>Aspect</th><th>CPC / ENADE (the <em>Statistics</em> page)</th><th>Census (the <em>Higher Education Census 2017-2024</em> page)</th></tr>
         <tr>
             <td><strong>What it measures</strong></td>
             <td>Programme quality &#8212; final-year students' performance in the ENADE exam + IDD (value added) + faculty + infrastructure</td>
@@ -349,8 +354,8 @@ a{color:#2563EB;}
         </tr>
         <tr>
             <td><strong>Coverage</strong></td>
-            <td>~47 thousand programmes that took part in ENADE in the 2017, 2018, 2021, 2022 and 2023 cycles</td>
-            <td>~670 thousand rows of programme×institution×mode (&#8776; 9.98 million enrolments in 2023)</td>
+            <td>~52 thousand programmes that took part in ENADE in the 2017, 2018, 2021, 2022, 2023 and 2025 cycles</td>
+            <td>~720 thousand rows of programme×institution×mode (&#8776; 10.23 million enrolments in 2024)</td>
         </tr>
         <tr>
             <td><strong>Useful granularity</strong></td>
@@ -365,7 +370,7 @@ a{color:#2563EB;}
         <tr>
             <td><strong>Source</strong></td>
             <td>INEP &#8212; Higher Education Quality Indicators</td>
-            <td>INEP &#8212; Higher Education Census microdata (2017-2023)</td>
+            <td>INEP &#8212; Higher Education Census microdata (2017-2024)</td>
         </tr>
     </table>
     <h3>Why not put it all on a single page?</h3>
@@ -385,7 +390,7 @@ a{color:#2563EB;}
     <h3>Which page to open</h3>
     <ul style="padding-left:22px;margin-top:6px;line-height:1.8;">
         <li>Want to know <strong>where the best-rated programmes</strong> in your field are? → <a href="en/estatisticas.html" style="color:var(--accent);font-weight:700;">ENADE statistics</a></li>
-        <li>Want to know <strong>how many students there are</strong> and how that has grown? → <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a></li>
+        <li>Want to know <strong>how many students there are</strong> and how that has grown? → <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2024</a></li>
         <li>Want to <strong>compare institutions and states by quality</strong>? → <a href="en/index.html" style="color:var(--accent);font-weight:700;">Main panel (CPC)</a> or the <a href="en/comparador.html" style="color:var(--accent);font-weight:700;">Comparator</a></li>
     </ul>
 </div>
@@ -400,7 +405,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="card">
-    <h2>CPC/ENADE files used (5 cycles)</h2>
+    <h2>CPC/ENADE files used (6 cycles)</h2>
     <table>
         <tr><th>Year</th><th>URL</th><th>Programmes</th><th>Coverage</th></tr>
         <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/igc_cpc/2018/resultado_cpc_2017.xlsx" target="_blank" style="word-break:break-all;">resultado_cpc_2017.xlsx</a></td><td>10,570</td><td>Teaching degrees + engineering, pre-COVID</td></tr>
@@ -408,20 +413,23 @@ a{color:#2563EB;}
         <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2021/CPC_2021.xlsx" target="_blank" style="word-break:break-all;">CPC_2021.xlsx</a></td><td>8,000</td><td>Teaching degrees, post-COVID</td></tr>
         <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2022/cpc_2022.xlsx" target="_blank" style="word-break:break-all;">cpc_2022.xlsx</a></td><td>9,891</td><td>Applied social sciences, post-COVID, with a full CPC</td></tr>
         <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2023/CPC_2023.xlsx" target="_blank" style="word-break:break-all;">CPC_2023.xlsx</a></td><td>9,812</td><td>Engineering, health, agricultural sciences</td></tr>
+        <tr><td><strong>2025</strong></td><td><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2025/conceito_enade_licenciaturas.xlsx" target="_blank" style="word-break:break-all;">conceito_enade_licenciaturas.xlsx</a><br><a href="https://download.inep.gov.br/educacao_superior/indicadores/resultados/2025/conceito_enade_medicina_2025.xlsx" target="_blank" style="word-break:break-all;">conceito_enade_medicina_2025.xlsx</a></td><td>5,299</td><td>Teacher-education degrees (4,948) and Medicine (351) — Enade Concept under the new model, <strong>no CPC or IDD</strong></td></tr>
     </table>
 </div>
 
 <div class="card">
-    <h2>Higher Education Census (microdata — 4 cycles)</h2>
-    <p>The source behind the <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2023</a> page. INEP publishes microdata aggregated by programme×institution with ~200 columns (gender, colour/race, age, time of day, FIES, PROUNI, quotas, disability, enrolment status and so on).</p>
+    <h2>Higher Education Census (microdata — 5 cycles)</h2>
+    <p>The source behind the <a href="en/censo.html" style="color:var(--accent);font-weight:700;">Higher Education Census 2017-2024</a> page. INEP publishes microdata aggregated by programme×institution with ~200 columns (gender, colour/race, age, time of day, FIES, PROUNI, quotas, disability, enrolment status and so on).</p>
     <table>
         <tr><th>Year</th><th>URL</th><th>Rows (programme×institution)</th><th>Enrolments</th></tr>
         <tr><td><strong>2017</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2017.zip" target="_blank" style="word-break:break-all;">microdados_...2017.zip</a></td><td>119,798</td><td>8,290,911</td></tr>
         <tr><td><strong>2021</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2021.zip" target="_blank" style="word-break:break-all;">microdados_...2021.zip</a></td><td>444,786</td><td>8,987,120</td></tr>
         <tr><td><strong>2022</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2022.zip" target="_blank" style="word-break:break-all;">microdados_...2022.zip</a></td><td>573,019</td><td>9,444,116</td></tr>
         <tr><td><strong>2023</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2023.zip" target="_blank" style="word-break:break-all;">microdados_...2023.zip</a></td><td>671,610</td><td>9,977,217</td></tr>
+        <tr><td><strong>2024</strong></td><td><a href="https://download.inep.gov.br/microdados/microdados_censo_da_educacao_superior_2024.zip" target="_blank" style="word-break:break-all;">microdados_...2024.zip</a></td><td>720,349</td><td>10,227,266</td></tr>
     </table>
-    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">The raw microdata (~160 MB in total) are processed locally in Python/DuckDB to produce a light consolidated JSON (&#8776; 5 MB) that feeds the dashboard in the browser. The full pipeline is in the repository at <code>censo_sup/pipeline_censo.py</code>.</p>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;"><strong>Ethnic-racial quotas in 2024:</strong> INEP discontinued the column for places reserved "on ethnic grounds" (valid from 2009 to 2023) and now splits it into Black, mixed-race and Indigenous (PPI), quilombola, and traditional peoples and communities. To keep the series, MAPA-GR uses the sum of the three in 2024 — 310,049 enrolments, against 306,423 in the old column in 2023.</p>
+    <p style="font-size:12px;color:var(--txt2);margin-top:8px;">The raw microdata (~570 MB in total, 457 MB for 2024 alone) are processed locally in Python/DuckDB to produce a light consolidated JSON (&#8776; 7 MB) that feeds the dashboard in the browser. The full pipeline is in the repository at <code>censo_sup/pipeline_censo.py</code>.</p>
 </div>
 </div>
 
@@ -434,12 +442,12 @@ a{color:#2563EB;}
     <h3>Overall totals</h3>
     <table>
         <tr><th>Metric</th><th>Value</th></tr>
-        <tr><td><strong>Programmes assessed</strong></td><td>47,091</td></tr>
-        <tr><td><strong>Distinct institutions</strong></td><td>2,417</td></tr>
-        <tr><td><strong>Students registered (ni)</strong></td><td>2,576,725</td></tr>
-        <tr><td><strong>Students who sat ENADE (np)</strong></td><td>2,026,112</td></tr>
+        <tr><td><strong>Programmes assessed</strong></td><td>52,390</td></tr>
+        <tr><td><strong>Distinct institutions</strong></td><td>2,461</td></tr>
+        <tr><td><strong>Students registered (ni)</strong></td><td>2,909,601</td></tr>
+        <tr><td><strong>Students who sat ENADE (np)</strong></td><td>2,261,428</td></tr>
         <tr><td><strong>Broad fields</strong></td><td>9</td></tr>
-        <tr><td><strong>ENADE cycles</strong></td><td>2017, 2018, 2021, 2022, 2023</td></tr>
+        <tr><td><strong>ENADE cycles</strong></td><td>2017, 2018, 2021, 2022, 2023, 2025</td></tr>
     </table>
 
     <h3>Programmes and students by broad field</h3>
@@ -447,12 +455,12 @@ a{color:#2563EB;}
         <tr><th>Field</th><th>Programmes</th><th>Registered</th><th>Sat</th></tr>
         <tr><td>Applied Social Sciences</td><td>11,509</td><td>813,417</td><td>641,003</td></tr>
         <tr><td>Technologist programmes</td><td>8,139</td><td>320,364</td><td>208,049</td></tr>
+        <tr><td>Health Sciences</td><td>7,493</td><td>433,029</td><td>374,432</td></tr>
         <tr><td>Engineering</td><td>7,066</td><td>310,425</td><td>265,058</td></tr>
-        <tr><td>Health Sciences</td><td>6,736</td><td>371,495</td><td>321,705</td></tr>
-        <tr><td>Humanities</td><td>4,925</td><td>450,293</td><td>346,138</td></tr>
-        <tr><td>Exact and Earth Sciences</td><td>3,893</td><td>116,768</td><td>89,665</td></tr>
-        <tr><td>Biological Sciences</td><td>1,985</td><td>71,661</td><td>57,858</td></tr>
-        <tr><td>Linguistics, Literature and Arts</td><td>1,951</td><td>81,124</td><td>59,747</td></tr>
+        <tr><td>Humanities</td><td>6,981</td><td>634,179</td><td>471,513</td></tr>
+        <tr><td>Exact and Earth Sciences</td><td>4,976</td><td>145,051</td><td>108,582</td></tr>
+        <tr><td>Linguistics, Literature and Arts</td><td>2,926</td><td>124,452</td><td>86,663</td></tr>
+        <tr><td>Biological Sciences</td><td>2,413</td><td>87,506</td><td>69,239</td></tr>
         <tr><td>Agricultural Sciences</td><td>887</td><td>41,178</td><td>36,889</td></tr>
     </table>
 
@@ -464,10 +472,11 @@ a{color:#2563EB;}
         <tr><td>2021</td><td>7,997</td><td>1,312</td><td>489,866</td><td>355,095</td></tr>
         <tr><td>2022</td><td>9,891</td><td>1,747</td><td>592,360</td><td>412,015</td></tr>
         <tr><td>2023</td><td>9,812</td><td>1,347</td><td>406,294</td><td>346,728</td></tr>
+        <tr><td>2025</td><td>5,299</td><td>936</td><td>332,876</td><td>235,316</td></tr>
     </table>
 
     <div class="info-box">
-        <strong>Note:</strong> the fields "Registered" (ni) and "Sat" (np) refer to <strong>final-year</strong> students registered for, and who actually took, ENADE in each cycle — <strong>not</strong> to total enrolment at the institution. Totals accumulated over 5 cycles (2017–2023).
+        <strong>Note:</strong> the fields "Registered" (ni) and "Sat" (np) refer to <strong>final-year</strong> students registered for, and who actually took, ENADE in each cycle — <strong>not</strong> to total enrolment at the institution. Totals accumulated over 6 cycles (2017–2025).
     </div>
 
     <p style="margin-top:16px;text-align:center;">
@@ -502,6 +511,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.8.0</strong></td><td>2026-08-09</td><td><strong>Botão “💡 Sugerir melhoria”</strong> na barra lateral das quatro telas (painel principal, Comparador, Estatísticas ENADE e Censo). Abre o formulário em <strong>daciencia.org/sugestao</strong>, onde se pede um ajuste, aponta-se um dado errado ou sugere-se uma melhoria — sigla da IES obrigatória, nome e e-mail opcionais, texto de até 250 palavras. No painel principal a <strong>sigla da instituição de referência vai pré-preenchida</strong>. O formulário fica fora do aplicativo de propósito: aqui dentro o envio seria uma requisição para outro domínio, e o texto ficaria preso ao cache do <em>service worker</em> a cada ajuste de redação.</td></tr>
         <tr><td><strong>v2.8.1</strong></td><td>2026-08-10</td><td><strong>O link da citação passa a abrir o artigo</strong>: o <code>https://doi.org/…</code> do MAPA-GR não resolvia (o registro do DOI ainda não propagou), e o leitor que clicasse em “Como citar” caía num <em>DOI Not Found</em>. O <strong>texto do DOI continua exibido</strong> — é o identificador da publicação — mas o link agora aponta para o artigo na <strong>Physicae Organum</strong>. Mesma correção na documentação, no README, no <code>CITATION.cff</code> e na página do projeto.</td></tr>
         <tr><td><strong>v2.8.2</strong></td><td>2026-08-13</td><td><strong>Grafia dos municípios do ciclo de 2018</strong>: a planilha do ENADE 2018 — única fonte do ciclo — grava o município em caixa alta e sem acento (<code>SAO ROQUE</code>), enquanto os demais ciclos gravam <code>São Roque</code>. O mesmo município aparecia, portanto, <strong>duas vezes</strong> nas listas e nas buscas, e quem procurasse pela grafia correta <strong>perdia o ciclo de 2018 inteiro</strong>. A correção usa o <strong>Código do Município (IBGE)</strong>, presente em todas as planilhas do INEP, para adotar a grafia dos ciclos que a trazem: <strong>8.821 registros</strong> corrigidos e <strong>734 municípios</strong> reunificados. O código também corrigiu <strong>13 erros de grafia da própria fonte</strong> (o INEP escrevia <code>ANGRA DO REIS</code>, <code>PALMEIRA DO INDIOS</code>, <code>PAU DO FERROS</code> e <code>MOGI-GUACU</code>, hoje <em>Angra dos Reis</em>, <em>Palmeira dos Índios</em>, <em>Pau dos Ferros</em> e <em>Mogi Guaçu</em>). Nenhum indicador foi alterado — a correção toca apenas o nome do município.</td></tr>
+        <tr><td><strong>v2.9.0</strong></td><td>2026-09-16</td><td><strong>Enade 2025 e Censo 2024.</strong> Entram os <strong>5.299 cursos do ciclo 2025</strong> — 4.948 licenciaturas (publicadas pelo INEP em 26/05/2026) e 351 cursos de Medicina (07/07/2026) —, somando <strong>52.390 cursos</strong>. É o <strong>modelo novo do Enade</strong>: o INEP publica o <strong>percentual de concluintes igual ou acima do padrão de proficiência</strong> e a faixa, sem nota contínua, sem CPC e sem IDD. Os cursos entram como ciclo parcial, com aviso próprio no painel; o percentual aparece na coluna ENADE (com %), no relatório, no CSV (<code>pct_concl_acima_padrao_2025</code>) e como nova métrica de ranqueamento. No <strong>Comparador</strong>, cada curso segue representado pelo ciclo mais recente <strong>com CPC</strong>: sem isso, toda licenciatura e a Medicina teriam passado a ser ordenadas por um CPC que não existe. A página <strong>Censo</strong> ganha os microdados de <strong>2024</strong> (publicados em 10/07/2026) e passa a derivar o período dos gráficos de crescimento dos próprios dados, em vez de trazer “2017→2023” escrito à mão. Os nomes reais dos cursos (<code>nc</code>) agora também consultam o Censo 2024, o que atualizou o nome de 97 cursos renomeados. A <strong>USP</strong>, ausente de todos os ciclos anteriores, aparece pela primeira vez, com 29 cursos. O seletor de instituição de referência passa de 264 para <strong>269 IES públicas</strong> (entram USP, UEPA, UFNT, Colégio Pedro II e UnDF, que só têm cursos em 2025). Nenhum indicador dos ciclos anteriores mudou.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -571,13 +581,59 @@ a{color:#2563EB;}
             <td>Documentada na aba <strong>Como Usar</strong>: a USP não está na base porque não está nos arquivos do INEP — sem participação no ENADE não há Conceito ENADE, e sem ele não há CPC nem IDD. É uma ausência de origem, não do MAPA-GR.</td>
         </tr>
     </table>
+
+    <h3 style="margin-top:26px;">O que mudou na v2.9.0 (16 de setembro de 2026)</h3>
+    <p style="text-align:justify;">A v2.9.0 traz os dois conjuntos que o INEP publicou em 2026 e que o aplicativo ainda não tinha: o <strong>Conceito Enade 2025</strong> das licenciaturas (26/05/2026) e da Medicina (07/07/2026), e os <strong>microdados do Censo da Educação Superior 2024</strong> (10/07/2026). O Enade 2025 chega num <strong>modelo novo</strong>, e boa parte do trabalho foi fazer o aplicativo mostrar esse ciclo sem misturá-lo, em silêncio, com os anteriores.</p>
+    <table>
+        <tr><th style="width:26%;">Item</th><th>Alteração</th></tr>
+        <tr>
+            <td><strong>Atualização — Enade 2025</strong></td>
+            <td><strong>5.299 cursos</strong> novos — 4.948 licenciaturas (17 áreas) e 351 cursos de Medicina —, levando o aplicativo a <strong>52.390 cursos</strong> em seis ciclos. Os cursos aparecem nas abas de Exatas, Biológicas, Saúde, Humanas e Letras, com o ciclo <strong>2025</strong> no filtro de ciclos.</td>
+        </tr>
+        <tr>
+            <td><strong>O modelo novo, explicado na tela</strong></td>
+            <td>Em 2025 o INEP deixou de publicar nota contínua para essas áreas: o Conceito Enade sai do <strong>percentual de concluintes igual ou acima do padrão de proficiência</strong>, e não há CPC nem IDD. Os cursos entram como <strong>ciclo parcial</strong> e ganham um <strong>aviso metodológico próprio</strong>, separado do aviso de 2018, dizendo que a faixa de 2025 <strong>não é diretamente comparável</strong> às anteriores.</td>
+        </tr>
+        <tr>
+            <td><strong>Facilidade — ranquear pelo Enade 2025</strong></td>
+            <td>Nova métrica <strong>% concl. ≥ padrão (Enade 2025)</strong> no seletor de métrica principal: ordena o ranking, o Top 15 IES e a evolução por esse percentual. Na tabela, o percentual aparece na coluna <strong>ENADE</strong> com o sinal <strong>%</strong> (e explicação ao passar o mouse); no relatório, como <code>% ≥ padrão (modelo 2025)</code>; no CSV, na coluna nova <code>pct_concl_acima_padrao_2025</code>.</td>
+        </tr>
+        <tr>
+            <td><strong>Melhoria — Comparador protegido</strong></td>
+            <td>O Comparador escolhe, por UF, o ciclo mais recente de cada curso e ordena por CPC → ENADE → IDD. Com 2025 na base, toda licenciatura e a Medicina teriam passado a ser ordenadas por um CPC que não existe. Agora cada curso é representado pelo <strong>ciclo mais recente com CPC</strong> (2021 nas licenciaturas, 2023 na Medicina); o ciclo parcial só entra quando o curso não tem outro. Vale para o modo Comparar e para os TOP 10 / TOP 27.</td>
+        </tr>
+        <tr>
+            <td><strong>USP na base</strong></td>
+            <td>A <strong>USP</strong>, ausente de todos os ciclos anteriores por não participar do ENADE, aparece pela primeira vez: <strong>29 cursos</strong> no Enade 2025. O seletor de instituição de referência passa de 264 para <strong>269 IES públicas</strong> — entram USP, UEPA, UFNT, Colégio Pedro II e UnDF.</td>
+        </tr>
+        <tr>
+            <td><strong>Atualização — Censo 2024</strong></td>
+            <td>A página <strong>Censo Ed. Superior</strong> ganha <strong>2024</strong> — 720.349 linhas de curso, <strong>10.227.266 matrículas</strong>, 5.010.613 ingressantes e 1.333.988 concluintes — e passa a abrir nele. Os totais de 2017 a 2023 foram reprocessados e conferem com os anteriores.</td>
+        </tr>
+        <tr>
+            <td><strong>Melhoria — período automático</strong></td>
+            <td>Os gráficos e o relatório de crescimento traziam “2017→2023” escrito no código. Agora o período sai dos próprios dados (<strong>2017→2024</strong>): o próximo Censo entra sem editar a página.</td>
+        </tr>
+        <tr>
+            <td><strong>Cotas étnico-raciais em 2024</strong></td>
+            <td>O INEP descontinuou a coluna de reserva de vagas “de cunho étnico” e passou a separá-la em pretos, pardos e indígenas, quilombolas e povos tradicionais. Sem tratamento, o gráfico de cotas de 2024 mostraria <strong>zero</strong> em étnico-raciais. O MAPA-GR usa a soma das três (310.049 matrículas em 2024, contra 306.423 em 2023) e registra a quebra nos dados.</td>
+        </tr>
+        <tr>
+            <td><strong>Nomes dos cursos</strong></td>
+            <td>O nome real de cada curso (usado nas áreas genéricas, como “Engenharia”) passa a consultar também o Censo 2024; 97 cursos renomeados tiveram o nome atualizado. Nenhum indicador dos ciclos anteriores mudou.</td>
+        </tr>
+        <tr>
+            <td><strong>Inglês, offline e cache</strong></td>
+            <td>Os avisos e a métrica nova têm versão em inglês (o aviso de 2018, que seguia em português na página inglesa, também foi traduzido); a versão offline foi regenerada; o Service Worker vai para <code>mapa-gr-v2.9.0</code>, para que quem já instalou o aplicativo receba os dados novos.</td>
+        </tr>
+    </table>
 </div>
 </div>
 
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.8.2 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.9.0 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>

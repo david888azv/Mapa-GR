@@ -231,7 +231,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/index.html" hreflang="en" lang="en">EN</a></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.8.2</div>
+        <div id="headerVersion">v2.9.0</div>
     </div>
 </div>
 
@@ -326,6 +326,7 @@ tr:hover { background: #EEF2F7; }
                 <option value="rg">Regime de trabalho (pad)</option>
                 <option value="nf">Infraestrutura (pad)</option>
                 <option value="op">Org. Didático-Ped. (pad)</option>
+                <option value="pp">% concl. ≥ padrão (Enade 2025)</option>
             </select>
         </div>
 
@@ -337,7 +338,7 @@ tr:hover { background: #EEF2F7; }
         <button class="btn" onclick="window.open('comparador.html','_blank')" style="background:#9B59B6;color:#fff;margin-top:8px;">⚔️ Comparar cursos entre UFs</button>
         <button class="btn" onclick="window.open('comparador.html?mode=top10','_blank')" style="background:#D4AF37;color:#fff;margin-top:4px;">🏆 TOP 10 / 27 — Cursos mais e menos bem avaliados</button>
         <button class="btn" onclick="window.open('estatisticas.html','_blank')" style="background:#FF5722;color:#fff;margin-top:16px;">📊 Estatísticas ENADE</button>
-        <button class="btn" onclick="window.open('censo.html','_blank')" style="background:#1565C0;color:#fff;margin-top:4px;">📈 Censo Ed. Superior 2017-2023</button>
+        <button class="btn" onclick="window.open('censo.html','_blank')" style="background:#1565C0;color:#fff;margin-top:4px;">📈 Censo Ed. Superior 2017-2024</button>
         <button class="btn" onclick="abrirHelp()" style="background:#607D8B;color:#fff;margin-top:4px;">? Ajuda / Documentação</button>
         <button class="btn" onclick="sugerir()" style="background:#00897B;color:#fff;margin-top:16px;" title="Pedir um ajuste, apontar um dado errado ou sugerir uma melhoria">💡 Sugerir melhoria</button>
     </div>
@@ -353,13 +354,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.8.2 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.9.0 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.8.2';
+const VERSION = '2.9.0';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -384,7 +385,8 @@ const CPC_COLORS = { 1:'#E74C3C', 2:'#F39C12', 3:'#F1C40F', 4:'#3498DB', 5:'#27A
 const METRIC_LABELS = {
     pc:'CPC contínuo', e:'ENADE contínuo', ip:'IDD (pad/cont)',
     dr:'% Doutores (pad)', ms:'% Mestres (pad)', rg:'Regime trab. (pad)',
-    nf:'Infraestrutura (pad)', op:'Org. Didático-Ped. (pad)'
+    nf:'Infraestrutura (pad)', op:'Org. Didático-Ped. (pad)',
+    pp:'% concl. ≥ padrão (Enade 2025)'
 };
 
 let META = null;
@@ -660,9 +662,16 @@ async function analisar() {
 
     if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas — os filtros de <b>Área, Ciclo e UF</b> (específicos de cada aba) não se aplicam aqui; <b>Grau, Modalidade, Categoria, Faixa e Região</b> continuam valendo.</p></div>`;
 
-    if (partialCount > 0) {
+    const n2018 = cursos.filter(c => c._partial && c.y === 2018).length;
+    const n2025 = cursos.filter(c => c._partial && c.y === 2025).length;
+    if (n2018 > 0) {
         html += `<div class="card" style="background:#FFF3E0;border-left:4px solid #FF9800;">
-            <p style="font-size:12px;margin:0;"><b>Aviso metodológico:</b> ${partialCount} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> como proxy, e indicadores como % Doutores, Infraestrutura e Regime de Trabalho não estão disponíveis.</p>
+            <p style="font-size:12px;margin:0;"><b>Aviso metodológico:</b> ${n2018} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> como proxy, e indicadores como % Doutores, Infraestrutura e Regime de Trabalho não estão disponíveis.</p>
+        </div>`;
+    }
+    if (n2025 > 0) {
+        html += `<div class="card" style="background:#FFF3E0;border-left:4px solid #FF9800;">
+            <p style="font-size:12px;margin:0;"><b>Aviso metodológico — Enade 2025:</b> ${n2025} curso(s) desta análise vêm do ciclo 2025 (Licenciaturas e Medicina), avaliado no <b>modelo novo</b> do INEP. Não há nota contínua: o Conceito Enade sai do <b>percentual de concluintes igual ou acima do padrão de proficiência</b> (coluna ENADE, com %). O INEP ainda não publicou CPC nem IDD de 2025, e a faixa de 2025 <b>não é diretamente comparável</b> às dos ciclos anteriores. Para ranquear esses cursos, escolha a métrica <b>% concl. ≥ padrão (Enade 2025)</b>.</p>
         </div>`;
     }
 
@@ -704,7 +713,7 @@ async function analisar() {
             <td style="font-size:10px;white-space:nowrap;" title="Códigos e-MEC vigentes na inscrição do ENADE ${c.y}">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
             ${pfCell}
             <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
-            <td>${c.e != null ? c.e.toFixed(2) : '—'}</td>
+            <td${c.pp != null ? ' title="Enade 2025: % de concluintes igual ou acima do padrão de proficiência"' : ''}>${c.e != null ? c.e.toFixed(2) : (c.pp != null ? c.pp.toFixed(1) + '%' : '—')}</td>
             <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
             <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
             <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
@@ -903,7 +912,7 @@ function buildReport(cursos, f) {
         unbCursos.forEach(c => {
             p(`  ${c.nc ? c.nc+' (ENADE: '+c.ar+')' : c.ar} ${c.y} — ${c.mu}/${c.u}`);
             p(`    e-MEC: IES ${c.ci!=null?c.ci:'—'} | curso ${c.cc!=null?c.cc:'—'}`);
-            p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):'—'}`);
+            p(`    Faixa: ${c.pf||'?'} | CPC cont: ${c.pc!=null?c.pc.toFixed(3):'—'} | ENADE: ${c.e!=null?c.e.toFixed(3):(c.pp!=null?c.pp.toFixed(1)+'% ≥ padrão (modelo 2025)':'—')}`);
             p(`    IDD pad: ${c.ip!=null?c.ip.toFixed(3):'—'} | %Dr: ${c.dr!=null?c.dr.toFixed(3):'—'} | %Mst: ${c.ms!=null?c.ms.toFixed(3):'—'}`);
             p(`    Infra: ${c.nf!=null?c.nf.toFixed(3):'—'} | Org.Ped: ${c.op!=null?c.op.toFixed(3):'—'} | Regime: ${c.rg!=null?c.rg.toFixed(3):'—'}`);
         });
@@ -976,14 +985,14 @@ function exportCSV() {
     const f = getFilters();
     const cursos = filterCursos(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
-    const header = ['grande_area','ano','sigla','ies','cod_ies_emec','cod_curso_emec','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes'];
+    const header = ['grande_area','ano','sigla','ies','cod_ies_emec','cod_curso_emec','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes','pct_concl_acima_padrao_2025'];
     const rows = cursos.map(c => [
         CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`,
         c.ci != null ? c.ci : '', c.cc != null ? c.cc : '',
         c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
         `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
         c.pf||'', c.pc||'', c.e||'', c.ip||'', c.ms||'', c.dr||'', c.rg||'', c.nf||'',
-        c.ni||'', c.np||''
+        c.ni||'', c.np||'', c.pp != null ? c.pp : ''
     ].join(';'));
     let csv = '# MAPA-GR v' + VERSION + ' — ' + new Date().toLocaleString('pt-BR') + '\n';
     csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';

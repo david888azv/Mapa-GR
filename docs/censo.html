@@ -4,8 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#0F244A">
-<title>MAPA-GR — Censo da Educação Superior 2017-2023</title>
-<meta name="description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2023.">
+<title>MAPA-GR — Censo da Educação Superior 2017-2024</title>
+<meta name="description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2024.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
 <link rel="canonical" href="https://david888azv.github.io/Mapa-GR/censo.html">
@@ -16,14 +16,14 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="MAPA-GR">
 <meta property="og:locale" content="pt_BR">
-<meta property="og:title" content="MAPA-GR — Censo da Educação Superior 2017-2023">
-<meta property="og:description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2023.">
+<meta property="og:title" content="MAPA-GR — Censo da Educação Superior 2017-2024">
+<meta property="og:description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2024.">
 <meta property="og:url" content="https://david888azv.github.io/Mapa-GR/censo.html">
 <meta property="og:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="MAPA-GR — Censo da Educação Superior 2017-2023">
-<meta name="twitter:description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2023.">
+<meta name="twitter:title" content="MAPA-GR — Censo da Educação Superior 2017-2024">
+<meta name="twitter:description" content="Matrículas, ingressantes e concluintes da graduação brasileira no Censo da Educação Superior (INEP), de 2017 a 2024.">
 <meta name="twitter:image" content="https://david888azv.github.io/Mapa-GR/icons/icon-512.png">
 <script src="chart.umd.min.js"></script>
 <style>
@@ -190,7 +190,7 @@ table.data-table .neg{color:#C62828;font-weight:600;}
     <div class="header-left">
         <button class="menu-toggle" id="menuToggle" aria-label="Abrir filtros">&#9776;</button>
         <img src="icons/icon-192.png" alt="Mapa-GR" class="header-icon">
-        <h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2023</h1>
+        <h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2024</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
@@ -212,12 +212,13 @@ table.data-table .neg{color:#C62828;font-weight:600;}
     <div class="sidebar" id="sidebar">
         <div class="filter-group">
             <h3>&#128196; Censo INEP</h3>
-            <p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Fonte: <strong>Portal INEP &#8212; Microdados do Censo da Educa&#231;&#227;o Superior</strong> (2017, 2021, 2022, 2023). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>
+            <p style="font-size:11px;color:var(--txt2);margin-bottom:6px;">Fonte: <strong>Portal INEP &#8212; Microdados do Censo da Educa&#231;&#227;o Superior</strong> (2017, 2021, 2022, 2023, 2024). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>
         </div>
 
         <div class="filter-group">
             <h3>Ano de refer&#234;ncia</h3>
-            <label><input type="radio" name="ano" value="2023" checked> 2023 (mais recente)</label>
+            <label><input type="radio" name="ano" value="2024" checked> 2024 (mais recente)</label>
+            <label><input type="radio" name="ano" value="2023"> 2023</label>
             <label><input type="radio" name="ano" value="2022"> 2022</label>
             <label><input type="radio" name="ano" value="2021"> 2021</label>
             <label><input type="radio" name="ano" value="2017"> 2017</label>
@@ -329,7 +330,7 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.8.2';
+const VERSION = '2.9.0';
 
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
@@ -383,10 +384,17 @@ function toast(msg) {
 function fmt(n) { if (n==null) return '\u2014'; return Number(n).toLocaleString('pt-BR'); }
 function fmtPct(n, digits=1) { if (n==null) return '\u2014'; return (n>=0?'+':'') + n.toFixed(digits) + '%'; }
 
+// Primeiro e último ano do consolidado: o período dos títulos e as chaves
+// variacao_total_<ini>_<fim> / cagr_pct_<ini>_<fim> saem daqui, para a página
+// não precisar de edição a cada Censo novo.
+let ANO_INI = null, ANO_FIM = null;
+
 async function loadAll() {
     try {
         const r = await fetch('dados/censo_superior_consolidado.json');
         DATA = await r.json();
+        ANO_INI = DATA.anos[0];
+        ANO_FIM = DATA.anos[DATA.anos.length - 1];
         buildFilters();
         document.getElementById('loading').style.display = 'none';
         document.getElementById('results').style.display = 'block';
@@ -538,7 +546,7 @@ function atualizar() {
 
     // Tabs
     html += '<div class="tabs-section">';
-    html += '<div class="tab-sec active" data-sec="sec-evol" onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o 2017-2023</div>';
+    html += '<div class="tab-sec active" data-sec="sec-evol" onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o ' + ANO_INI + '-' + ANO_FIM + '</div>';
     html += '<div class="tab-sec" data-sec="sec-area" onclick="switchSection(this)">Por \u00c1rea</div>';
     html += '<div class="tab-sec" data-sec="sec-reg"  onclick="switchSection(this)">Por Regi\u00e3o / UF</div>';
     html += '<div class="tab-sec" data-sec="sec-gm"   onclick="switchSection(this)">Grau / Modalidade</div>';
@@ -555,9 +563,9 @@ function atualizar() {
     html += '<div class="chart-container"><canvas id="chartEvol"></canvas></div></div>';
 
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Crescimento total 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Crescimento total ' + ANO_INI + '\u2192' + ANO_FIM + ' (principais m\u00e9tricas)</h2>';
     html += '<div class="chart-container"><canvas id="chartVarTotal"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>CAGR 2017\u21922023 (principais m\u00e9tricas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>CAGR ' + ANO_INI + '\u2192' + ANO_FIM + ' (principais m\u00e9tricas)</h2>';
     html += '<div class="chart-container"><canvas id="chartCagr"></canvas></div></div></div>';
     html += '</div>';
 
@@ -578,7 +586,7 @@ function atualizar() {
     html += '<div class="chart-row">';
     html += '<div class="chart-half"><div class="card"><h2>' + mLabel + ' por Grande \u00c1rea</h2>';
     html += '<div class="chart-container"><canvas id="chartArea"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Crescimento 2017\u21922023 por Grande \u00c1rea (matr\u00edculas)</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Crescimento ' + ANO_INI + '\u2192' + ANO_FIM + ' por Grande \u00c1rea (matr\u00edculas)</h2>';
     html += '<div class="chart-container"><canvas id="chartAreaGrowth"></canvas></div></div></div>';
     html += '</div>';
     html += '<div class="card"><h2>Detalhamento por Grande \u00c1rea &#8212; ' + f.ano + '</h2>';
@@ -630,15 +638,15 @@ function atualizar() {
     // SEC INCL
     html += '<div class="section-panel" id="sec-incl">';
     html += '<div class="chart-row">';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>';
     html += '<div class="chart-container"><canvas id="chartFies"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>';
     html += '<div class="chart-container"><canvas id="chartProuni"></canvas></div></div></div>';
     html += '</div>';
     html += '<div class="chart-row">';
     html += '<div class="chart-half"><div class="card"><h2>Reserva de vagas (cotas) por tipo &#8212; ' + f.ano + '</h2>';
     html += '<div class="chart-container"><canvas id="chartRv"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas PCD 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas PCD ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>';
     html += '<div class="chart-container"><canvas id="chartPcd"></canvas></div></div></div>';
     html += '</div>';
     html += '</div>';
@@ -656,7 +664,7 @@ function atualizar() {
     html += '<div class="chart-row">';
     html += '<div class="chart-half"><div class="card"><h2>Matr\u00edculas por Categoria Administrativa</h2>';
     html += '<div class="chart-container"><canvas id="chartCat"></canvas></div></div></div>';
-    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada 2017\u21922023</h2>';
+    html += '<div class="chart-half"><div class="card"><h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>';
     html += '<div class="chart-container"><canvas id="chartPubPriv"></canvas></div></div></div>';
     html += '</div>';
     html += '<div class="card"><h2>Detalhamento por Categoria &#8212; ' + f.ano + '</h2>';
@@ -771,8 +779,8 @@ function renderEvol(f) {
     }
 
     // Variação total
-    const varKey = 'variacao_total_2017_2023';
-    const cagrKey = 'cagr_pct_2017_2023';
+    const varKey = 'variacao_total_' + ANO_INI + '_' + ANO_FIM;
+    const cagrKey = 'cagr_pct_' + ANO_INI + '_' + ANO_FIM;
     const varData = DATA[varKey] || {};
     const cagrData = DATA[cagrKey] || {};
     const metricasPrincipais = ['mat','ing','con','vg','mat_fies','mat_prouni_i','mat_pcd','mat_rv','sit_tra','sit_des','mat_60m'];
@@ -1439,11 +1447,11 @@ function exportReport() {
     p('');
 
     // Crescimento / CAGR
-    const varKey = 'variacao_total_2017_2023';
-    const cagrKey = 'cagr_pct_2017_2023';
+    const varKey = 'variacao_total_' + ANO_INI + '_' + ANO_FIM;
+    const cagrKey = 'cagr_pct_' + ANO_INI + '_' + ANO_FIM;
     const varData = DATA[varKey] || {};
     const cagrData = DATA[cagrKey] || {};
-    p('CRESCIMENTO 2017 → 2023 (totais nacionais):');
+    p('CRESCIMENTO ' + ANO_INI + ' → ' + ANO_FIM + ' (totais nacionais):');
     ['mat','ing','con','vg','mat_fies','mat_prouni_i','mat_pcd','mat_rv','sit_tra','sit_des'].forEach(m => {
         const v = varData[m], c = cagrData[m];
         if (v == null && c == null) return;

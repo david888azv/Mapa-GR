@@ -445,6 +445,59 @@ def extract_enade_idd_2018(enade_path, idd_path):
     return [clean(d) for d in cursos.values()]
 
 
+# Enade 2025: modelo novo do INEP. Não há nota bruta/padronizada nem Conceito
+# contínuo — só o PERCENTUAL de concluintes igual ou acima do padrão de
+# proficiência e a faixa (1-5). Tampouco há CPC ou IDD (o INEP ainda não os
+# publicou para 2025). Entra como ciclo parcial, igual a 2018, com um campo
+# próprio `pp` (percentual 0-100) que NÃO é comparável ao ENADE contínuo `e`.
+# Publicado em duas planilhas: Licenciaturas (26/05/2026) e Medicina (07/07/2026).
+
+CT_2025 = {  # grafias da planilha 2025 -> as dos demais ciclos (filtros do app)
+    'Comunitária/ Confessional': 'Comunitária/Confessional',
+}
+MODAL_2025 = {'presencial': 'Educação Presencial', 'ead': 'Educação a Distância',
+              'educação presencial': 'Educação Presencial',
+              'educação a distância': 'Educação a Distância'}
+
+
+def _area_2025(area, grau):
+    """'MATEMÁTICA ' + 'LICENCIATURA' -> 'MATEMÁTICA (LICENCIATURA)', o nome
+    que os ciclos 2017/2021 usam; 'MEDICINA' e 'Letras - Inglês' ficam como estão."""
+    area = ' '.join(s(area).split())
+    grau = s(grau).upper()
+    if grau == 'LICENCIATURA' and area != 'Letras - Inglês':
+        return f'{area} (LICENCIATURA)'
+    return area
+
+
+def _pct(v):
+    v = fnum(v)
+    return None if v is None else round(v * 100, 1)
+
+
+def extract_enade_2025(path):
+    """Conceito Enade 2025 (Licenciaturas ou Medicina) — ciclo parcial, sem CPC/IDD."""
+    wb = openpyxl.load_workbook(path, read_only=True, data_only=True)
+    ws = wb.worksheets[0]
+    out = []
+    for i, r in enumerate(ws.iter_rows(values_only=True)):
+        if i == 0 or not r or not isinstance(r[0], int):
+            continue  # cabeçalho e notas de rodapé
+        ct = s(r[8]).replace('\u200b', '').strip()
+        grau = s(r[3]).capitalize()
+        d = {
+            'y': 2025, 'ar': _area_2025(r[2], r[3]), 'g': grau, 'ci': iint(r[4]),
+            'ie': s(r[5]), 'sg': s(r[6]), 'o': s(r[7]), 'ct': CT_2025.get(ct, ct),
+            'cc': iint(r[9]), 'm': MODAL_2025.get(s(r[10]).lower(), s(r[10])),
+            'mu': s(r[12]), 'u': s(r[13]), 'ni': iint(r[14]), 'np': iint(r[15]),
+            'pp': _pct(r[17]), 'pf': iint(r[18]),
+            '_partial': 1,
+        }
+        out.append(clean(d))
+    wb.close()
+    return out
+
+
 # ===== Main =====
 
 def main():
@@ -470,7 +523,11 @@ def main():
     d23 = extract_cpc_2023(os.path.join(IN_DIR, 'CPC_2023.xlsx'))
     print(f'  CPC 2023: {len(d23)} cursos')
 
-    all_courses = d17 + d18 + d21 + d22 + d23
+    d25 = (extract_enade_2025(os.path.join(IN_DIR, 'conceito_enade_licenciaturas_2025.xlsx'))
+           + extract_enade_2025(os.path.join(IN_DIR, 'conceito_enade_medicina_2025.xlsx')))
+    print(f'  ENADE 2025: {len(d25)} cursos (parcial: Conceito Enade no modelo novo, sem CPC/IDD)')
+
+    all_courses = d17 + d18 + d21 + d22 + d23 + d25
     print(f'\nTotal cursos consolidados: {len(all_courses)}')
 
     # Nome real do curso (Censo) -> campo `nc`, só onde a área ENADE (`ar`) esconde

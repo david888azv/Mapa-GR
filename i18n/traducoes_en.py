@@ -148,6 +148,8 @@ INDEX = [
      '<option value="nf">Infrastructure (std)</option>'),
     ('<option value="op">Org. Didático-Ped. (pad)</option>',
      '<option value="op">Teaching organisation (std)</option>'),
+    ('<option value="pp">% concl. ≥ padrão (Enade 2025)</option>',
+     '<option value="pp">% graduates ≥ standard (Enade 2025)</option>'),
 
     ('onclick="analisar()">Analisar</button>', 'onclick="analisar()">Analyse</button>'),
     ('onclick="marcarTodos()">Marcar todos</button>',
@@ -164,8 +166,8 @@ INDEX = [
      'margin-top:4px;">🏆 TOP 10 / 27 — Best and worst rated programmes</button>'),
     ('margin-top:16px;">📊 Estatísticas ENADE</button>',
      'margin-top:16px;">📊 ENADE statistics</button>'),
-    ('margin-top:4px;">📈 Censo Ed. Superior 2017-2023</button>',
-     'margin-top:4px;">📈 Higher Education Census 2017-2023</button>'),
+    ('margin-top:4px;">📈 Censo Ed. Superior 2017-2024</button>',
+     'margin-top:4px;">📈 Higher Education Census 2017-2024</button>'),
     # ======================================================================
     # Strings do JAVASCRIPT. Aqui mora o cuidado principal desta tabela: ao
     # lado de rotulo de interface ha nome de instituicao, sigla e chave de
@@ -180,8 +182,9 @@ INDEX = [
     # NB: nada de apostrofe nas traducoes que vao para dentro de string JS de
     # aspas simples — um "master's" ali fecha a string e quebra a pagina inteira.
     # Foi o que aconteceu na primeira geracao; por isso existe testar_ingles.py.
-    ("nf:'Infraestrutura (pad)', op:'Org. Didático-Ped. (pad)'",
-     "nf:'Infrastructure (std)', op:'Teaching org. (std)'"),
+    ("nf:'Infraestrutura (pad)', op:'Org. Didático-Ped. (pad)',",
+     "nf:'Infrastructure (std)', op:'Teaching org. (std)',"),
+    ("pp:'% concl. ≥ padrão (Enade 2025)'", "pp:'% graduates ≥ standard (Enade 2025)'"),
 
     # --------------------------------------------- modal de licenca/creditos
     ("Monitoramento e Análise da Formação Acadêmica na Graduação</p>",
@@ -249,6 +252,28 @@ INDEX = [
      "<h2>No programme found</h2><p>Adjust the filters in the sidebar.</p>"),
     ("'🔎 Busca global (todas as áreas)'", "'🔎 Global search (all fields)'"),
     ("${partialCount} sem CPC composto", "${partialCount} without a composite CPC"),
+    ("<b>Aviso metodológico:</b> ${n2018} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual "
+     "o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> "
+     "como proxy, e indicadores como % Doutores, Infraestrutura e Regime de Trabalho não estão disponíveis.",
+     "<b>Methodological note:</b> ${n2018} programme(s) in this analysis come from the 2018 ENADE cycle, "
+     "for which INEP did not publish the full composite CPC. For these programmes the ranking uses the "
+     "<b>ENADE band</b> as a proxy, and indicators such as % with doctorate, infrastructure and faculty "
+     "contract type are not available."),
+    ("<b>Aviso metodológico — Enade 2025:</b> ${n2025} curso(s) desta análise vêm do ciclo 2025 "
+     "(Licenciaturas e Medicina), avaliado no <b>modelo novo</b> do INEP. Não há nota contínua: o Conceito "
+     "Enade sai do <b>percentual de concluintes igual ou acima do padrão de proficiência</b> (coluna ENADE, "
+     "com %). O INEP ainda não publicou CPC nem IDD de 2025, e a faixa de 2025 <b>não é diretamente "
+     "comparável</b> às dos ciclos anteriores. Para ranquear esses cursos, escolha a métrica <b>% concl. ≥ "
+     "padrão (Enade 2025)</b>.",
+     "<b>Methodological note — Enade 2025:</b> ${n2025} programme(s) in this analysis come from the 2025 "
+     "cycle (teacher-education degrees and Medicine), assessed under INEP's <b>new model</b>. There is no "
+     "continuous score: the Enade Concept is derived from the <b>percentage of graduates at or above the "
+     "proficiency standard</b> (ENADE column, shown with %). INEP has not yet published CPC or IDD for "
+     "2025, and the 2025 band is <b>not directly comparable</b> with earlier cycles. To rank these "
+     "programmes, choose the metric <b>% graduates ≥ standard (Enade 2025)</b>."),
+    ('title="Enade 2025: % de concluintes igual ou acima do padrão de proficiência"',
+     'title="Enade 2025: % of graduates at or above the proficiency standard"'),
+    ("+'% ≥ padrão (modelo 2025)'", "+'% ≥ standard (2025 model)'"),
     ("setStatus(`${cursos.length} cursos mostrados em ${CURRENT.label}`)",
      "setStatus(`${cursos.length} programmes shown in ${CURRENT.label}`)"),
 
@@ -986,25 +1011,25 @@ ESTATISTICAS += [
 # ==========================================================================
 CENSO = [
     # ------------------------------------------------------------------ <head>
-    ("<title>MAPA-GR — Censo da Educação Superior 2017-2023</title>",
-     "<title>MAPA-GR — Higher Education Census 2017-2023</title>"),
+    ("<title>MAPA-GR — Censo da Educação Superior 2017-2024</title>",
+     "<title>MAPA-GR — Higher Education Census 2017-2024</title>"),
 
     # --------------------------------------------------------------- cabecalho
     ('aria-label="Abrir filtros">&#9776;</button>', 'aria-label="Open filters">&#9776;</button>'),
-    ("<h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2023</h1>",
-     "<h1><span>MAPA-GR</span> &#8212; Higher Education Census 2017-2023</h1>"),
+    ("<h1><span>MAPA-GR</span> &#8212; Censo da Educa&#231;&#227;o Superior 2017-2024</h1>",
+     "<h1><span>MAPA-GR</span> &#8212; Higher Education Census 2017-2024</h1>"),
     ("            &#8592; Voltar\n", "            &#8592; Back\n"),
 
     # ------------------------------------------------------------ barra lateral
     ("<h3>&#128196; Censo INEP</h3>", "<h3>&#128196; INEP Census</h3>"),
     ("Fonte: <strong>Portal INEP &#8212; Microdados do Censo da Educa&#231;&#227;o Superior</strong> "
-     "(2017, 2021, 2022, 2023). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>",
+     "(2017, 2021, 2022, 2023, 2024). Agregados nacionais, por regi&#227;o, UF, &#225;rea e IES.</p>",
      "Source: <strong>INEP portal &#8212; Higher Education Census microdata</strong> "
-     "(2017, 2021, 2022, 2023). Aggregated nationally and by region, state, field and "
+     "(2017, 2021, 2022, 2023, 2024). Aggregated nationally and by region, state, field and "
      "institution.</p>"),
     ("<h3>Ano de refer&#234;ncia</h3>", "<h3>Reference year</h3>"),
-    ('value="2023" checked> 2023 (mais recente)</label>',
-     'value="2023" checked> 2023 (most recent)</label>'),
+    ('value="2024" checked> 2024 (mais recente)</label>',
+     'value="2024" checked> 2024 (most recent)</label>'),
     ("Na aba <em>Evolu&#231;&#227;o</em> todos os anos s&#227;o exibidos simultaneamente.</p>",
      "The <em>Trend</em> tab shows every year at once.</p>"),
     ("<h3>M&#233;trica principal</h3>", "<h3>Main metric</h3>"),
@@ -1131,8 +1156,8 @@ CENSO = [
      '</div><div class="label">Applicants</div></div>'),
     ("' (filtro)</div></div>'", "' (filtered)</div></div>'"),
     (r"'. Ano de refer\u00eancia: <strong>'", "'. Reference year: <strong>'"),
-    (r'onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o 2017-2023</div>',
-     'onclick="switchSection(this)">&#128200; Trend 2017-2023</div>'),
+    (r'''onclick="switchSection(this)">&#128200; Evolu\u00e7\u00e3o ' + ANO_INI + '-' + ANO_FIM + '</div>''',
+     '''onclick="switchSection(this)">&#128200; Trend ' + ANO_INI + '-' + ANO_FIM + '</div>'''),
     (r'onclick="switchSection(this)">Por \u00c1rea</div>', 'onclick="switchSection(this)">By field</div>'),
     (r'onclick="switchSection(this)">Por Regi\u00e3o / UF</div>',
      'onclick="switchSection(this)">By region / state</div>'),
@@ -1148,9 +1173,9 @@ CENSO = [
     # -------------------------------------------------------- JS: cartoes
     (r'<div class="card"><h2>Evolu\u00e7\u00e3o nacional &#8212; ',
      '<div class="card"><h2>National trend &#8212; '),
-    (r"<h2>Crescimento total 2017\u21922023 (principais m\u00e9tricas)</h2>",
-     '<h2>Total growth 2017→2023 (main metrics)</h2>'),
-    (r"<h2>CAGR 2017\u21922023 (principais m\u00e9tricas)</h2>", '<h2>CAGR 2017→2023 (main metrics)</h2>'),
+    (r"<h2>Crescimento total ' + ANO_INI + '\u2192' + ANO_FIM + ' (principais m\u00e9tricas)</h2>",
+     '''<h2>Total growth ' + ANO_INI + '→' + ANO_FIM + ' (main metrics)</h2>'''),
+    (r"<h2>CAGR ' + ANO_INI + '\u2192' + ANO_FIM + ' (principais m\u00e9tricas)</h2>", '''<h2>CAGR ' + ANO_INI + '→' + ANO_FIM + ' (main metrics)</h2>'''),
     ('<div class="card"><h2>Totais nacionais por ano</h2>',
      '<div class="card"><h2>National totals by year</h2>'),
     (r"""setChartType(\'pie\', this)">Pizza</button>""", r"""setChartType(\'pie\', this)">Pie</button>"""),
@@ -1158,8 +1183,8 @@ CENSO = [
     (r"""setChartType(\'doughnut\', this)">Rosca</button>""",
      r"""setChartType(\'doughnut\', this)">Doughnut</button>"""),
     (r"' por Grande \u00c1rea</h2>'", "' by broad field</h2>'"),
-    (r"<h2>Crescimento 2017\u21922023 por Grande \u00c1rea (matr\u00edculas)</h2>",
-     '<h2>Growth 2017→2023 by broad field (enrolments)</h2>'),
+    (r"<h2>Crescimento ' + ANO_INI + '\u2192' + ANO_FIM + ' por Grande \u00c1rea (matr\u00edculas)</h2>",
+     '''<h2>Growth ' + ANO_INI + '→' + ANO_FIM + ' by broad field (enrolments)</h2>'''),
     (r'<div class="card"><h2>Detalhamento por Grande \u00c1rea &#8212; ',
      '<div class="card"><h2>Breakdown by broad field &#8212; '),
     (r"' por Regi\u00e3o</h2>'", "' by region</h2>'"),
@@ -1180,21 +1205,21 @@ CENSO = [
      '<div class="card"><h2>Age range of active enrolments</h2>'),
     (r'<div class="card"><h2>Matr\u00edculas por turno (presencial)</h2>',
      '<div class="card"><h2>Enrolments by time of day (on campus)</h2>'),
-    (r"<h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas 2017\u21922023</h2>",
-     '<h2>FIES trend &#8212; enrolments 2017→2023</h2>'),
-    (r"<h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas 2017\u21922023</h2>",
-     '<h2>PROUNI trend &#8212; enrolments 2017→2023</h2>'),
+    (r"<h2>Evolu\u00e7\u00e3o FIES &#8212; matr\u00edculas ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>",
+     '''<h2>FIES trend &#8212; enrolments ' + ANO_INI + '→' + ANO_FIM + '</h2>'''),
+    (r"<h2>Evolu\u00e7\u00e3o PROUNI &#8212; matr\u00edculas ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>",
+     '''<h2>PROUNI trend &#8212; enrolments ' + ANO_INI + '→' + ANO_FIM + '</h2>'''),
     ('<h2>Reserva de vagas (cotas) por tipo &#8212; ',
      '<h2>Affirmative-action quotas by type &#8212; '),
-    (r"<h2>Matr\u00edculas PCD 2017\u21922023</h2>", '<h2>Enrolments of students with disabilities 2017→2023</h2>'),
+    (r"<h2>Matr\u00edculas PCD ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>", '''<h2>Enrolments of students with disabilities ' + ANO_INI + '→' + ANO_FIM + '</h2>'''),
     (r'<div class="card"><h2>Top 30 IES por matr\u00edculas &#8212; ',
      '<div class="card"><h2>Top 30 institutions by enrolments &#8212; '),
     ('<div class="card"><h2>Detalhamento Top 50 IES</h2>',
      '<div class="card"><h2>Breakdown of the top 50 institutions</h2>'),
     (r"<h2>Matr\u00edculas por Categoria Administrativa</h2>",
      '<h2>Enrolments by administrative category</h2>'),
-    (r"<h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada 2017\u21922023</h2>",
-     '<h2>Public vs. private 2017→2023</h2>'),
+    (r"<h2>Evolu\u00e7\u00e3o P\u00fablica vs Privada ' + ANO_INI + '\u2192' + ANO_FIM + '</h2>",
+     '''<h2>Public vs. private ' + ANO_INI + '→' + ANO_FIM + '</h2>'''),
     ('<div class="card"><h2>Detalhamento por Categoria &#8212; ',
      '<div class="card"><h2>Breakdown by category &#8212; '),
 
@@ -1240,7 +1265,7 @@ CENSO = [
     ("'  Vagas ofertadas: '", "'  Places offered: '"),
     ("'  Inscritos: '", "'  Applicants: '"),
     ("'TOTAIS NACIONAIS POR ANO (sem filtros):'", "'NATIONAL TOTALS BY YEAR (unfiltered):'"),
-    ("'CRESCIMENTO 2017 → 2023 (totais nacionais):'", "'GROWTH 2017 → 2023 (national totals):'"),
+    ("'CRESCIMENTO ' + ANO_INI + ' → ' + ANO_FIM + ' (totais nacionais):'", "'GROWTH ' + ANO_INI + ' → ' + ANO_FIM + ' (national totals):'"),
     ("' a.a.'", "' p.a.'"),
     ("'POR GRANDE ÁREA ('", "'BY BROAD FIELD ('"),
     ("'POR REGIÃO ('", "'BY REGION ('"),
@@ -1265,17 +1290,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.8.2 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.8.2 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.9.0 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.9.0 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.8.2</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.8.2</h1>"),
-    ("<div>v2.8.2 — Agosto 2026</div>", "<div>v2.8.2 — August 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.9.0</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.9.0</h1>"),
+    ("<div>v2.9.0 — Setembro 2026</div>", "<div>v2.9.0 — September 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
