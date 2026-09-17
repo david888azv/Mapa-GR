@@ -128,8 +128,8 @@ INDEX = [
     ('value="S" checked> Sul</label>', 'value="S" checked> South</label>'),
 
     ("<h3>UF (Estado)</h3>", "<h3>State (UF)</h3>"),
-    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>'),
-    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>'),
+    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>', 2),
+    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>', 2),
 
     ("<h3>Métrica principal</h3>", "<h3>Main metric</h3>"),
     ('<option value="pc" selected>CPC contínuo</option>',
@@ -251,6 +251,8 @@ INDEX = [
     ("<h2>Nenhum curso encontrado</h2><p>Ajuste os filtros na barra lateral.</p>",
      "<h2>No programme found</h2><p>Adjust the filters in the sidebar.</p>"),
     ("'🔎 Busca global (todas as áreas)'", "'🔎 Global search (all fields)'"),
+    ('🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).',
+     '🔎 <b>Global search</b> for "<b>${f.searchTerm}</b>" across the 9 broad fields. <b>Degree, Mode, Category, Band and Region</b> always apply; <b>Field, Cycle and State</b> apply when you untick some option (with everything ticked, the search covers every field, cycle and state).'),
     ("${partialCount} sem CPC composto", "${partialCount} without a composite CPC"),
     ("<b>Aviso metodológico:</b> ${n2018} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual "
      "o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> "
@@ -312,7 +314,7 @@ INDEX = [
     ("label: `${METRIC_LABELS[metrica]} — média`", "label: `${METRIC_LABELS[metrica]} — mean`"),
 
     # --------------------------------------------- avisos
-    ("toast('Nenhuma aba carregada')", "toast('No tab loaded')"),
+    ("toast('Nenhuma aba carregada')", "toast('No tab loaded')", 2),
     ("toast('Nenhum curso no filtro atual')", "toast('No programme matches the current filter')"),
     ("toast(`Relatório salvo: ${filename}`)", "toast(`Report saved: ${filename}`)"),
     ("toast('Nada a exportar')", "toast('Nothing to export')"),
@@ -852,8 +854,8 @@ ESTATISTICAS = [
      "Public = federal/state/municipal. Private = all other categories (for- and non-profit, "
      "community/confessional, special).</p>"),
     ("<h3>UF (Estado)</h3>", "<h3>State (UF)</h3>"),
-    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>'),
-    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>'),
+    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>', 2),
+    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>', 2),
     ("<h3>&#128269; Buscar por sigla da IES</h3>", "<h3>&#128269; Search by institution acronym</h3>"),
     ('<label><input type="checkbox" id="searchEnabled"> Filtrar por sigla</label>',
      '<label><input type="checkbox" id="searchEnabled"> Filter by acronym</label>'),
@@ -1080,8 +1082,8 @@ CENSO = [
      'class="reg-chk" value="SE" checked> Southeast</label>'),
     ('class="reg-chk" value="S" checked> Sul</label>',
      'class="reg-chk" value="S" checked> South</label>'),
-    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>'),
-    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>'),
+    ('cursor:pointer;">Todos</button>', 'cursor:pointer;">All</button>', 2),
+    ('cursor:pointer;">Nenhum</button>', 'cursor:pointer;">None</button>', 2),
     ("<h3>Categoria Administrativa</h3>", "<h3>Administrative category</h3>"),
     ('class="cat-chk" value="1" checked> P&#250;blica Federal</label>',
      'class="cat-chk" value="1" checked> Federal public</label>'),
@@ -1290,17 +1292,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.9.0 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.9.0 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.9.1 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.9.1 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.9.0</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.9.0</h1>"),
-    ("<div>v2.9.0 — Setembro 2026</div>", "<div>v2.9.0 — September 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.9.1</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.9.1</h1>"),
+    ("<div>v2.9.1 — Setembro 2026</div>", "<div>v2.9.1 — September 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),

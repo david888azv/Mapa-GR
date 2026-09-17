@@ -249,6 +249,10 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 
         <div class="filter-group">
             <h3>Broad field</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="areaAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">All</button>
+                <button type="button" onclick="areaAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">None</button>
+            </div>
             <div id="areaFilter"></div>
         </div>
 
@@ -334,7 +338,7 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.9.0';
+const VERSION = '2.9.1';
 
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
@@ -440,6 +444,10 @@ function buildFilters() {
         document.getElementById('searchSigla').disabled = !e.target.checked;
         if (e.target.checked) document.getElementById('searchSigla').focus();
     });
+}
+
+function areaAll(checked) {
+    document.querySelectorAll('.area-chk').forEach(function(e) { e.checked = checked; });
 }
 
 function ufAll(checked) {
@@ -1255,7 +1263,11 @@ function renderIes(f) {
         return { co, sg: meta.sg_ies || '?', uf: meta.uf || '?', cat: meta.cat_adm, ...d };
     });
     if (f.searchOn && f.searchTerm) {
-        iesList = iesList.filter(x => (x.sg || '').toUpperCase().includes(f.searchTerm));
+        // sigla exata existente casa só ela ("UFPE" não traz a UFPEL); senão, "contém"
+        const siglas = new Set(iesList.map(x => (x.sg || '').toUpperCase()));
+        iesList = siglas.has(f.searchTerm)
+            ? iesList.filter(x => (x.sg || '').toUpperCase() === f.searchTerm)
+            : iesList.filter(x => (x.sg || '').toUpperCase().includes(f.searchTerm));
     }
     // Apply categoria filter
     iesList = iesList.filter(x => !x.cat || f.cats.includes(String(x.cat)));

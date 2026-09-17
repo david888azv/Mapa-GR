@@ -155,6 +155,17 @@ tr:hover { background: #EEF2F7; }
     background: rgba(0,0,0,.5); z-index: 90; }
 .sidebar-overlay.show { display: block; }
 
+/* Desktop: página em coluna com a altura exata da janela. O painel lateral e o
+   conteúdo rolam dentro da sobra real, em vez de uma altura fixa (calc(100vh - Npx))
+   que ignorava a barra de abas e a de status — até a v2.9.0 o fim do painel, com o
+   botão "Sugerir melhoria", ficava abaixo da borda da janela. */
+@media (min-width: 901px) {
+    body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+    .header, .tabs-bar, .status-bar { flex: 0 0 auto; }
+    .container { flex: 1 1 auto; min-height: 0; }
+    .sidebar, .main { max-height: none; }
+}
+
 @media (max-width: 900px) {
     .container { flex-direction: column; }
     .sidebar { width: 100%; min-width: auto; max-height: none; }
@@ -231,7 +242,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/index.html" hreflang="en" lang="en">EN</a></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.9.0</div>
+        <div id="headerVersion">v2.9.1</div>
     </div>
 </div>
 
@@ -257,6 +268,10 @@ tr:hover { background: #EEF2F7; }
 
         <div class="filter-group">
             <h3>Área (multiselecionar)</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="areaAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Todos</button>
+                <button type="button" onclick="areaAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">Nenhum</button>
+            </div>
             <div id="areaFilter" style="max-height:180px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
@@ -354,13 +369,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.9.0 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.9.1 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.9.0';
+const VERSION = '2.9.1';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -450,7 +465,7 @@ async function loadArea(slug) {
     const r = await fetch(meta.arquivo);
     const data = await r.json();
     // Enrich with region
-    data.cursos.forEach(c => { c._r = UF_REGIAO[c.u] || '?'; });
+    data.cursos.forEach(c => { c._r = UF_REGIAO[c.u] || '?'; c._ga = meta.label; });
     CACHE[slug] = data;
     return data;
 }
@@ -537,6 +552,10 @@ function updateSidebarFilters() {
     ufDiv.innerHTML = ufHtml;
 }
 
+function areaAll(checked) {
+    document.querySelectorAll('.area-chk').forEach(e => { e.checked = checked; });
+}
+
 function ufAll(checked) {
     document.querySelectorAll('.uf-chk').forEach(e => { e.checked = checked; });
 }
@@ -557,7 +576,14 @@ function getFilters() {
     const searchOn = document.getElementById('searchEnabled').checked;
     const searchTerm = document.getElementById('searchSigla').value.trim();
     const searchTokens = _srch(searchTerm).split(/\s+/).filter(Boolean); // termos combinados (E)
-    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, searchOn, searchTerm, searchTokens };
+    // Recorte "parcial" = o usuário desmarcou algo. Na busca global (que varre as
+    // nove grandes áreas) Área, Ciclo e UF só restringem quando parciais: com tudo
+    // marcado não há o que restringir, e as listas da aba não cobrem as outras áreas.
+    const areasParcial = areas.length < document.querySelectorAll('.area-chk').length;
+    const ciclosParcial = ciclos.length < document.querySelectorAll('.cycle-chk').length;
+    const ufsParcial = ufs.length < document.querySelectorAll('.uf-chk').length;
+    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, searchOn, searchTerm, searchTokens,
+             areasParcial, ciclosParcial, ufsParcial };
 }
 
 function normModal(m) {
@@ -574,21 +600,25 @@ function normGrau(g) {
 }
 
 function filterCursos(f, pool) {
-    // pool != null => BUSCA GLOBAL (varre todas as áreas). Nesse modo, os filtros
-    // específicos da aba (Área/Ciclo/UF, populados a partir da grande área atual)
-    // não se aplicam; os globais (Grau/Modalidade/Categoria/Faixa/Região) sim.
+    // pool != null => BUSCA GLOBAL (varre todas as áreas). Grau/Modalidade/Categoria/
+    // Faixa/Região valem sempre. Área, Ciclo e UF valem quando o usuário os restringiu
+    // (recorte parcial): até a v2.9.0 eram ignorados na busca, e "UnB + 2021 + Física
+    // (Bacharelado)" devolvia os 171 cursos da UnB em todas as áreas e ciclos.
     const global = !!pool;
     const src = pool || (CURRENT ? CURRENT.cursos : []);
+    const siglaExata = f.searchOn ? tokensDeSigla(f.searchTokens, src) : new Set();
     return src.filter(c => {
         if (f.searchOn && f.searchTokens.length) {
             // termos combinados (E): cada token precisa casar algum campo. Campos
             // unidos por espaco (tokens nao tem espaco), evitando vazamento entre eles.
+            // Token que É a sigla de uma IES casa só a sigla, e inteira (ver tokensDeSigla).
             const hay = [c.sg, c.nc, c.ar, c.ie, c.mu].map(_srch).join(' ');
-            if (!f.searchTokens.every(t => hay.includes(t))) return false;
+            const sg = _srch(c.sg);
+            if (!f.searchTokens.every(t => siglaExata.has(t) ? sg === t : hay.includes(t))) return false;
         }
-        if (!global && f.areas.length && !f.areas.includes(c.ar)) return false;
-        if (!global && !f.ciclos.includes(c.y)) return false;
-        if (!global && f.ufs.length && !f.ufs.includes(c.u)) return false;
+        if ((!global || f.areasParcial) && f.areas.length && !f.areas.includes(c.ar)) return false;
+        if ((!global || f.ciclosParcial) && !f.ciclos.includes(c.y)) return false;
+        if ((!global || f.ufsParcial) && f.ufs.length && !f.ufs.includes(c.u)) return false;
         const grau = normGrau(c.g || '');
         if (!f.graus.includes(grau)) return false;
         if (!f.modais.includes(normModal(c.m))) return false;
@@ -597,6 +627,21 @@ function filterCursos(f, pool) {
         if (!f.regs.includes(c._r)) return false;
         return true;
     });
+}
+
+// Tokens da busca que são a sigla EXATA de alguma IES do conjunto. Sem isto, a
+// busca era por "contém" e "UFPE" trazia também a UFPEL, "UFS" a UFSC/UFSM/UFSCar
+// (452 das 2.015 siglas puxavam outras IES). Um token que também aparece no nome
+// de alguma área ou curso (ex.: "ARTE") segue sendo busca de texto, não de sigla.
+let _siglasCache = { src: null, n: -1, siglas: null, nomes: '' };
+function tokensDeSigla(tokens, src) {
+    if (!tokens.length) return new Set();
+    if (_siglasCache.src !== src || _siglasCache.n !== src.length) {
+        const siglas = new Set(), nomes = new Set();
+        src.forEach(c => { if (c.sg) siglas.add(_srch(c.sg)); nomes.add(_srch(c.ar)); if (c.nc) nomes.add(_srch(c.nc)); });
+        _siglasCache = { src, n: src.length, siglas, nomes: [...nomes].join(' | ') };
+    }
+    return new Set(tokens.filter(t => _siglasCache.siglas.has(t) && !_siglasCache.nomes.includes(t)));
 }
 
 // Garante que todas as grandes áreas estejam carregadas (para a busca global).
@@ -609,19 +654,28 @@ function allCursos() {
 
 function mean(arr) { return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
 
+// Mesmo conjunto de cursos para a tela, o relatório e o CSV. Até a v2.9.0 os dois
+// exportadores chamavam filterCursos(f) sem o pool global, e numa busca exportavam
+// só a aba atual — outro conjunto que não o mostrado na tela.
+function ehBuscaGlobal(f) { return f.searchOn && f.searchTokens.length > 0; }
+async function cursosFiltrados(f) {
+    if (!ehBuscaGlobal(f)) return filterCursos(f);
+    await ensureAllAreas();
+    return filterCursos(f, allCursos());
+}
+
 // === RENDERING ===
 let _searchSeq = 0;
 async function analisar() {
     if (!CURRENT) return;
     const f = getFilters();
-    const global = f.searchOn && f.searchTokens.length > 0;
+    const global = ehBuscaGlobal(f);
     let cursos;
     if (global) {
         const seq = ++_searchSeq;
         setStatus('Buscando em todas as áreas…');
-        await ensureAllAreas();
+        cursos = await cursosFiltrados(f);
         if (seq !== _searchSeq) return;   // uma busca mais nova começou; aborta esta
-        cursos = filterCursos(f, allCursos());
     } else {
         cursos = filterCursos(f);
     }
@@ -660,7 +714,7 @@ async function analisar() {
             <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Faixa 1</div></div>
         </div></div>`;
 
-    if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas — os filtros de <b>Área, Ciclo e UF</b> (específicos de cada aba) não se aplicam aqui; <b>Grau, Modalidade, Categoria, Faixa e Região</b> continuam valendo.</p></div>`;
+    if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).</p></div>`;
 
     const n2018 = cursos.filter(c => c._partial && c.y === 2018).length;
     const n2025 = cursos.filter(c => c._partial && c.y === 2025).length;
@@ -883,7 +937,7 @@ function buildReport(cursos, f) {
     p(`  UFs: ${f.ufs.length}/${totalUfs} (${f.ufs.length === totalUfs ? 'todas' : f.ufs.join(', ')})`);
     p(`  Métrica principal: ${metricaLabel}`);
     if (f.searchOn && f.searchTerm) {
-        p(`  Busca: "${f.searchTerm}" (sigla, curso ou área; global)`);
+        p(`  Busca: "${f.searchTerm}" (sigla, curso ou área; global — Área, Ciclo e UF restringem só quando desmarcados em parte)`);
     }
     p('');
     p(`Resultados:`);
@@ -953,10 +1007,10 @@ function buildReport(cursos, f) {
     return lines.join('\n');
 }
 
-function exportReport() {
+async function exportReport() {
     if (!CURRENT) { toast('Nenhuma aba carregada'); return; }
     const f = getFilters();
-    const cursos = filterCursos(f);
+    const cursos = await cursosFiltrados(f);
     if (!cursos.length) { toast('Nenhum curso no filtro atual'); return; }
     const txt = buildReport(cursos, f);
     // Filename: report-GR-YYYYMMDD-HHMMSS.txt
@@ -981,13 +1035,14 @@ function desmarcarTodos() {
     document.querySelectorAll('#sidebar input[type="checkbox"]').forEach(e => e.checked = false);
 }
 
-function exportCSV() {
+async function exportCSV() {
+    if (!CURRENT) { toast('Nenhuma aba carregada'); return; }
     const f = getFilters();
-    const cursos = filterCursos(f);
+    const cursos = await cursosFiltrados(f);
     if (!cursos.length) { toast('Nada a exportar'); return; }
     const header = ['grande_area','ano','sigla','ies','cod_ies_emec','cod_curso_emec','uf','municipio','area','nome_curso','grau','modalidade','categoria','faixa','cpc_cont','enade_cont','idd_pad','mestres_pad','doutores_pad','regime_pad','infra_pad','n_inscritos','n_participantes','pct_concl_acima_padrao_2025'];
     const rows = cursos.map(c => [
-        CURRENT.label, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`,
+        `"${(c._ga || CURRENT.label).replace(/"/g,'""')}"`, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`,
         c.ci != null ? c.ci : '', c.cc != null ? c.cc : '',
         c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
         `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
@@ -996,7 +1051,7 @@ function exportCSV() {
     ].join(';'));
     let csv = '# MAPA-GR v' + VERSION + ' — ' + new Date().toLocaleString('pt-BR') + '\n';
     csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';
-    csv += '# Grande Área: ' + CURRENT.label + '\n';
+    csv += '# Grande Área: ' + (ehBuscaGlobal(f) ? 'busca global "' + f.searchTerm + '" (ver coluna grande_area)' : CURRENT.label) + '\n';
     csv += header.join(';') + '\n' + rows.join('\n');
     const blob = new Blob(['\ufeff' + csv], {type:'text/csv;charset=utf-8'});
     const a = document.createElement('a');

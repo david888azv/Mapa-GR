@@ -6,7 +6,7 @@
      procurados em /Mapa-GR/en/ e nao existiriam la. -->
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.9.0 — Documentation and Data Sources</title>
+<title>MAPA-GR v2.9.1 — Documentation and Data Sources</title>
 <meta name="description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -90,13 +90,13 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentation v2.9.0</h1>
+        <h1><em>MAPA-GR</em> — Documentation v2.9.1</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div class="langsel"><a href="../help-doc.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
-            <div>v2.9.0 — September 2026</div>
+            <div>v2.9.1 — September 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -512,6 +512,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.8.1</strong></td><td>2026-08-10</td><td><strong>O link da citação passa a abrir o artigo</strong>: o <code>https://doi.org/…</code> do MAPA-GR não resolvia (o registro do DOI ainda não propagou), e o leitor que clicasse em “Como citar” caía num <em>DOI Not Found</em>. O <strong>texto do DOI continua exibido</strong> — é o identificador da publicação — mas o link agora aponta para o artigo na <strong>Physicae Organum</strong>. Mesma correção na documentação, no README, no <code>CITATION.cff</code> e na página do projeto.</td></tr>
         <tr><td><strong>v2.8.2</strong></td><td>2026-08-13</td><td><strong>Grafia dos municípios do ciclo de 2018</strong>: a planilha do ENADE 2018 — única fonte do ciclo — grava o município em caixa alta e sem acento (<code>SAO ROQUE</code>), enquanto os demais ciclos gravam <code>São Roque</code>. O mesmo município aparecia, portanto, <strong>duas vezes</strong> nas listas e nas buscas, e quem procurasse pela grafia correta <strong>perdia o ciclo de 2018 inteiro</strong>. A correção usa o <strong>Código do Município (IBGE)</strong>, presente em todas as planilhas do INEP, para adotar a grafia dos ciclos que a trazem: <strong>8.821 registros</strong> corrigidos e <strong>734 municípios</strong> reunificados. O código também corrigiu <strong>13 erros de grafia da própria fonte</strong> (o INEP escrevia <code>ANGRA DO REIS</code>, <code>PALMEIRA DO INDIOS</code>, <code>PAU DO FERROS</code> e <code>MOGI-GUACU</code>, hoje <em>Angra dos Reis</em>, <em>Palmeira dos Índios</em>, <em>Pau dos Ferros</em> e <em>Mogi Guaçu</em>). Nenhum indicador foi alterado — a correção toca apenas o nome do município.</td></tr>
         <tr><td><strong>v2.9.0</strong></td><td>2026-09-16</td><td><strong>Enade 2025 e Censo 2024.</strong> Entram os <strong>5.299 cursos do ciclo 2025</strong> — 4.948 licenciaturas (publicadas pelo INEP em 26/05/2026) e 351 cursos de Medicina (07/07/2026) —, somando <strong>52.390 cursos</strong>. É o <strong>modelo novo do Enade</strong>: o INEP publica o <strong>percentual de concluintes igual ou acima do padrão de proficiência</strong> e a faixa, sem nota contínua, sem CPC e sem IDD. Os cursos entram como ciclo parcial, com aviso próprio no painel; o percentual aparece na coluna ENADE (com %), no relatório, no CSV (<code>pct_concl_acima_padrao_2025</code>) e como nova métrica de ranqueamento. No <strong>Comparador</strong>, cada curso segue representado pelo ciclo mais recente <strong>com CPC</strong>: sem isso, toda licenciatura e a Medicina teriam passado a ser ordenadas por um CPC que não existe. A página <strong>Censo</strong> ganha os microdados de <strong>2024</strong> (publicados em 10/07/2026) e passa a derivar o período dos gráficos de crescimento dos próprios dados, em vez de trazer “2017→2023” escrito à mão. Os nomes reais dos cursos (<code>nc</code>) agora também consultam o Censo 2024, o que atualizou o nome de 97 cursos renomeados. A <strong>USP</strong>, ausente de todos os ciclos anteriores, aparece pela primeira vez, com 29 cursos. O seletor de instituição de referência passa de 264 para <strong>269 IES públicas</strong> (entram USP, UEPA, UFNT, Colégio Pedro II e UnDF, que só têm cursos em 2025). Nenhum indicador dos ciclos anteriores mudou.</td></tr>
+        <tr><td><strong>v2.9.1</strong></td><td>2026-09-17</td><td><strong>Correções de filtragem e de navegação.</strong> (1) Com o <strong>filtro por texto</strong> ativo, os filtros de <strong>Área, Ciclo e UF</strong> eram ignorados: “UnB” + ciclo 2021 + só Física (Bacharelado) devolvia os 171 cursos da UnB em todas as áreas e ciclos. Agora a busca continua varrendo as nove grandes áreas, mas Área, Ciclo e UF passam a valer sempre que alguma opção é desmarcada. (2) O <strong>Relatório</strong> e o <strong>CSV</strong> passam a trazer exatamente os cursos mostrados na tela — numa busca, exportavam só a aba atual —, e o CSV da busca traz a grande área de cada curso. (3) <strong>Sigla exata</strong>: digitar a sigla de uma IES casa só essa sigla — “UFPE” deixou de trazer a UFPEL, “UFS” a UFSC e a UFSM; 452 das 2.015 siglas puxavam outras instituições. Texto que não é sigla segue como busca parcial. Vale no painel, nas Estatísticas, no Comparador e no Censo. (4) Botões <strong>Todos / Nenhum</strong> no filtro de Área, como já havia no de UF, para isolar um curso com dois cliques. (5) A <strong>barra lateral</strong> do painel principal e do Comparador não rolava até o fim, e o botão “Sugerir melhoria” ficava abaixo da borda da janela; a altura passou a acompanhar a janela. Nenhum dado mudou.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -633,7 +634,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.9.0 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.9.1 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>
