@@ -3,7 +3,7 @@
 **Monitoramento e Análise da Formação Acadêmica na Graduação**
 
 Sistema interativo e gratuito para explorar a qualidade da graduação brasileira pelos
-indicadores do **INEP/SINAES** — CPC, ENADE, IDD e IGC — em **47.091 cursos** de todas as
+indicadores do **INEP/SINAES** — CPC, ENADE, IDD e IGC — em **52.390 cursos** de todas as
 9 grandes áreas do conhecimento.
 
 ### 🔗 Abrir o aplicativo: **https://david888azv.github.io/Mapa-GR/**
@@ -20,14 +20,16 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
 
 ## Escopo
 
-- **Cobertura**: 47.091 cursos de graduação, em 9 grandes áreas (Exatas, Biológicas,
+- **Cobertura**: 52.390 cursos de graduação, em 9 grandes áreas (Exatas, Biológicas,
   Engenharias, Agrárias, Saúde, Sociais Aplicadas, Humanas, Letras e Tecnólogos)
-- **Ciclos ENADE**: 2017, 2021 e 2023 (conforme a área)
-- **Censo da Educação Superior**: matrículas, ingressantes e concluintes, 2017–2023
+- **Ciclos ENADE**: 2017, 2018, 2021, 2022, 2023 e 2025 (conforme a área). O de 2025
+  (licenciaturas e Medicina) segue o modelo novo do INEP: só o Conceito Enade, calculado pelo
+  percentual de concluintes acima do padrão de proficiência, sem CPC nem IDD
+- **Censo da Educação Superior**: matrículas, ingressantes e concluintes, 2017–2024
 - **Indicadores**: CPC, ENADE, IDD, IGC, % Doutores, Infraestrutura, Organização
   Didático-Pedagógica, Regime de Trabalho
-- **Instituição de referência** (v2.5): ao abrir, escolhe-se uma entre **264 instituições
-  públicas** — 112 federais, 117 estaduais e 35 municipais — que passa a ser destacada (★)
+- **Instituição de referência** (v2.5): ao abrir, escolhe-se uma entre **269 instituições
+  públicas** — 114 federais, 120 estaduais e 35 municipais — que passa a ser destacada (★)
   na comparação. Busca por sigla, nome, UF ou esfera; link direto por sigla
   (`?ies=UFMG`) ou pelo código da IES do INEP (`?ies=568`). O seletor define só o
   destaque: os cursos de **todas** as instituições, inclusive privadas, sempre entram na
@@ -43,8 +45,9 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
 - **Funciona offline** (PWA) e não coleta dados de quem usa — o botão de sugestões não muda
   isso: só sai daqui o que a pessoa escrever, de propósito, no formulário
 
-> A **USP não consta da base**: não participa do ENADE, então não tem Conceito ENADE e
-> não entra nos Indicadores de Qualidade publicados pelo INEP. É ausência da fonte.
+> A **USP só aparece no ciclo 2025**: até 2023 não participava do ENADE e não tem uma única
+> linha nos Indicadores de Qualidade do INEP — ausência da fonte. No Enade 2025 das licenciaturas
+> e da Medicina ela entra, com 29 cursos.
 
 ## Distinção MAPA-PG × MAPA-GR
 
@@ -74,7 +77,7 @@ mapa-gr/
 ├── help-doc.html            # documentação
 ├── gerar_mapa_gr.py         # script de extração dos XLSX do INEP
 ├── build/
-│   └── gerar_ies_publicas.py  # índice das 264 IES públicas (seletor de referência)
+│   └── gerar_ies_publicas.py  # índice das 269 IES públicas (seletor de referência)
 ├── docs/                    # PWA servida pelo GitHub Pages
 │   ├── index.html
 │   ├── manifest.json

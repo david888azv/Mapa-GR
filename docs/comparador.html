@@ -533,6 +533,17 @@ function isPublica(ct) {
     return /^p[uú]blica/i.test((ct || '').trim());
 }
 
+// Ano mais recente COM CPC. Os ciclos parciais (2018 e Enade 2025, `_partial`)
+// não têm CPC nem IDD — e o de 2025 nem nota contínua —, então o ranking abaixo,
+// que ordena por CPC→ENADE→IDD, ficaria sem critério. Eles só entram quando o
+// curso não tem nenhum ciclo completo. Sem isto, a partir da v2.9.0 toda
+// licenciatura e a Medicina passariam do CPC 2021/2023 para o Enade 2025.
+function anoMaisRecente(arr) {
+    const completos = arr.filter(c => !c._partial);
+    const base = completos.length ? completos : arr;
+    return Math.max(...base.map(c => c.y || 0));
+}
+
 // ===== Seleção do melhor curso por UF =====
 // tipo: 'pub' | 'priv' | null (sem restrição de tipo)
 function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, tipo) {
@@ -551,7 +562,7 @@ function pickBestForUF(area, uf, cpcMin, enadeMin, iddMin, tipo) {
     });
     if (!cand.length) return null;
     // Most recent year, then best CPC cont (tie: ENADE, IDD)
-    const maxY = Math.max(...cand.map(c => c.y || 0));
+    const maxY = anoMaisRecente(cand);
     const ofY = cand.filter(c => c.y === maxY);
     ofY.sort((a, b) =>
         (b.pc || 0) - (a.pc || 0) ||
@@ -699,7 +710,7 @@ function pickPerUF(cursos, worst) {
     const picks = [];
     Object.keys(byUF).forEach(u => {
         const arr = byUF[u];
-        const maxY = Math.max(...arr.map(c => c.y || 0));
+        const maxY = anoMaisRecente(arr);
         const ofY = arr.filter(c => c.y === maxY);
         ofY.sort(cmp);
         picks.push({ ...ofY[0] });
