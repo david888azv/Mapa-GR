@@ -209,6 +209,10 @@ table.data-table tr:hover{background:#FFE0B2;}
 
         <div class="filter-group">
             <h3>Broad field</h3>
+            <div style="display:flex;gap:4px;margin-bottom:6px;">
+                <button type="button" onclick="areaAll(true)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">All</button>
+                <button type="button" onclick="areaAll(false)" style="flex:1;padding:3px;font-size:10px;border:1px solid var(--borda);background:#F0F2F5;border-radius:3px;cursor:pointer;">None</button>
+            </div>
             <div id="areaFilter" style="max-height:200px;overflow-y:auto;border:1px solid var(--borda);padding:6px;border-radius:4px;background:#FAFBFC;"></div>
         </div>
 
@@ -387,6 +391,10 @@ function buildSidebarFilters() {
     ufDiv.innerHTML = ufHtml;
 }
 
+function areaAll(checked) {
+    document.querySelectorAll('.area-chk').forEach(function(e) { e.checked = checked; });
+}
+
 function ufAll(checked) {
     document.querySelectorAll('.uf-chk').forEach(e => { e.checked = checked; });
 }
@@ -416,7 +424,19 @@ function getFilters() {
     return { areas, ciclos, regs, ufs, tipos, searchOn, searchTerm };
 }
 
+// Sigla digitada que existe exatamente como sigla de IES casa só ela; senão, "contém"
+// (busca parcial, ex.: "UNI"). Antes era sempre "contém": "UFPE" trazia a UFPEL junto.
+let SIGLAS_TODAS = null;
+function siglaCasa(sg, termo, conhecidas) {
+    const s = (sg || '').toUpperCase();
+    return conhecidas && conhecidas.has(termo) ? s === termo : s.includes(termo);
+}
+
 function filterCursos(f) {
+    if (!SIGLAS_TODAS || SIGLAS_TODAS._n !== ALL_CURSOS.length) {
+        SIGLAS_TODAS = new Set(ALL_CURSOS.map(c => (c.sg || '').toUpperCase()).filter(Boolean));
+        SIGLAS_TODAS._n = ALL_CURSOS.length;
+    }
     return ALL_CURSOS.filter(c => {
         if (!f.areas.includes(c._ga)) return false;
         if (!f.ciclos.includes(c.y)) return false;
@@ -426,7 +446,7 @@ function filterCursos(f) {
             const tipo = isPublica(c.ct) ? 'pub' : 'priv';
             if (!f.tipos.includes(tipo)) return false;
         }
-        if (f.searchOn && f.searchTerm && !(c.sg || '').toUpperCase().includes(f.searchTerm)) return false;
+        if (f.searchOn && f.searchTerm && !siglaCasa(c.sg, f.searchTerm, SIGLAS_TODAS)) return false;
         return true;
     });
 }

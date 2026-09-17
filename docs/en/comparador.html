@@ -138,6 +138,17 @@ tr:first-child td { font-weight: 700; }
     opacity: 0; transition: opacity .3s; z-index: 999; }
 .toast.show { opacity: 1; }
 
+/* Desktop: página em coluna com a altura exata da janela. O painel lateral e o
+   conteúdo rolam dentro da sobra real, em vez de uma altura fixa (calc(100vh - Npx))
+   que ignorava a barra de abas e a de status — até a v2.9.0 o fim do painel, com o
+   botão "Sugerir melhoria", ficava abaixo da borda da janela. */
+@media (min-width: 901px) {
+    body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+    .header, .tabs-bar, .status-bar { flex: 0 0 auto; }
+    .container { flex: 1 1 auto; min-height: 0; }
+    .sidebar, .main { max-height: none; }
+}
+
 @media (max-width: 900px) {
     .container { flex-direction: column; }
     .sidebar { width: 100%; min-width: auto; max-height: none; }
@@ -655,6 +666,13 @@ function updateTopButtons() {
     }
 }
 
+// Sigla digitada que existe exatamente como sigla de IES casa só ela; senão, "contém".
+// Antes era sempre "contém": "UFPE" trazia a UFPEL junto.
+function siglaCasa(sg, termo, conhecidas) {
+    const s = (sg || '').toUpperCase();
+    return conhecidas && conhecidas.has(termo) ? s === termo : s.includes(termo);
+}
+
 // Aplica os filtros do painel (tipo de IES / sigla / região / UF) ao curso escolhido
 function topFilterCursos(area) {
     const regs = [...document.querySelectorAll('.treg-chk:checked')].map(e => e.value);
@@ -662,10 +680,12 @@ function topFilterCursos(area) {
     const tipos = [...document.querySelectorAll('.tipo-chk:checked')].map(e => e.value);
     const searchOn = $('tSearchEnabled').checked;
     const searchTerm = $('tSearchSigla').value.trim().toUpperCase();
+    // Siglas da grande área carregada: se o termo é uma delas, casa só ela (senão "contém").
+    const siglas = new Set(CURRENT_DATA.cursos.map(c => (c.sg || '').toUpperCase()).filter(Boolean));
     const cursos = CURRENT_DATA.cursos.filter(c => {
         if (c.ar !== area) return false;
         if (c.pc == null) return false; // precisa de CPC contínuo para ranquear
-        if (searchOn && searchTerm && !(c.sg || '').toUpperCase().includes(searchTerm)) return false;
+        if (searchOn && searchTerm && !siglaCasa(c.sg, searchTerm, siglas)) return false;
         const r = UF_REGIAO[c.u] || '?';
         if (!regs.includes(r)) return false;
         if (!ufs.includes(c.u)) return false;
