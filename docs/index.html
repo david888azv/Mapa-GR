@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0F244A">
-<meta name="description" content="MAPA-GR — Análise da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de ~47.000 cursos em 9 grandes áreas.">
+<meta name="description" content="MAPA-GR — Análise da graduação brasileira a partir dos indicadores SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de 52.390 cursos em 9 grandes áreas.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
 <link rel="canonical" href="https://david888azv.github.io/Mapa-GR/">
@@ -16,7 +16,7 @@
 <meta property="og:site_name" content="MAPA-GR">
 <meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)">
-<meta property="og:description" content="Sistema interativo e gratuito para explorar os indicadores da graduação brasileira (CPC, ENADE, IDD, IGC): ~47.000 cursos, 9 grandes áreas, dados públicos do INEP/SINAES.">
+<meta property="og:description" content="Sistema interativo e gratuito para explorar os indicadores da graduação brasileira (CPC, ENADE, IDD, IGC): 52.390 cursos, 9 grandes áreas, dados públicos do INEP/SINAES.">
 <meta property="og:url" content="https://david888azv.github.io/Mapa-GR/">
 <!-- Marca DA ciência (daciencia.org): peça oficial do projeto, 1200x630 — o formato que
      Facebook/LinkedIn/WhatsApp esperam. Antes apontava para icons/icon-512.png, um ícone
@@ -30,7 +30,7 @@
 <!-- Twitter / X -->
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)">
-<meta name="twitter:description" content="Indicadores da graduação brasileira (CPC, ENADE, IDD, IGC) de ~47.000 cursos, em 9 grandes áreas. Dados públicos do INEP/SINAES.">
+<meta name="twitter:description" content="Indicadores da graduação brasileira (CPC, ENADE, IDD, IGC) de 52.390 cursos, em 9 grandes áreas. Dados públicos do INEP/SINAES.">
 <meta name="twitter:image" content="https://david888azv.github.io/Mapa-GR/og-da-ciencia.png">
 <meta name="twitter:image:alt" content="DA ciência — Ciência com dados. Educação com evidência.">
 <link rel="manifest" href="manifest.json">
@@ -242,7 +242,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/index.html" hreflang="en" lang="en">EN</a></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.9.1</div>
+        <div id="headerVersion">v2.10.0</div>
     </div>
 </div>
 
@@ -300,6 +300,7 @@ tr:hover { background: #EEF2F7; }
             <label><input type="checkbox" class="cat-chk" value="Pública Municipal" checked> Pública Municipal</label>
             <label><input type="checkbox" class="cat-chk" value="Privada sem fins lucrativos" checked> Priv. s/ fins</label>
             <label><input type="checkbox" class="cat-chk" value="Privada com fins lucrativos" checked> Priv. c/ fins</label>
+            <label><input type="checkbox" class="cat-chk" value="Comunitária/Confessional" checked> Comunit./Confes.</label>
             <label><input type="checkbox" class="cat-chk" value="Especial" checked> Especial</label>
         </div>
 
@@ -369,13 +370,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.9.1 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.10.0 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.9.1';
+const VERSION = '2.10.0';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -411,9 +412,9 @@ let _charts = {};
 let _sortCol = null;
 let _sortDir = 1;
 
-// === REFERÊNCIA (IES pública escolhida no seletor pós-consentimento) ===
-// Desde a v2.5 são selecionáveis todas as instituições PÚBLICAS — federais,
-// estaduais e municipais (privadas em release futuro). A escolhida é destacada
+// === REFERÊNCIA (IES escolhida no seletor pós-consentimento) ===
+// Da v2.5 à v2.9 eram selecionáveis só as públicas; desde a v2.10, todas as
+// 2.461 IES da base, inclusive privadas e comunitárias. A escolhida é destacada
 // (★, magenta) em toda a análise, como era fixo para a UnB. Default UnB até a
 // escolha; deep-link via ?ies=SIGLA ou ?ies=<código INEP>.
 //
@@ -423,7 +424,7 @@ let _sortDir = 1;
 let REF_CI = 2;       // código INEP da UnB
 let REF_SIGLA = 'UNB';
 let REF_NOME = 'Universidade de Brasília';
-let IES_PUB = null;   // índice das IES públicas (dados/ies_publicas.json)
+let IES_PUB = null;   // índice de TODAS as IES (dados/ies.json; até a v2.9, só as públicas)
 function refUpper() { return (REF_SIGLA || '').toUpperCase(); }
 // Curso pertence à instituição de referência? Compara por código INEP; cai na
 // sigla apenas se o registro não trouxer `ci`.
@@ -434,6 +435,14 @@ function isRefCurso(c) {
 }
 // Para agregados cuja chave é a própria sigla (Top IES).
 function isRefSigla(sg) { return (sg || '').toUpperCase() === refUpper(); }
+// Chave de IES nos agregados: o código INEP. Até a v2.9 era a sigla, e 194
+// siglas pertencem a mais de uma IES (FAP 15, FAMA 13, FATEC 10) e 4.872 cursos
+// não têm sigla — todos viravam uma "IES" só.
+// Texto digitado pelo usuário, antes de ir para o innerHTML.
+const escHtml = t => String(t).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[ch]);
+const iesKey = c => c.ci != null ? 'ci' + c.ci : 'sg' + (c.sg || '');
+// Rótulo da IES nos gráficos: sigla; sem sigla, o começo do nome.
+const iesRotulo = c => c.sg || (c.ie ? capNome(c.ie).slice(0, 22) : '—');
 
 function setStatus(msg) { document.getElementById('statusLeft').textContent = msg; }
 function toast(msg) {
@@ -671,11 +680,11 @@ async function analisar() {
     const f = getFilters();
     const global = ehBuscaGlobal(f);
     let cursos;
-    if (global) {
-        const seq = ++_searchSeq;
+    const seq = ++_searchSeq;             // toda análise conta: uma busca global lenta
+    if (global) {                         // não pode sobrescrever um filtro mais novo
         setStatus('Buscando em todas as áreas…');
         cursos = await cursosFiltrados(f);
-        if (seq !== _searchSeq) return;   // uma busca mais nova começou; aborta esta
+        if (seq !== _searchSeq) return;   // uma análise mais nova começou; aborta esta
     } else {
         cursos = filterCursos(f);
     }
@@ -694,7 +703,7 @@ async function analisar() {
     const fs = {};
     cursos.forEach(c => { if (c.pf != null) fs[c.pf] = (fs[c.pf]||0)+1; });
     const ufs = new Set(cursos.map(c => c.u));
-    const ies = new Set(cursos.map(c => c.sg));
+    const ies = new Set(cursos.map(iesKey));
 
     // Check partial data
     const partialCount = cursos.filter(c => c._partial).length;
@@ -706,7 +715,7 @@ async function analisar() {
             <div class="stat-box"><div class="value">${cursos.length}</div><div class="label">Cursos filtrados</div></div>
             <div class="stat-box"><div class="value">${ies.size}</div><div class="label">IES</div></div>
             <div class="stat-box"><div class="value">${ufs.size}</div><div class="label">UFs</div></div>
-            <div class="stat-box"><div class="value">${avg.toFixed(2)}</div><div class="label">${metricaLabel} (média)</div></div>
+            <div class="stat-box"><div class="value">${vals.length ? avg.toFixed(2) : '—'}</div><div class="label">${metricaLabel} (média${vals.length && vals.length < cursos.length ? ', n=' + vals.length : ''})</div></div>
             <div class="stat-box" style="border-left-color:#C8E6C9;"><div class="value">${fs[5]||0}</div><div class="label">Faixa 5</div></div>
             <div class="stat-box" style="border-left-color:#BBDEFB;"><div class="value">${fs[4]||0}</div><div class="label">Faixa 4</div></div>
             <div class="stat-box" style="border-left-color:#FFF9C4;"><div class="value">${fs[3]||0}</div><div class="label">Faixa 3</div></div>
@@ -714,7 +723,7 @@ async function analisar() {
             <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Faixa 1</div></div>
         </div></div>`;
 
-    if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).</p></div>`;
+    if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${escHtml(f.searchTerm)}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).</p></div>`;
 
     const n2018 = cursos.filter(c => c._partial && c.y === 2018).length;
     const n2025 = cursos.filter(c => c._partial && c.y === 2025).length;
@@ -742,7 +751,8 @@ async function analisar() {
     }
 
     // Ranking table
-    const sorted = [...cursos].sort((a,b) => (b[metrica]||-999) - (a[metrica]||-999));
+    const _v = c => c[metrica] != null ? c[metrica] : -Infinity;   // 0 é nota, não ausência
+    const sorted = [...cursos].sort((a,b) => _v(b) - _v(a));
     const showLimit = Math.min(sorted.length, 500);
     html += `<div class="card"><h2>Ranking (${cursos.length}, mostrando top ${showLimit}) — por ${metricaLabel}</h2>
         <p style="font-size:11px;color:#7F8C8D;margin-bottom:6px;">Clique no cabeçalho para reordenar.</p>
@@ -796,7 +806,7 @@ async function analisar() {
         renderCharts(cursos, f);
         bindSortable();
     }, 30);
-    setStatus(`${cursos.length} cursos mostrados em ${CURRENT.label}`);
+    setStatus(`${cursos.length} cursos mostrados em ${global ? 'todas as áreas (busca)' : CURRENT.label}`);
 }
 
 function bindSortable() {
@@ -845,12 +855,13 @@ function renderCharts(cursos, f) {
     const iesMap = {};
     cursos.forEach(c => {
         if (c[metrica] == null) return;
-        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set(), is_unb: isRefSigla(c.sg) };
-        iesMap[c.sg].vals.push(c[metrica]);
-        iesMap[c.sg].ufs.add(c.u);
+        const k = iesKey(c);
+        if (!iesMap[k]) iesMap[k] = { sg: iesRotulo(c), vals: [], ufs: new Set(), is_unb: isRefCurso(c) };
+        iesMap[k].vals.push(c[metrica]);
+        iesMap[k].ufs.add(c.u);
     });
-    const iesList = Object.entries(iesMap).map(([sg, info]) => ({
-        sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
+    const iesList = Object.values(iesMap).map(info => ({
+        sg: info.sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
     })).filter(p => p.n >= 1).sort((a,b) => b.avg - a.avg).slice(0, 15);
 
     _charts.ies = new Chart(document.getElementById('chartIES'), {
@@ -917,12 +928,13 @@ function buildReport(cursos, f) {
     const lines = [];
     const p = (s) => lines.push(s);
     p('═══════════════════════════════════════════════════════════');
-    p(`  MAPA-GR v${VERSION} — ${CURRENT.icon} ${CURRENT.label}`);
+    const _glob = ehBuscaGlobal(f);
+    p(`  MAPA-GR v${VERSION} — ${_glob ? '🔎 Busca global (todas as áreas)' : CURRENT.icon + ' ' + CURRENT.label}`);
     p(`  ${new Date().toLocaleString('pt-BR')}`);
     p('═══════════════════════════════════════════════════════════');
     p('');
     p(`Filtros aplicados:`);
-    p(`  Aba (grande área): ${CURRENT.label}`);
+    p(`  Aba (grande área): ${_glob ? 'todas (busca global; a aba aberta era ' + CURRENT.label + ')' : CURRENT.label}`);
     p(`  Áreas: ${f.areas.length}/${CURRENT.areas.length} selecionadas`);
     if (f.areas.length && f.areas.length < CURRENT.areas.length) {
         f.areas.forEach(a => p(`    • ${a}`));
@@ -930,7 +942,7 @@ function buildReport(cursos, f) {
     p(`  Ciclos: ${f.ciclos.join(', ')}`);
     p(`  Graus: ${f.graus.join(', ')}`);
     p(`  Modalidades: ${f.modais.join(', ')}`);
-    p(`  Categorias: ${f.cats.length}/6 selecionadas`);
+    p(`  Categorias: ${f.cats.length}/${document.querySelectorAll('.cat-chk').length} selecionadas`);
     p(`  Faixas CPC/ENADE: ${f.pfs.join(', ')}`);
     p(`  Regiões: ${f.regs.join(', ')}`);
     const totalUfs = [...new Set(CURRENT.cursos.map(c => c.u).filter(u => u))].length;
@@ -942,7 +954,7 @@ function buildReport(cursos, f) {
     p('');
     p(`Resultados:`);
     p(`  Cursos filtrados: ${cursos.length}`);
-    p(`  IES distintas: ${new Set(cursos.map(c => c.sg)).size}`);
+    p(`  IES distintas: ${new Set(cursos.map(iesKey)).size}`);
     p(`  UFs cobertas: ${new Set(cursos.map(c => c.u)).size}`);
     const vals = cursos.map(c => c[f.metrica]).filter(v => v != null);
     if (vals.length) {
@@ -986,15 +998,16 @@ function buildReport(cursos, f) {
     const iesMap = {};
     cursos.forEach(c => {
         if (c[f.metrica] == null) return;
-        if (!iesMap[c.sg]) iesMap[c.sg] = { vals: [], ufs: new Set() };
-        iesMap[c.sg].vals.push(c[f.metrica]);
-        iesMap[c.sg].ufs.add(c.u);
+        const k = iesKey(c);
+        if (!iesMap[k]) iesMap[k] = { sg: iesRotulo(c), ref: isRefCurso(c), vals: [], ufs: new Set() };
+        iesMap[k].vals.push(c[f.metrica]);
+        iesMap[k].ufs.add(c.u);
     });
-    const iesArr = Object.entries(iesMap).map(([sg,info]) => ({
-        sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
+    const iesArr = Object.values(iesMap).map(info => ({
+        sg: info.sg, ref: info.ref, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
     })).sort((a,b) => b.avg - a.avg);
     iesArr.slice(0, 10).forEach((p2, i) => {
-        const mark = isRefSigla(p2.sg) ? '★ ' : '  ';
+        const mark = p2.ref ? '★ ' : '  ';
         p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(14)} | média=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
     });
     p('');
@@ -1025,6 +1038,7 @@ async function exportReport() {
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast(`Relatório salvo: ${filename}`);
 }
 
@@ -1046,8 +1060,7 @@ async function exportCSV() {
         c.ci != null ? c.ci : '', c.cc != null ? c.cc : '',
         c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
         `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
-        c.pf||'', c.pc||'', c.e||'', c.ip||'', c.ms||'', c.dr||'', c.rg||'', c.nf||'',
-        c.ni||'', c.np||'', c.pp != null ? c.pp : ''
+        ...['pf','pc','e','ip','ms','dr','rg','nf','ni','np','pp'].map(k => c[k] != null ? c[k] : '')
     ].join(';'));
     let csv = '# MAPA-GR v' + VERSION + ' — ' + new Date().toLocaleString('pt-BR') + '\n';
     csv += '# Prof. David L. Azevedo | Fonte: INEP Dados Abertos\n';
@@ -1058,6 +1071,7 @@ async function exportCSV() {
     a.href = URL.createObjectURL(blob);
     a.download = `mapa-gr-${CURRENT.grande_area}-` + new Date().toISOString().replace(/[-:T]/g,'').slice(0,14) + '.csv';
     a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     toast(`${cursos.length} cursos exportados`);
 }
 
@@ -1136,7 +1150,7 @@ function acceptLicense() {
 }
 
 // ── Seletor de instituição de referência (pós-consentimento) ──────────
-// Instituições públicas (federais, estaduais e municipais) nesta versão. A
+// Todas as instituições (públicas e privadas) desde a v2.10. A
 // escolhida vira a referência destacada (★) na comparação. Deep-link
 // ?ies=SIGLA (ou ?ies=<código INEP>, necessário nas siglas repetidas) entra direto.
 function capNome(s) {
@@ -1150,7 +1164,11 @@ function capNome(s) {
 const ESFERA_TAG = {
     'Pública Federal':   {t: 'federal',   c: '#1565C0'},
     'Pública Estadual':  {t: 'estadual',  c: '#2E7D32'},
-    'Pública Municipal': {t: 'municipal', c: '#8D6E63'}
+    'Pública Municipal': {t: 'municipal', c: '#8D6E63'},
+    'Privada sem fins lucrativos': {t: 'privada s/ fins', c: '#6A1B9A'},
+    'Privada com fins lucrativos': {t: 'privada c/ fins', c: '#AD1457'},
+    'Comunitária/Confessional':    {t: 'comunitária', c: '#00838F'},
+    'Especial':                    {t: 'especial', c: '#5D4037'}
 };
 // Aplica a IES escolhida como referência da análise.
 function aplicarRef(hit) {
@@ -1160,7 +1178,7 @@ function aplicarRef(hit) {
 }
 async function startRefPicker() {
     if (!IES_PUB) {
-        try { IES_PUB = await fetch('dados/ies_publicas.json', {cache:'force-cache'}).then(r=>r.json()); }
+        try { IES_PUB = await fetch('dados/ies.json').then(r=>r.json()); }
         catch(_) { IES_PUB = { ies: [] }; }
     }
     const qs = new URLSearchParams(location.search);
@@ -1168,8 +1186,10 @@ async function startRefPicker() {
     if (iesQS) {
         // aceita o código INEP (não ambíguo) ou a sigla (1ª ocorrência)
         const lista = IES_PUB.ies || [];
+        // sigla repetida (170 entre as 2.461 IES): fica a de mais cursos; o
+        // código INEP é o único deep-link sem ambiguidade
         const hit = (/^\d+$/.test(iesQS) ? lista.find(i => i.ci === Number(iesQS)) : null)
-                 || lista.find(i => i.sigla === iesQS);
+                 || lista.filter(i => i.sigla === iesQS).sort((a, b) => b.n_cursos - a.n_cursos)[0];
         if (hit) { aplicarRef(hit); updateRefLabel(); loadMetadata(); return; }
     }
     showIesPicker();
@@ -1183,10 +1203,10 @@ function showIesPicker() {
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:22px 22px 18px;max-width:640px;width:94%;box-shadow:0 8px 32px rgba(0,0,0,.4);max-height:92vh;display:flex;flex-direction:column;">
         <h2 style="color:#0F244A;margin:0 0 4px;font-size:20px;font-weight:800;text-align:center;">Escolha a instituição de referência</h2>
         <p style="color:#555;font-size:12.5px;line-height:1.5;text-align:center;margin:0 0 12px;">
-            Selecione <strong>uma instituição pública</strong> — federal, estadual ou municipal. Ela será usada como
+            Selecione <strong>uma instituição</strong>, pública ou privada. Ela será usada como
             referência — <span style="color:#E91E63;font-weight:700;">destacada em vermelho</span> — na comparação com
-            os demais cursos de cada área. <span style="color:#7F8C8D;">(Instituições privadas em versão futura.)</span></p>
-        <input id="iesSearch" type="text" placeholder="Buscar por sigla, nome, UF ou esfera (ex.: UEMA, UFMG, estadual, MA)…"
+            os demais cursos de cada área.</p>
+        <input id="iesSearch" type="text" placeholder="Buscar por sigla, nome, UF ou categoria (ex.: UFMG, UNIEURO, privada, DF)…"
             style="width:100%;padding:9px 12px;border:1.5px solid #C8CDD4;border-radius:8px;font-size:14px;margin-bottom:10px;" oninput="filterIes(this.value)">
         <div id="iesList" style="overflow-y:auto;flex:1;min-height:180px;border:1px solid #E0E4E8;border-radius:8px;"></div>
         <div style="text-align:center;margin-top:14px;">
@@ -1206,7 +1226,8 @@ function filterIes(q) {
     // busca por sigla, nome, UF e esfera ("estadual", "federal", "municipal")
     const arr = (IES_PUB.ies || []).filter(i =>
         !nq || norm(i.sigla).includes(nq) || norm(i.nome).includes(nq)
-            || norm(i.uf).includes(nq) || norm(i.ct).includes(nq));
+            || norm(i.uf).includes(nq) || norm(i.ct).includes(nq)
+            || norm((ESFERA_TAG[i.ct] || {}).t).includes(nq));
     list.innerHTML = arr.slice(0, 400).map(i => {
         const tag = ESFERA_TAG[i.ct] || {t: '', c: '#7F8C8D'};
         // 7 IES n\u00e3o t\u00eam sigla no INEP \u2014 nessas, o nome \u00e9 o pr\u00f3prio r\u00f3tulo
@@ -1218,7 +1239,8 @@ function filterIes(q) {
             <span style="color:#7F8C8D;font-size:11px;">${capNome(i.nome)}</span></span>
             <span style="color:#7F8C8D;font-size:11px;white-space:nowrap;">${i.n_cursos} curso${i.n_cursos!==1?'s':''}</span>
         </div>`;
-    }).join('') || '<div style="padding:16px;color:#7F8C8D;font-size:13px;text-align:center;">Nenhuma institui\u00e7\u00e3o p\u00fablica encontrada.</div>';
+    }).join('') + (arr.length > 400 ? `<div style="padding:10px;color:#7F8C8D;font-size:12px;text-align:center;">Mostrando 400 de ${arr.length.toLocaleString('pt-BR')}. Digite para refinar.</div>` : '')
+      || '<div style="padding:16px;color:#7F8C8D;font-size:13px;text-align:center;">Nenhuma institui\u00e7\u00e3o encontrada.</div>';
     if (_iesSel != null) { const el = list.querySelector(`.ies-opt[data-ci="${_iesSel}"]`); if (el) { el.style.background='#FCE4EC'; } }
 }
 function pickIes(ci) {
