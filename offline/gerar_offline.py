@@ -156,9 +156,9 @@ def main():
     # Páginas que usam metadata + todas as grandes áreas
     area_paths = ['dados/metadata.json'] + [f'dados/{s}.json' for s in AREA_SLUGS]
     pages = {
-        # o seletor de referência do index.html busca o índice de IES públicas —
+        # o seletor de referência do index.html busca o índice de IES (todas, v2.10) —
         # sem embuti-lo, o fetch cai no file:// e a lista abre vazia (bug v2.4)
-        'index.html':        area_paths + ['dados/ies_publicas.json'],
+        'index.html':        area_paths + ['dados/ies.json'],
         'estatisticas.html': area_paths,
         'comparador.html':   area_paths,
         'censo.html':        ['dados/censo_superior_consolidado.json'],

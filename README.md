@@ -28,12 +28,13 @@ Parte do projeto de divulgação científica **DA ciência** — https://dacienc
 - **Censo da Educação Superior**: matrículas, ingressantes e concluintes, 2017–2024
 - **Indicadores**: CPC, ENADE, IDD, IGC, % Doutores, Infraestrutura, Organização
   Didático-Pedagógica, Regime de Trabalho
-- **Instituição de referência** (v2.5): ao abrir, escolhe-se uma entre **269 instituições
-  públicas** — 114 federais, 120 estaduais e 35 municipais — que passa a ser destacada (★)
-  na comparação. Busca por sigla, nome, UF ou esfera; link direto por sigla
-  (`?ies=UFMG`) ou pelo código da IES do INEP (`?ies=568`). O seletor define só o
-  destaque: os cursos de **todas** as instituições, inclusive privadas, sempre entram na
-  análise. Privadas selecionáveis em versão futura.
+- **Instituição de referência** (v2.10): ao abrir, escolhe-se uma entre as **2.461
+  instituições** da base — 261 públicas, 2.072 privadas, 96 comunitárias ou confessionais e
+  32 especiais —, que passa a ser destacada (★) na comparação. Busca por sigla, nome, UF ou
+  categoria; link direto por sigla (`?ies=UFMG`, `?ies=UNIEURO`) ou pelo código da IES do
+  INEP (`?ies=1113`), obrigatório nas 170 siglas usadas por mais de uma instituição. O
+  seletor define só o destaque: os cursos de **todas** as instituições sempre entram na
+  análise. Até a v2.9 só as públicas eram selecionáveis.
 - **Códigos e-MEC** (v2.6): cada linha do ranking traz os códigos e-MEC da **IES** e do
   **curso** (`2 / 1188880`); no CSV saem separados em `cod_ies_emec` e `cod_curso_emec`.
   São os códigos vigentes na inscrição do ENADE daquele ciclo, não os do cadastro atual
@@ -77,7 +78,7 @@ mapa-gr/
 ├── help-doc.html            # documentação
 ├── gerar_mapa_gr.py         # script de extração dos XLSX do INEP
 ├── build/
-│   └── gerar_ies_publicas.py  # índice das 269 IES públicas (seletor de referência)
+│   └── gerar_ies.py         # índice das 2.461 IES, públicas e privadas (seletor de referência)
 ├── docs/                    # PWA servida pelo GitHub Pages
 │   ├── index.html
 │   ├── manifest.json
@@ -85,7 +86,7 @@ mapa-gr/
 │   ├── chart.umd.min.js
 │   ├── dados_inep.json
 │   ├── help-doc.html
-│   ├── dados/               # área-*.json + ies_publicas.json
+│   ├── dados/               # área-*.json + ies.json
 │   └── icons/
 ├── offline/                 # distribuição local, 5 páginas autocontidas
 │   └── gerar_offline.py     # regera a versão offline a partir de docs/
@@ -94,8 +95,8 @@ mapa-gr/
 
 A pasta `dados_inep/` local (arquivos XLSX brutos do INEP, ~15 MB) não é commitada — ver `.gitignore`. Para regenerar o dataset, baixe os arquivos dos Indicadores de Qualidade do portal INEP e rode `python3 gerar_mapa_gr.py`.
 
-Para reconstruir o índice do seletor de referência: `python3 build/gerar_ies_publicas.py`
-(lê os `docs/dados/*.json` de curso e grava `docs/dados/ies_publicas.json`). Depois de
+Para reconstruir o índice do seletor de referência: `python3 build/gerar_ies.py`
+(lê os `docs/dados/*.json` de curso e grava `docs/dados/ies.json`). Depois de
 alterar `docs/`, regere a versão local com `cd offline && python3 gerar_offline.py`.
 
 ## Fontes de dados

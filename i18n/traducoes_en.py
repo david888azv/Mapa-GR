@@ -29,9 +29,9 @@ INDEX = [
      "<title>MAPA-GR — Analysis of Brazilian Undergraduate Education (INEP/SINAES)</title>"),
 
     ('content="MAPA-GR — Análise da graduação brasileira a partir dos indicadores '
-     'SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de ~47.000 cursos em 9 grandes áreas.">',
+     'SINAES/INEP (CPC, ENADE, IDD, IGC). Dados de 52.390 cursos em 9 grandes áreas.">',
      'content="MAPA-GR — Analysis of Brazilian undergraduate education through the official '
-     'SINAES/INEP indicators (CPC, ENADE, IDD, IGC). Data on ~47,000 programmes across 9 '
+     'SINAES/INEP indicators (CPC, ENADE, IDD, IGC). Data on 52,390 programmes across 9 '
      'broad fields.">'),
 
     ('<meta property="og:title" content="MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)">',
@@ -39,10 +39,10 @@ INDEX = [
      'Education (INEP/SINAES)">'),
 
     ('<meta property="og:description" content="Sistema interativo e gratuito para explorar os '
-     'indicadores da graduação brasileira (CPC, ENADE, IDD, IGC): ~47.000 cursos, 9 grandes '
+     'indicadores da graduação brasileira (CPC, ENADE, IDD, IGC): 52.390 cursos, 9 grandes '
      'áreas, dados públicos do INEP/SINAES.">',
      '<meta property="og:description" content="A free, interactive system for exploring the '
-     'indicators of Brazilian undergraduate education (CPC, ENADE, IDD, IGC): ~47,000 '
+     'indicators of Brazilian undergraduate education (CPC, ENADE, IDD, IGC): 52,390 '
      'programmes, 9 broad fields, public data from INEP/SINAES.">'),
 
     ('<meta name="twitter:title" content="MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)">',
@@ -50,9 +50,9 @@ INDEX = [
      'Education (INEP/SINAES)">'),
 
     ('<meta name="twitter:description" content="Indicadores da graduação brasileira (CPC, '
-     'ENADE, IDD, IGC) de ~47.000 cursos, em 9 grandes áreas. Dados públicos do INEP/SINAES.">',
+     'ENADE, IDD, IGC) de 52.390 cursos, em 9 grandes áreas. Dados públicos do INEP/SINAES.">',
      '<meta name="twitter:description" content="Indicators of Brazilian undergraduate '
-     'education (CPC, ENADE, IDD, IGC) for ~47,000 programmes across 9 broad fields. Public '
+     'education (CPC, ENADE, IDD, IGC) for 52,390 programmes across 9 broad fields. Public '
      'data from INEP/SINAES.">'),
 
     ('<meta property="og:image:alt" content="DA ciência — Ciência com dados. Educação com evidência.">',
@@ -115,6 +115,8 @@ INDEX = [
      'value="Privada sem fins lucrativos" checked> Private non-profit</label>'),
     ('value="Privada com fins lucrativos" checked> Priv. c/ fins</label>',
      'value="Privada com fins lucrativos" checked> Private for-profit</label>'),
+    ('value="Comunitária/Confessional" checked> Comunit./Confes.</label>',
+     'value="Comunitária/Confessional" checked> Community/denominational</label>'),
     ('value="Especial" checked> Especial</label>',
      'value="Especial" checked> Special</label>'),
 
@@ -236,8 +238,18 @@ INDEX = [
     (">Concordo e desejo continuar</button>", ">I agree and wish to continue</button>"),
 
     # --------------------------------------------- seletor de instituicao
-    ('placeholder="Buscar por sigla, nome, UF ou esfera (ex.: UEMA, UFMG, estadual, MA)…"',
-     'placeholder="Search by acronym, name, state or sphere (e.g.: UEMA, UFMG, estadual, MA)…"'),
+    ('placeholder="Buscar por sigla, nome, UF ou categoria (ex.: UFMG, UNIEURO, privada, DF)…"',
+     'placeholder="Search by acronym, name, state or category (e.g.: UFMG, UNIEURO, privada, DF)…"'),
+    ('>Escolha a instituição de referência</h2>', '>Choose the reference institution</h2>'),
+    ('''            Selecione <strong>uma instituição</strong>, pública ou privada. Ela será usada como
+            referência — <span style="color:#E91E63;font-weight:700;">destacada em vermelho</span> — na comparação com
+            os demais cursos de cada área.</p>''',
+     '''            Select <strong>one institution</strong>, public or private. It will be used as the
+            reference — <span style="color:#E91E63;font-weight:700;">highlighted in red</span> — when compared with
+            the other programmes in each field.</p>'''),
+    (">Mostrando 400 de ${arr.length.toLocaleString('pt-BR')}. Digite para refinar.</div>",
+     ">Showing 400 of ${arr.length.toLocaleString('en-GB')}. Type to narrow down.</div>"),
+    ("Nenhuma institui\\u00e7\\u00e3o encontrada.", "No institution found."),
 
     # --------------------------------------------- estado e carregamento
     ('<p id="loadingMsg">Carregando metadata...</p>', '<p id="loadingMsg">Loading metadata...</p>'),
@@ -250,9 +262,9 @@ INDEX = [
     ("setStatus('Filtro vazio')", "setStatus('No results')"),
     ("<h2>Nenhum curso encontrado</h2><p>Ajuste os filtros na barra lateral.</p>",
      "<h2>No programme found</h2><p>Adjust the filters in the sidebar.</p>"),
-    ("'🔎 Busca global (todas as áreas)'", "'🔎 Global search (all fields)'"),
-    ('🔎 <b>Busca global</b> por "<b>${f.searchTerm}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).',
-     '🔎 <b>Global search</b> for "<b>${f.searchTerm}</b>" across the 9 broad fields. <b>Degree, Mode, Category, Band and Region</b> always apply; <b>Field, Cycle and State</b> apply when you untick some option (with everything ticked, the search covers every field, cycle and state).'),
+    ("'🔎 Busca global (todas as áreas)'", "'🔎 Global search (all fields)'", 2),
+    ('🔎 <b>Busca global</b> por "<b>${escHtml(f.searchTerm)}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).',
+     '🔎 <b>Global search</b> for "<b>${escHtml(f.searchTerm)}</b>" across the 9 broad fields. <b>Degree, Mode, Category, Band and Region</b> always apply; <b>Field, Cycle and State</b> apply when you untick some option (with everything ticked, the search covers every field, cycle and state).'),
     ("${partialCount} sem CPC composto", "${partialCount} without a composite CPC"),
     ("<b>Aviso metodológico:</b> ${n2018} curso(s) desta análise vêm do ciclo ENADE 2018, para o qual "
      "o INEP não publicou o CPC composto completo. Para esses cursos, o rank usa a <b>faixa ENADE</b> "
@@ -276,13 +288,14 @@ INDEX = [
     ('title="Enade 2025: % de concluintes igual ou acima do padrão de proficiência"',
      'title="Enade 2025: % of graduates at or above the proficiency standard"'),
     ("+'% ≥ padrão (modelo 2025)'", "+'% ≥ standard (2025 model)'"),
-    ("setStatus(`${cursos.length} cursos mostrados em ${CURRENT.label}`)",
-     "setStatus(`${cursos.length} programmes shown in ${CURRENT.label}`)"),
+    ("setStatus(`${cursos.length} cursos mostrados em ${global ? 'todas as áreas (busca)' : CURRENT.label}`)",
+     "setStatus(`${cursos.length} programmes shown in ${global ? 'all fields (search)' : CURRENT.label}`)"),
 
     # --------------------------------------------- caixas de numeros e tabela
     ('<div class="label">Cursos filtrados</div>', '<div class="label">Programmes</div>'),
     ('<div class="label">UFs</div>', '<div class="label">States</div>'),
-    ('<div class="label">${metricaLabel} (média)</div>', '<div class="label">${metricaLabel} (mean)</div>'),
+    ("<div class=\"label\">${metricaLabel} (média${vals.length && vals.length < cursos.length ? ', n=' + vals.length : ''})</div>",
+     "<div class=\"label\">${metricaLabel} (mean${vals.length && vals.length < cursos.length ? ', n=' + vals.length : ''})</div>"),
     ('<div class="label">Faixa 5</div>', '<div class="label">Band 5</div>'),
     ('<div class="label">Faixa 4</div>', '<div class="label">Band 4</div>'),
     ('<div class="label">Faixa 3</div>', '<div class="label">Band 3</div>'),
@@ -1292,17 +1305,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.9.1 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.9.1 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.10.0 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.10.0 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.9.1</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.9.1</h1>"),
-    ("<div>v2.9.1 — Setembro 2026</div>", "<div>v2.9.1 — September 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.10.0</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.10.0</h1>"),
+    ("<div>v2.10.0 — Novembro 2026</div>", "<div>v2.10.0 — November 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
