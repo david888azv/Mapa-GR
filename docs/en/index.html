@@ -250,7 +250,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><a href="../index.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.10.1</div>
+        <div id="headerVersion">v2.10.2</div>
     </div>
 </div>
 
@@ -389,13 +389,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.10.1 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.10.2 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.10.1';
+const VERSION = '2.10.2';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -549,6 +549,10 @@ async function switchTab(slug) {
 }
 
 function prefetchOthers() {
+    // Com economia de dados ligada ou rede 2G/3G, não baixa as outras oito áreas
+    // (~18 MB) de antemão: elas vêm quando a aba é aberta ou numa busca global.
+    const cx = navigator.connection;
+    if (cx && (cx.saveData || /(^|-)(2g|3g)$/.test(cx.effectiveType || ''))) return;
     const order = ['exatas','biologicas','engenharias','saude','agrarias','sociais','humanas','letras','tecnologos'];
     order.forEach((slug, i) => {
         if (CACHE[slug]) return;
@@ -718,6 +722,26 @@ async function cursosFiltrados(f) {
     await ensureAllAreas();
     return filterCursos(f, allCursos());
 }
+// Média por IES: primeiro a média de cada curso (código e-MEC) nos seus ciclos,
+// depois a média dos cursos. Até a v2.10.1 um curso avaliado em dois ciclos
+// pesava em dobro, e "cursos" contava avaliações, não cursos.
+function agregaIES(cursos, metrica) {
+    const porCurso = {};
+    cursos.forEach(c => {
+        if (c[metrica] == null) return;
+        const kc = c.cc != null ? 'cc' + c.cc : iesKey(c) + '|' + c.ar + '|' + c.mu + '|' + c.m;
+        if (!porCurso[kc]) porCurso[kc] = { c, vals: [] };
+        porCurso[kc].vals.push(c[metrica]);
+    });
+    const iesMap = {};
+    Object.values(porCurso).forEach(({ c, vals }) => {
+        const k = iesKey(c);
+        if (!iesMap[k]) iesMap[k] = { sg: iesRotulo(c), ref: isRefCurso(c), vals: [], ufs: new Set() };
+        iesMap[k].vals.push(mean(vals));
+        iesMap[k].ufs.add(c.u);
+    });
+    return Object.values(iesMap).map(i => ({ sg: i.sg, ref: i.ref, is_unb: i.ref, avg: mean(i.vals), n: i.vals.length, ufs: [...i.ufs] }));
+}
 // Cursos que o filtro de Faixa tira do recorte (todos os outros filtros valendo).
 // Com as faixas 1, 2 e "sem conceito" desmarcadas (o padrão), um em cada cinco
 // cursos some — e com ele os piores da instituição de referência — sem aviso.
@@ -726,6 +750,16 @@ function cursosOcultosPorFaixa(f, cursos) {
     const todos = filterCursos(f, pool, true);
     const vistos = new Set(cursos);
     return todos.filter(c => !vistos.has(c));
+}
+function notaOrigemFaixa(cursos) {
+    const n = { cpc: 0, e18: 0, e25: 0 };
+    cursos.forEach(c => { if (c.pf != null) n[origemFaixa(c)]++; });
+    if ((n.cpc > 0) + (n.e18 > 0) + (n.e25 > 0) < 2) return '';
+    const partes = [];
+    if (n.cpc) partes.push(`${n.cpc} with a CPC band`);
+    if (n.e18) partes.push(`${n.e18} with a 2018 ENADE band`);
+    if (n.e25) partes.push(`${n.e25} with a 2025 Enade score`);
+    return `<p style="font-size:11px;color:#455A64;margin:6px 0 0;">The band counts add up different scales: ${partes.join(', ')}. The "Distribution by band" chart shows each one separately.</p>`;
 }
 function rotuloFaixa(c) { return c.pf != null ? 'Band ' + c.pf : 'no score'; }
 function todasFaixas() {
@@ -781,7 +815,7 @@ async function analisar() {
             <div class="stat-box" style="border-left-color:#FFF9C4;"><div class="value">${fs[3]||0}</div><div class="label">Band 3</div></div>
             <div class="stat-box" style="border-left-color:#FFE0B2;"><div class="value">${fs[2]||0}</div><div class="label">Band 2</div></div>
             <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Band 1</div></div>
-        </div></div>`;
+        </div>${notaOrigemFaixa(cursos)}</div>`;
 
     const ocultos = cursosOcultosPorFaixa(f, cursos);
     if (ocultos.length) {
@@ -832,28 +866,9 @@ async function analisar() {
             <th title="e-MEC code of the institution and of the programme, as published by INEP">e-MEC<br>inst. / progr.</th>
             <th>Band</th><th>CPC cont.</th><th>ENADE</th><th>IDD</th><th>%Dr</th><th>Infra</th>
         </tr></thead><tbody>`;
-    sorted.slice(0, showLimit).forEach(c => {
-        const rowClass = isRefCurso(c) ? 'row-unb' : '';
-        const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
-        const grau = normGrau(c);
-        const modal = normModal(c.m);
-        html += `<tr class="${rowClass}">
-            <td><b>${c.sg || '—'}</b></td>
-            <td>${c.u || '—'}</td>
-            <td>${c.y}</td>
-            <td>${grau[0]}</td>
-            <td>${modal[0]}</td>
-            <td style="text-align:left;font-size:10px;">${cursoComArea(c,true)}<br><span style="color:#999;">${c.mu || '—'}</span></td>
-            <td style="font-size:10px;white-space:nowrap;" title="e-MEC codes in force at ENADE ${c.y} registration">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
-            ${pfCell}
-            <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
-            <td${c.pp != null ? ' title="Enade 2025: % of graduates at or above the proficiency standard"' : ''}>${c.e != null ? c.e.toFixed(2) : (c.pp != null ? c.pp.toFixed(1) + '%' : '—')}</td>
-            <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
-            <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
-            <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
-        </tr>`;
-    });
+    html += sorted.slice(0, showLimit).map(linhaTabela).join('');
     html += `</tbody></table></div></div>`;
+    _tbl = { rows: sorted, limit: showLimit }; _sortCol = null; _sortDir = 1;
 
     // Charts
     html += `<div class="chart-row">
@@ -879,60 +894,100 @@ async function analisar() {
     setStatus(`${cursos.length} programmes shown in ${global ? 'all fields (search)' : CURRENT.label}`);
 }
 
+// Linha da tabela de ranking (a mesma na carga e na reordenação).
+function linhaTabela(c) {
+        const rowClass = isRefCurso(c) ? 'row-unb' : '';
+        const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
+        const grau = normGrau(c);
+        const modal = normModal(c.m);
+        return `<tr class="${rowClass}">
+            <td><b>${c.sg || '—'}</b></td>
+            <td>${c.u || '—'}</td>
+            <td>${c.y}</td>
+            <td>${grau[0]}</td>
+            <td>${modal[0]}</td>
+            <td style="text-align:left;font-size:10px;">${cursoComArea(c,true)}<br><span style="color:#999;">${c.mu || '—'}</span></td>
+            <td style="font-size:10px;white-space:nowrap;" title="e-MEC codes in force at ENADE ${c.y} registration">${c.ci != null ? c.ci : '—'}<span style="color:#B0B6BD;"> / </span>${c.cc != null ? c.cc : '—'}</td>
+            ${pfCell}
+            <td>${c.pc != null ? c.pc.toFixed(2) : '—'}</td>
+            <td${c.pp != null ? ' title="Enade 2025: % of graduates at or above the proficiency standard"' : ''}>${c.e != null ? c.e.toFixed(2) : (c.pp != null ? c.pp.toFixed(1) + '%' : '—')}</td>
+            <td>${c.ip != null ? c.ip.toFixed(2) : '—'}</td>
+            <td>${c.dr != null ? c.dr.toFixed(2) : '—'}</td>
+            <td>${c.nf != null ? c.nf.toFixed(2) : '—'}</td>
+        </tr>`;
+}
+
+// Ordenação pelo cabeçalho. Até a v2.10.1 reordenava só as 500 linhas exibidas,
+// comparava texto ("—" no meio dos números) e misturava, na coluna ENADE, a nota
+// contínua (0–5) com o % ≥ padrão do Enade 2025 (0–100). Agora reordena o
+// recorte inteiro e reexibe as 500 primeiras; sem valor vai sempre para o fim; na
+// coluna ENADE os cursos com nota contínua vêm antes dos de 2025, cada grupo na
+// sua escala.
+let _tbl = { rows: [], limit: 500 };
+const _COL_CHAVE = [
+    c => c.sg || null, c => c.u || null, c => c.y, c => normGrau(c), c => normModal(c.m),
+    c => _srch(nomeCurso(c)) + ' ' + _srch(c.mu), c => c.ci, c => c.pf,
+    c => c.pc, c => c.e != null ? [0, c.e] : (c.pp != null ? [1, c.pp] : null),
+    c => c.ip, c => c.dr, c => c.nf
+];
+function _cmpChave(a, b, dir) {
+    if (a == null || b == null) return (a == null) - (b == null);   // nulo no fim, nos dois sentidos
+    if (Array.isArray(a)) return (a[0] - b[0]) || (a[1] - b[1]) * dir; // escala antes do valor
+    if (typeof a === 'number') return (a - b) * dir;
+    return String(a).localeCompare(String(b), 'pt-BR') * dir;
+}
 function bindSortable() {
     document.querySelectorAll('#tabelaCursos th').forEach((th, colIdx) => {
+        th.style.cursor = 'pointer';
         th.addEventListener('click', () => {
-            const tbody = th.closest('table').querySelector('tbody');
-            const rows = [...tbody.querySelectorAll('tr')];
+            const chave = _COL_CHAVE[colIdx];
+            if (!chave) return;
             const dir = (_sortCol === colIdx) ? -_sortDir : -1;
             _sortCol = colIdx; _sortDir = dir;
-            rows.sort((a, b) => {
-                let va = a.cells[colIdx].textContent.trim();
-                let vb = b.cells[colIdx].textContent.trim();
-                const na = parseFloat(va); const nb = parseFloat(vb);
-                if (!isNaN(na) && !isNaN(nb)) return (na - nb) * dir;
-                return va.localeCompare(vb) * dir;
-            });
-            rows.forEach(r => tbody.appendChild(r));
+            const rows = _tbl.rows.map(c => [chave(c), c]);
+            rows.sort((x, y) => _cmpChave(x[0], y[0], dir));
+            _tbl.rows = rows.map(r => r[1]);
+            document.querySelector('#tabelaCursos tbody').innerHTML =
+                _tbl.rows.slice(0, _tbl.limit).map(linhaTabela).join('');
         });
     });
 }
-
 function destroyCharts() {
     Object.values(_charts).forEach(c => { try { c.destroy(); } catch(e){} });
     _charts = {};
 }
 
+// Origem da faixa: CPC (2017, 2021, 2022, 2023), faixa ENADE de 2018 (o INEP não
+// publicou CPC) ou Conceito Enade 2025 (modelo novo). São escalas diferentes e,
+// até a v2.10.1, o gráfico somava as três numa barra só.
+function origemFaixa(c) { return c.y === 2025 ? 'e25' : (c._partial ? 'e18' : 'cpc'); }
+const ORIGEM_FAIXA = {
+    cpc: { rot: 'CPC band', cor: null },
+    e18: { rot: 'ENADE band 2018 (no CPC)', cor: '#90A4AE' },
+    e25: { rot: 'Enade 2025 score (new model)', cor: '#7E57C2' }
+};
 function renderCharts(cursos, f) {
     destroyCharts();
 
     // 1. Faixas
     const faixas = [1,2,3,4,5];
-    const dataFaixa = faixas.map(fx => cursos.filter(c => c.pf === fx).length);
+    const dsFaixa = Object.entries(ORIGEM_FAIXA).map(([k, o]) => ({
+        label: o.rot,
+        data: faixas.map(fx => cursos.filter(c => c.pf === fx && origemFaixa(c) === k).length),
+        backgroundColor: o.cor || faixas.map(fx => CPC_COLORS[fx])
+    })).filter(d => d.data.some(v => v > 0));
     _charts.faixas = new Chart(document.getElementById('chartFaixas'), {
         type: 'bar',
-        data: {
-            labels: faixas.map(fx => `Band ${fx}`),
-            datasets: [{ data: dataFaixa, backgroundColor: faixas.map(fx => CPC_COLORS[fx]) }]
-        },
+        data: { labels: faixas.map(fx => `Band ${fx}`), datasets: dsFaixa },
         options: { responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, title: { display: true, text: 'No. of programmes' } } } }
+            plugins: { legend: { display: dsFaixa.length > 1, labels: { boxWidth: 12, font: { size: 10 } } } },
+            scales: { x: { stacked: true },
+                      y: { stacked: true, beginAtZero: true, title: { display: true, text: 'No. of programmes' } } } }
     });
 
     // 2. Top IES
     const metrica = f.metrica;
-    const iesMap = {};
-    cursos.forEach(c => {
-        if (c[metrica] == null) return;
-        const k = iesKey(c);
-        if (!iesMap[k]) iesMap[k] = { sg: iesRotulo(c), vals: [], ufs: new Set(), is_unb: isRefCurso(c) };
-        iesMap[k].vals.push(c[metrica]);
-        iesMap[k].ufs.add(c.u);
-    });
-    const iesList = Object.values(iesMap).map(info => ({
-        sg: info.sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
-    })).filter(p => p.n >= f.minIes).sort((a,b) => b.avg - a.avg).slice(0, 15);
+    const iesList = agregaIES(cursos, metrica).filter(p => p.n >= f.minIes).sort((a,b) => b.avg - a.avg).slice(0, 15);
 
     _charts.ies = new Chart(document.getElementById('chartIES'), {
         type: 'bar',
@@ -1071,17 +1126,7 @@ function buildReport(cursos, f) {
 
     // Top 10 IES por média
     p('Top 10 IES por ' + metricaLabel + ' (média' + (f.minIes > 1 ? ', IES com ≥ ' + f.minIes + ' cursos' : '') + '):');
-    const iesMap = {};
-    cursos.forEach(c => {
-        if (c[f.metrica] == null) return;
-        const k = iesKey(c);
-        if (!iesMap[k]) iesMap[k] = { sg: iesRotulo(c), ref: isRefCurso(c), vals: [], ufs: new Set() };
-        iesMap[k].vals.push(c[f.metrica]);
-        iesMap[k].ufs.add(c.u);
-    });
-    const iesArr = Object.values(iesMap).map(info => ({
-        sg: info.sg, ref: info.ref, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
-    })).filter(x => x.n >= f.minIes).sort((a,b) => b.avg - a.avg);
+    const iesArr = agregaIES(cursos, f.metrica).filter(x => x.n >= f.minIes).sort((a,b) => b.avg - a.avg);
     iesArr.slice(0, 10).forEach((p2, i) => {
         const mark = p2.ref ? '★ ' : '  ';
         p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(14)} | média=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
@@ -1247,6 +1292,17 @@ const ESFERA_TAG = {
     'Especial':                    {t: 'especial', c: '#5D4037'}
 };
 // Aplica a IES escolhida como referência da análise.
+// A referência escolhida fica guardada neste navegador: sem isto, quem abre o app
+// instalado (start_url sem ?ies) passava pelo seletor toda vez.
+const REF_KEY = 'mapa-gr-ref-ci-v1';
+function lembrarRef(ci) { try { localStorage.setItem(REF_KEY, String(ci)); } catch(e){} }
+function refLembrada() { try { const v = localStorage.getItem(REF_KEY); return v ? Number(v) : null; } catch(e){ return null; } }
+function urlComRef(hit) {
+    const homonimas = (IES_PUB.ies || []).filter(i => i.sigla && i.sigla === hit.sigla).length;
+    const u = new URL(location.href);
+    u.searchParams.set('ies', (hit.sigla && homonimas === 1) ? hit.sigla : String(hit.ci));
+    history.replaceState(null, '', u.toString());
+}
 function aplicarRef(hit) {
     REF_CI = (hit.ci != null) ? hit.ci : null;
     REF_SIGLA = hit.sigla || '';
@@ -1266,7 +1322,11 @@ async function startRefPicker() {
         // código INEP é o único deep-link sem ambiguidade
         const hit = (/^\d+$/.test(iesQS) ? lista.find(i => i.ci === Number(iesQS)) : null)
                  || lista.filter(i => i.sigla === iesQS).sort((a, b) => b.n_cursos - a.n_cursos)[0];
-        if (hit) { aplicarRef(hit); updateRefLabel(); loadMetadata(); return; }
+        if (hit) { aplicarRef(hit); lembrarRef(hit.ci); updateRefLabel(); loadMetadata(); return; }
+    } else {
+        const ci = refLembrada();
+        const hit = ci != null ? (IES_PUB.ies || []).find(i => i.ci === ci) : null;
+        if (hit) { aplicarRef(hit); urlComRef(hit); updateRefLabel(); loadMetadata(); return; }
     }
     showIesPicker();
 }
@@ -1332,11 +1392,9 @@ function confirmIesPicker() {
     const hit = (IES_PUB.ies || []).find(i => i.ci === _iesSel);
     if (!hit) return;
     aplicarRef(hit);
+    lembrarRef(hit.ci);
     // no deep-link, sigla repetida (FATEC) ou ausente precisa do c\u00f3digo INEP
-    const homonimas = (IES_PUB.ies || []).filter(i => i.sigla && i.sigla === hit.sigla).length;
-    const u = new URL(location.href);
-    u.searchParams.set('ies', (hit.sigla && homonimas === 1) ? hit.sigla : String(hit.ci));
-    history.replaceState(null, '', u.toString());
+    urlComRef(hit);
     const ov = document.getElementById('iesPickerOverlay'); if (ov) ov.remove();
     updateRefLabel();
     if (META) { if (CURRENT) analisar(); } else { loadMetadata(); }

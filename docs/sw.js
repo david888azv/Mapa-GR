@@ -1,4 +1,4 @@
-const CACHE = 'mapa-gr-v2.10.1';
+const CACHE = 'mapa-gr-v2.10.2';
 
 // Essential assets cached on install
 const CORE_ASSETS = [
@@ -16,20 +16,17 @@ const CORE_ASSETS = [
   './dados/metadata.json',
   './dados/ies.json',  // índice de todas as IES (seletor de referência)
   './dados/exatas.json',  // default tab
-  './dados/censo_superior_consolidado.json'
+  './dados/censo_superior_consolidado.json',
+  // versão em inglês (até a v2.10.1 só funcionava offline depois de visitada)
+  './en/index.html',
+  './en/comparador.html',
+  './en/estatisticas.html',
+  './en/censo.html',
+  './en/help-doc.html'
 ];
 
-// Optional area JSONs cached on demand
-const AREA_FILES = [
-  './dados/biologicas.json',
-  './dados/engenharias.json',
-  './dados/saude.json',
-  './dados/agrarias.json',
-  './dados/sociais.json',
-  './dados/humanas.json',
-  './dados/letras.json',
-  './dados/tecnologos.json'
-];
+// As outras oito áreas não entram no install: o app as baixa (e o
+// stale-while-revalidate abaixo as guarda) quando a aba é aberta ou na pré-carga.
 
 self.addEventListener('install', (e) => {
   e.waitUntil(
