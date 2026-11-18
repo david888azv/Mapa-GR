@@ -121,6 +121,19 @@ INDEX = [
      'value="Especial" checked> Special</label>'),
 
     ("<h3>Faixa CPC/ENADE</h3>", "<h3>CPC/ENADE band</h3>"),
+    ('<label title="Cursos sem faixa divulgada pelo INEP (SC)"><input type="checkbox" class="pf-chk" value="0"> Sem conceito</label>',
+     '<label title="Programmes with no band published by INEP (SC)"><input type="checkbox" class="pf-chk" value="0"> No score</label>'),
+    ("<h3>Top IES: mínimo de cursos</h3>", "<h3>Top institutions: minimum programmes</h3>"),
+    ('title="Só entram no Top IES as instituições com pelo menos este número de cursos no recorte"',
+     'title="Only institutions with at least this many programmes in the selection enter the Top institutions chart"'),
+    ('<option value="1">1 (sem mínimo)</option>', '<option value="1">1 (no minimum)</option>'),
+    ("ℹ️ <b>${ocultos.length} curso(s) fora deste recorte pelo filtro de Faixa</b> (${det})${refTxt}. Médias, distribuição, ranking e Top IES não os incluem.",
+     "ℹ️ <b>${ocultos.length} programme(s) left out of this selection by the Band filter</b> (${det})${refTxt}. Averages, distribution, ranking and Top institutions do not include them."),
+    ("cursor:pointer;\">Mostrar todas as faixas</button>", "cursor:pointer;\">Show all bands</button>"),
+    ("const refTxt = nRef ? ` — <b>${nRef} deles da ${escHtml(REF_NOME)}</b>` : '';",
+     "const refTxt = nRef ? ` — <b>${nRef} of them from ${escHtml(REF_NOME)}</b>` : '';"),
+    ("function rotuloFaixa(c) { return c.pf != null ? 'Faixa ' + c.pf : 'sem conceito'; }",
+     "function rotuloFaixa(c) { return c.pf != null ? 'Band ' + c.pf : 'no score'; }"),
 
     ("<h3>Região</h3>", "<h3>Region</h3>"),
     ('value="N" checked> Norte</label>', 'value="N" checked> North</label>'),
@@ -191,7 +204,7 @@ INDEX = [
     # --------------------------------------------- modal de licenca/creditos
     ("Monitoramento e Análise da Formação Acadêmica na Graduação</p>",
      "Monitoring and Analysis of Undergraduate Education</p>"),
-    ("v${VERSION} — Agosto 2026</p>", "v${VERSION} — August 2026</p>"),
+    ("v${VERSION} — Novembro 2026</p>", "v${VERSION} — November 2026</p>"),
     ("Prof. Titular David Lima Azevedo</p>", "Prof. David Lima Azevedo, Full Professor</p>"),
     ("Grupo de Dinâmica e Ab Initio (GDAI) · Núcleo de Estrutura da Matéria · Instituto de Física — UnB<br>",
      "Dynamics and Ab Initio Group (GDAI) · Matter Structure Centre · Institute of Physics — UnB<br>"),
@@ -315,7 +328,8 @@ INDEX = [
 
     # --------------------------------------------- graficos
     ("<h2>Distribuição por Faixa</h2>", "<h2>Distribution by band</h2>"),
-    ("<h2>Top 15 IES — ${metricaLabel}</h2>", "<h2>Top 15 institutions — ${metricaLabel}</h2>"),
+    ("<h2>Top 15 IES — ${metricaLabel}${f.minIes > 1 ? ` (IES com ≥ ${f.minIes} cursos)` : ''}</h2>",
+     "<h2>Top 15 institutions — ${metricaLabel}${f.minIes > 1 ? ` (institutions with ≥ ${f.minIes} programmes)` : ''}</h2>"),
     ("<h2>Cursos por UF</h2>", "<h2>Programmes by state</h2>"),
     ("<h2>Evolução temporal — ${metricaLabel}</h2>", "<h2>Trend over time — ${metricaLabel}</h2>"),
     ("labels: faixas.map(fx => `Faixa ${fx}`)", "labels: faixas.map(fx => `Band ${fx}`)"),
@@ -1305,17 +1319,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.10.0 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.10.0 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.10.1 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.10.1 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.10.0</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.10.0</h1>"),
-    ("<div>v2.10.0 — Novembro 2026</div>", "<div>v2.10.0 — November 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.10.1</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.10.1</h1>"),
+    ("<div>v2.10.1 — Novembro 2026</div>", "<div>v2.10.1 — November 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),

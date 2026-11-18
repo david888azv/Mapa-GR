@@ -105,7 +105,11 @@ body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); color:
 .stats-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
 .stat-box { flex: 1; min-width: 88px; background: #F8F9FA; border-radius: 4px; padding: 6px 4px; text-align: center;
     border-left: 3px solid #3498DB; }
-.stat-box.unb { border-left-color: var(--unb); background: #FCE4EC; }
+.stat-box.unb { border: 1px solid #F8BBD0; border-left: 4px solid var(--unb); background: #FFFFFF; }
+/* cursos da IES de referência: texto quase preto em negrito sobre branco (contraste ~17:1;
+   antes era cinza #7F8C8D/#999 sobre rosa #FCE4EC, ~3:1) */
+.stat-box.unb .label { color: #1A1A1A; font-size: 10px; font-weight: 700; }
+.stat-box.unb .label span { color: #37474F !important; font-weight: 600 !important; }
 .stat-box .value { font-size: 16px; font-weight: 700; color: var(--azul); }
 .stat-box.unb .value { color: var(--unb); }
 .stat-box .label { font-size: 9px; color: var(--txt2); text-transform: uppercase; line-height: 1.2; }
@@ -242,7 +246,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><span class="cur" aria-current="true">PT</span><a href="en/index.html" hreflang="en" lang="en">EN</a></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.10.0</div>
+        <div id="headerVersion">v2.10.1</div>
     </div>
 </div>
 
@@ -311,6 +315,7 @@ tr:hover { background: #EEF2F7; }
             <label><input type="checkbox" class="pf-chk" value="3" checked> 3</label>
             <label><input type="checkbox" class="pf-chk" value="4" checked> 4</label>
             <label><input type="checkbox" class="pf-chk" value="5" checked> 5</label>
+            <label title="Cursos sem faixa divulgada pelo INEP (SC)"><input type="checkbox" class="pf-chk" value="0"> Sem conceito</label>
         </div>
 
         <div class="filter-group">
@@ -346,6 +351,16 @@ tr:hover { background: #EEF2F7; }
             </select>
         </div>
 
+        <div class="filter-group">
+            <h3>Top IES: mínimo de cursos</h3>
+            <select id="selMinIes" title="Só entram no Top IES as instituições com pelo menos este número de cursos no recorte">
+                <option value="1">1 (sem mínimo)</option>
+                <option value="3" selected>3</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+            </select>
+        </div>
+
         <button class="btn btn-primary" id="btnAnalisar" onclick="analisar()">Analisar</button>
         <button class="btn btn-secondary" onclick="marcarTodos()">Marcar todos</button>
         <button class="btn btn-secondary" onclick="desmarcarTodos()">Desmarcar todos</button>
@@ -370,13 +385,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.10.0 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.10.1 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.10.0';
+const VERSION = '2.10.1';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -582,6 +597,7 @@ function getFilters() {
     const regs = [...document.querySelectorAll('.reg-chk:checked')].map(e => e.value);
     const ufs = [...document.querySelectorAll('.uf-chk:checked')].map(e => e.value);
     const metrica = document.getElementById('selMetrica').value;
+    const minIes = +(document.getElementById('selMinIes') || {value: 1}).value || 1;
     const searchOn = document.getElementById('searchEnabled').checked;
     const searchTerm = document.getElementById('searchSigla').value.trim();
     const searchTokens = _srch(searchTerm).split(/\s+/).filter(Boolean); // termos combinados (E)
@@ -591,7 +607,7 @@ function getFilters() {
     const areasParcial = areas.length < document.querySelectorAll('.area-chk').length;
     const ciclosParcial = ciclos.length < document.querySelectorAll('.cycle-chk').length;
     const ufsParcial = ufs.length < document.querySelectorAll('.uf-chk').length;
-    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, searchOn, searchTerm, searchTokens,
+    return { areas, ciclos, graus, modais, cats, pfs, regs, ufs, metrica, minIes, searchOn, searchTerm, searchTokens,
              areasParcial, ciclosParcial, ufsParcial };
 }
 
@@ -600,15 +616,28 @@ function normModal(m) {
     const low = m.toLowerCase();
     return (low.includes('dist') || low.includes('eadé') || low === 'ead') ? 'EAD' : 'Presencial';
 }
-function normGrau(g) {
-    if (!g) return 'Outro';
-    const low = g.toLowerCase();
+// Grau do curso. O INEP só preenche o grau nos ciclos 2017, 2021 e 2025; em
+// 2018, 2022 e 2023 o campo vem vazio, e em 2017 vem "Outro" para áreas sem
+// sufixo. Até a v2.10.0 todos esses (33.810 cursos: Direito, Administração,
+// Medicina, as Engenharias…) caíam em "Tecnólogo/Outro", e "só Bacharelado"
+// em Engenharias dava 0 de 7.066. Sem grau explícito, deduz-se da área ENADE:
+// sufixo (LICENCIATURA)/(BACHARELADO), "TECNOLOGIA EM…" = tecnólogo, e as
+// demais áreas sem sufixo são bacharelados. LETRAS - INGLÊS é ambígua e fica
+// em "Outro".
+const _GRAU_AMBIGUO = new Set(['LETRAS - INGLÊS']);
+function normGrau(c) {
+    const low = ((c && c.g) || '').toLowerCase();
     if (low.includes('lic')) return 'Licenciatura';
     if (low.includes('bach')) return 'Bacharelado';
-    return 'Outro';
+    if (low.includes('tecn')) return 'Outro';
+    const ar = ((c && c.ar) || '').toUpperCase();
+    if (ar.includes('LICENCIATURA')) return 'Licenciatura';
+    if (ar.includes('BACHARELADO')) return 'Bacharelado';
+    if (/^TECNOL[OÓ]G/.test(ar) || _GRAU_AMBIGUO.has(ar) || !ar) return 'Outro';
+    return 'Bacharelado';
 }
 
-function filterCursos(f, pool) {
+function filterCursos(f, pool, ignorarFaixa) {
     // pool != null => BUSCA GLOBAL (varre todas as áreas). Grau/Modalidade/Categoria/
     // Faixa/Região valem sempre. Área, Ciclo e UF valem quando o usuário os restringiu
     // (recorte parcial): até a v2.9.0 eram ignorados na busca, e "UnB + 2021 + Física
@@ -628,11 +657,13 @@ function filterCursos(f, pool) {
         if ((!global || f.areasParcial) && f.areas.length && !f.areas.includes(c.ar)) return false;
         if ((!global || f.ciclosParcial) && !f.ciclos.includes(c.y)) return false;
         if ((!global || f.ufsParcial) && f.ufs.length && !f.ufs.includes(c.u)) return false;
-        const grau = normGrau(c.g || '');
+        const grau = normGrau(c);
         if (!f.graus.includes(grau)) return false;
         if (!f.modais.includes(normModal(c.m))) return false;
         if (!f.cats.includes(c.ct)) return false;
-        if (c.pf == null || !f.pfs.includes(c.pf)) return false;
+        // Faixa: SC (sem conceito) é a caixa de valor 0; até a v2.10.0 não existia
+        // e os 2.939 cursos sem faixa nunca apareciam.
+        if (!ignorarFaixa && !f.pfs.includes(c.pf == null ? 0 : c.pf)) return false;
         if (!f.regs.includes(c._r)) return false;
         return true;
     });
@@ -671,6 +702,20 @@ async function cursosFiltrados(f) {
     if (!ehBuscaGlobal(f)) return filterCursos(f);
     await ensureAllAreas();
     return filterCursos(f, allCursos());
+}
+// Cursos que o filtro de Faixa tira do recorte (todos os outros filtros valendo).
+// Com as faixas 1, 2 e "sem conceito" desmarcadas (o padrão), um em cada cinco
+// cursos some — e com ele os piores da instituição de referência — sem aviso.
+function cursosOcultosPorFaixa(f, cursos) {
+    const pool = ehBuscaGlobal(f) ? allCursos() : null;
+    const todos = filterCursos(f, pool, true);
+    const vistos = new Set(cursos);
+    return todos.filter(c => !vistos.has(c));
+}
+function rotuloFaixa(c) { return c.pf != null ? 'Faixa ' + c.pf : 'sem conceito'; }
+function todasFaixas() {
+    document.querySelectorAll('.pf-chk').forEach(e => { e.checked = true; });
+    analisar();
 }
 
 // === RENDERING ===
@@ -723,6 +768,16 @@ async function analisar() {
             <div class="stat-box" style="border-left-color:#FFCDD2;"><div class="value">${fs[1]||0}</div><div class="label">Faixa 1</div></div>
         </div></div>`;
 
+    const ocultos = cursosOcultosPorFaixa(f, cursos);
+    if (ocultos.length) {
+        const porFx = {};
+        ocultos.forEach(c => { const k = rotuloFaixa(c); porFx[k] = (porFx[k] || 0) + 1; });
+        const det = Object.entries(porFx).sort().map(([k, n]) => `${k}: ${n}`).join(' · ');
+        const nRef = ocultos.filter(isRefCurso).length;
+        const refTxt = nRef ? ` — <b>${nRef} deles da ${escHtml(REF_NOME)}</b>` : '';
+        html += `<div class="card" style="background:#FFFDE7;border-left:4px solid #F9A825;"><p style="font-size:12px;margin:0;color:#2C3E50;">ℹ️ <b>${ocultos.length} curso(s) fora deste recorte pelo filtro de Faixa</b> (${det})${refTxt}. Médias, distribuição, ranking e Top IES não os incluem. <button type="button" onclick="todasFaixas()" style="margin-left:6px;padding:2px 8px;font-size:11px;border:1px solid #F9A825;background:#fff;border-radius:3px;cursor:pointer;">Mostrar todas as faixas</button></p></div>`;
+    }
+
     if (global) html += `<div class="card" style="background:#E8F4FD;border-left:4px solid #1565C0;"><p style="font-size:12px;margin:0;">🔎 <b>Busca global</b> por "<b>${escHtml(f.searchTerm)}</b>" nas 9 grandes áreas. <b>Grau, Modalidade, Categoria, Faixa e Região</b> valem sempre; <b>Área, Ciclo e UF</b> valem quando você desmarca alguma opção (com tudo marcado, a busca cobre todas as áreas, ciclos e UFs).</p></div>`;
 
     const n2018 = cursos.filter(c => c._partial && c.y === 2018).length;
@@ -765,7 +820,7 @@ async function analisar() {
     sorted.slice(0, showLimit).forEach(c => {
         const rowClass = isRefCurso(c) ? 'row-unb' : '';
         const pfCell = c.pf != null ? `<td class="cpc-${c.pf}">${c.pf}</td>` : '<td>—</td>';
-        const grau = normGrau(c.g);
+        const grau = normGrau(c);
         const modal = normModal(c.m);
         html += `<tr class="${rowClass}">
             <td><b>${c.sg || '—'}</b></td>
@@ -789,7 +844,7 @@ async function analisar() {
     html += `<div class="chart-row">
         <div class="chart-half"><div class="card"><h2>Distribuição por Faixa</h2>
             <div class="chart-container"><canvas id="chartFaixas"></canvas></div></div></div>
-        <div class="chart-half"><div class="card"><h2>Top 15 IES — ${metricaLabel}</h2>
+        <div class="chart-half"><div class="card"><h2>Top 15 IES — ${metricaLabel}${f.minIes > 1 ? ` (IES com ≥ ${f.minIes} cursos)` : ''}</h2>
             <div class="chart-container"><canvas id="chartIES"></canvas></div></div></div>
     </div>`;
 
@@ -862,7 +917,7 @@ function renderCharts(cursos, f) {
     });
     const iesList = Object.values(iesMap).map(info => ({
         sg: info.sg, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs], is_unb: info.is_unb
-    })).filter(p => p.n >= 1).sort((a,b) => b.avg - a.avg).slice(0, 15);
+    })).filter(p => p.n >= f.minIes).sort((a,b) => b.avg - a.avg).slice(0, 15);
 
     _charts.ies = new Chart(document.getElementById('chartIES'), {
         type: 'bar',
@@ -943,7 +998,8 @@ function buildReport(cursos, f) {
     p(`  Graus: ${f.graus.join(', ')}`);
     p(`  Modalidades: ${f.modais.join(', ')}`);
     p(`  Categorias: ${f.cats.length}/${document.querySelectorAll('.cat-chk').length} selecionadas`);
-    p(`  Faixas CPC/ENADE: ${f.pfs.join(', ')}`);
+    p(`  Faixas CPC/ENADE: ${f.pfs.map(x => x === 0 ? 'sem conceito' : x).join(', ')}`);
+    p(`  Top IES: mínimo de ${f.minIes} curso(s) por IES`);
     p(`  Regiões: ${f.regs.join(', ')}`);
     const totalUfs = [...new Set(CURRENT.cursos.map(c => c.u).filter(u => u))].length;
     p(`  UFs: ${f.ufs.length}/${totalUfs} (${f.ufs.length === totalUfs ? 'todas' : f.ufs.join(', ')})`);
@@ -954,6 +1010,11 @@ function buildReport(cursos, f) {
     p('');
     p(`Resultados:`);
     p(`  Cursos filtrados: ${cursos.length}`);
+    const _ocult = cursosOcultosPorFaixa(f, cursos);
+    if (_ocult.length) {
+        const _nr = _ocult.filter(isRefCurso).length;
+        p(`  Fora do recorte pelo filtro de Faixa: ${_ocult.length}${_nr ? ' (' + _nr + ' da instituição de referência)' : ''}`);
+    }
     p(`  IES distintas: ${new Set(cursos.map(iesKey)).size}`);
     p(`  UFs cobertas: ${new Set(cursos.map(c => c.u)).size}`);
     const vals = cursos.map(c => c[f.metrica]).filter(v => v != null);
@@ -994,7 +1055,7 @@ function buildReport(cursos, f) {
     p('');
 
     // Top 10 IES por média
-    p('Top 10 IES por ' + metricaLabel + ' (média):');
+    p('Top 10 IES por ' + metricaLabel + ' (média' + (f.minIes > 1 ? ', IES com ≥ ' + f.minIes + ' cursos' : '') + '):');
     const iesMap = {};
     cursos.forEach(c => {
         if (c[f.metrica] == null) return;
@@ -1005,7 +1066,7 @@ function buildReport(cursos, f) {
     });
     const iesArr = Object.values(iesMap).map(info => ({
         sg: info.sg, ref: info.ref, avg: mean(info.vals), n: info.vals.length, ufs: [...info.ufs]
-    })).sort((a,b) => b.avg - a.avg);
+    })).filter(x => x.n >= f.minIes).sort((a,b) => b.avg - a.avg);
     iesArr.slice(0, 10).forEach((p2, i) => {
         const mark = p2.ref ? '★ ' : '  ';
         p(`  ${mark}${String(i+1).padStart(2)}. ${p2.sg.padEnd(14)} | média=${p2.avg.toFixed(3)} | cursos=${p2.n} | ${p2.ufs.join('/')}`);
@@ -1059,7 +1120,7 @@ async function exportCSV() {
         `"${(c._ga || CURRENT.label).replace(/"/g,'""')}"`, c.y, c.sg, `"${(c.ie||'').replace(/"/g,'""')}"`,
         c.ci != null ? c.ci : '', c.cc != null ? c.cc : '',
         c.u, `"${(c.mu||'').replace(/"/g,'""')}"`,
-        `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c.g), normModal(c.m), c.ct,
+        `"${c.ar.replace(/"/g,'""')}"`, `"${(c.nc||'').replace(/"/g,'""')}"`, normGrau(c), normModal(c.m), c.ct,
         ...['pf','pc','e','ip','ms','dr','rg','nf','ni','np','pp'].map(k => c[k] != null ? c[k] : '')
     ].join(';'));
     let csv = '# MAPA-GR v' + VERSION + ' — ' + new Date().toLocaleString('pt-BR') + '\n';
@@ -1115,7 +1176,7 @@ function showLicenseModal() {
     overlay.innerHTML = `<div style="background:#fff;border-radius:12px;padding:32px;max-width:620px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.4);text-align:center;max-height:90vh;overflow-y:auto;">
         <h2 style="color:#0F244A;margin-bottom:4px;font-size:22px;font-weight:800;letter-spacing:1px;">MAPA-GR</h2>
         <p style="color:#555;font-size:12px;margin-bottom:12px;line-height:1.4;">Monitoramento e Análise da Formação Acadêmica na Graduação</p>
-        <p style="color:#2C3E50;font-size:13px;margin-bottom:4px;">v${VERSION} — Agosto 2026</p>
+        <p style="color:#2C3E50;font-size:13px;margin-bottom:4px;">v${VERSION} — Novembro 2026</p>
         <p style="color:#E91E63;font-weight:700;font-size:14px;margin-bottom:2px;">Prof. Titular David Lima Azevedo</p>
         <p style="color:#555;font-size:11px;margin-bottom:14px;line-height:1.5;">Grupo de Dinâmica e Ab Initio (GDAI) · Núcleo de Estrutura da Matéria · Instituto de Física — UnB<br>
             <a href="https://orcid.org/0000-0002-3456-554X" target="_blank" style="color:#1565C0;">ORCID</a> ·
