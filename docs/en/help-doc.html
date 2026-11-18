@@ -6,7 +6,7 @@
      procurados em /Mapa-GR/en/ e nao existiriam la. -->
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.10.1 — Documentation and Data Sources</title>
+<title>MAPA-GR v2.10.2 — Documentation and Data Sources</title>
 <meta name="description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -90,13 +90,13 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentation v2.10.1</h1>
+        <h1><em>MAPA-GR</em> — Documentation v2.10.2</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div class="langsel"><a href="../help-doc.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
-            <div>v2.10.1 — November 2026</div>
+            <div>v2.10.2 — November 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -515,6 +515,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.9.1</strong></td><td>2026-09-17</td><td><strong>Correções de filtragem e de navegação.</strong> (1) Com o <strong>filtro por texto</strong> ativo, os filtros de <strong>Área, Ciclo e UF</strong> eram ignorados: “UnB” + ciclo 2021 + só Física (Bacharelado) devolvia os 171 cursos da UnB em todas as áreas e ciclos. Agora a busca continua varrendo as nove grandes áreas, mas Área, Ciclo e UF passam a valer sempre que alguma opção é desmarcada. (2) O <strong>Relatório</strong> e o <strong>CSV</strong> passam a trazer exatamente os cursos mostrados na tela — numa busca, exportavam só a aba atual —, e o CSV da busca traz a grande área de cada curso. (3) <strong>Sigla exata</strong>: digitar a sigla de uma IES casa só essa sigla — “UFPE” deixou de trazer a UFPEL, “UFS” a UFSC e a UFSM; 452 das 2.015 siglas puxavam outras instituições. Texto que não é sigla segue como busca parcial. Vale no painel, nas Estatísticas, no Comparador e no Censo. (4) Botões <strong>Todos / Nenhum</strong> no filtro de Área, como já havia no de UF, para isolar um curso com dois cliques. (5) A <strong>barra lateral</strong> do painel principal e do Comparador não rolava até o fim, e o botão “Sugerir melhoria” ficava abaixo da borda da janela; a altura passou a acompanhar a janela. Nenhum dado mudou.</td></tr>
         <tr><td><strong>v2.10.0</strong></td><td>2026-11-17</td><td><strong>Instituições privadas no seletor de referência, e correções de contagem.</strong> (1) O seletor passa das 269 públicas para as <strong>2.461 instituições</strong> da base — privadas com e sem fins lucrativos, comunitárias ou confessionais e especiais —, com etiqueta de categoria e busca por ela; a categoria exibida é a do ciclo mais recente da IES, porque a natureza jurídica da mantenedora muda (a Unieuro era sem fins lucrativos até 2018 e com fins a partir de 2021). (2) O filtro <strong>Categoria</strong> do painel não tinha a caixa <strong>Comunitária/Confessional</strong>, e os <strong>1.392 cursos</strong> dessa categoria (ciclos 2023 e 2025) nunca apareciam no painel; a caixa foi incluída. As Estatísticas e o Comparador já os contavam como privadas. (3) As contagens de <strong>IES</strong> e o <strong>Top 15 IES</strong> passam a agrupar pelo <strong>código da IES no INEP</strong>, não pela sigla: 194 siglas pertencem a mais de uma instituição (FAP, 15; FAMA, 13; FATEC, 10) e 4.872 cursos não têm sigla, e todos viravam uma única "IES". (4) No <strong>CSV</strong>, o valor zero saía em branco, como se faltasse (2.619 IDD, 2.075 % de doutores e 1.013 ENADE iguais a zero); agora sai 0. (5) A média de um recorte sem nenhum valor da métrica aparecia como 0,00; agora aparece "—", e o número de cursos com valor é indicado quando nem todos têm. (6) Uma busca global lenta podia sobrescrever um filtro aplicado depois dela. (7) Na busca global, a barra de status e o cabeçalho do relatório passam a dizer "todas as áreas", e não o nome da aba aberta. Nenhum indicador mudou.</td></tr>
         <tr><td><strong>v2.10.1</strong></td><td>2026-11-17</td><td><strong>Correções de filtro no painel e legibilidade.</strong> (1) Filtro <strong>Grau</strong>: o INEP só preenche o grau nos ciclos 2017, 2021 e 2025; em 2018, 2022 e 2023 o campo vem vazio, e <strong>33.810 cursos</strong> — Direito, Administração, Medicina, as Engenharias — caíam em “Tecnólogo/Outro”. Marcar só “Bacharelado” em Engenharias devolvia 0 de 7.066 cursos. Sem grau explícito, o grau passa a ser deduzido da área ENADE: sufixo (Licenciatura) ou (Bacharelado), “Tecnologia em…” como tecnólogo e as demais áreas como bacharelado; só “Letras - Inglês”, ambígua, segue em “Outro”. (2) Filtro <strong>Faixa</strong>: nova caixa <strong>Sem conceito</strong> para os 2.939 cursos sem faixa divulgada, que nunca apareciam. E, como as faixas 1 e 2 vêm desmarcadas, um aviso passa a dizer quantos cursos o filtro de Faixa tira do recorte — e quantos deles são da instituição de referência —, com um botão para mostrar todas as faixas; o relatório traz a mesma contagem. No padrão, eram 20 % dos cursos fora das médias sem aviso. (3) <strong>Top 15 IES</strong> e Top 10 do relatório: novo seletor de <strong>mínimo de cursos por IES</strong>, 3 por padrão. Sem mínimo, 12 das 15 primeiras de Exatas tinham de 1 a 4 cursos. (4) Os cartões dos cursos da <strong>instituição de referência</strong> passam a ter fundo branco e texto escuro em negrito; antes era cinza-claro sobre rosa, de leitura difícil. Nenhum dado mudou.</td></tr>
+        <tr><td><strong>v2.10.2</strong></td><td>2026-11-17</td><td><strong>Ordenação, escalas de faixa, médias por IES e uso offline.</strong> (1) <strong>Ordenar pelo cabeçalho</strong> do ranking reordena o recorte inteiro, e não só as 500 linhas exibidas; cursos sem valor vão sempre para o fim; na coluna ENADE os cursos com nota contínua (0–5) vêm antes dos de 2025, com o % ≥ padrão (0–100), cada grupo na sua escala — antes os dois se comparavam como um número só. (2) O gráfico <strong>Distribuição por Faixa</strong> separa, em barras empilhadas, a faixa CPC, a faixa ENADE de 2018 (sem CPC) e o Conceito Enade 2025 (modelo novo); quando o recorte mistura escalas, uma nota sob as contagens diz quantos cursos há de cada uma. (3) No <strong>Top 15 IES</strong> e no Top 10 do relatório, cada curso entra uma vez: primeiro a média do curso nos seus ciclos, depois a média dos cursos da IES. Antes um curso avaliado em dois ciclos pesava em dobro, e o número de “cursos” contava avaliações. (4) A <strong>instituição de referência</strong> fica guardada no navegador: quem abre o app instalado não passa mais pelo seletor toda vez (o botão “Trocar instituição de referência” continua). (5) As páginas em <strong>inglês</strong> entram no cache do aplicativo e funcionam offline sem visita prévia. (6) Com <strong>economia de dados</strong> ligada ou rede 2G/3G, o painel não pré-carrega as outras oito áreas (~18 MB); elas vêm quando a aba é aberta. Nenhum dado mudou.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -636,7 +637,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.10.1 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.10.2 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>

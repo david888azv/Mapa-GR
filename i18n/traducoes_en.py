@@ -331,6 +331,14 @@ INDEX = [
     ("<h2>Top 15 IES — ${metricaLabel}${f.minIes > 1 ? ` (IES com ≥ ${f.minIes} cursos)` : ''}</h2>",
      "<h2>Top 15 institutions — ${metricaLabel}${f.minIes > 1 ? ` (institutions with ≥ ${f.minIes} programmes)` : ''}</h2>"),
     ("<h2>Cursos por UF</h2>", "<h2>Programmes by state</h2>"),
+    ("cpc: { rot: 'Faixa CPC', cor: null },", "cpc: { rot: 'CPC band', cor: null },"),
+    ("e18: { rot: 'Faixa ENADE 2018 (sem CPC)', cor: '#90A4AE' },", "e18: { rot: 'ENADE band 2018 (no CPC)', cor: '#90A4AE' },"),
+    ("e25: { rot: 'Conceito Enade 2025 (modelo novo)', cor: '#7E57C2' }", "e25: { rot: 'Enade 2025 score (new model)', cor: '#7E57C2' }"),
+    ("if (n.cpc) partes.push(`${n.cpc} de faixa CPC`);", "if (n.cpc) partes.push(`${n.cpc} with a CPC band`);"),
+    ("if (n.e18) partes.push(`${n.e18} de faixa ENADE 2018`);", "if (n.e18) partes.push(`${n.e18} with a 2018 ENADE band`);"),
+    ("if (n.e25) partes.push(`${n.e25} de Conceito Enade 2025`);", "if (n.e25) partes.push(`${n.e25} with a 2025 Enade score`);"),
+    ('As contagens por faixa somam escalas diferentes: ${partes.join(\', \')}. O gráfico "Distribuição por Faixa" separa cada uma.',
+     'The band counts add up different scales: ${partes.join(\', \')}. The "Distribution by band" chart shows each one separately.'),
     ("<h2>Evolução temporal — ${metricaLabel}</h2>", "<h2>Trend over time — ${metricaLabel}</h2>"),
     ("labels: faixas.map(fx => `Faixa ${fx}`)", "labels: faixas.map(fx => `Band ${fx}`)"),
     # aparece nos dois graficos; cada chave leva o contexto que a distingue
@@ -1319,17 +1327,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.10.1 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.10.1 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.10.2 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.10.2 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.10.1</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.10.1</h1>"),
-    ("<div>v2.10.1 — Novembro 2026</div>", "<div>v2.10.1 — November 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.10.2</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.10.2</h1>"),
+    ("<div>v2.10.2 — Novembro 2026</div>", "<div>v2.10.2 — November 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
