@@ -251,8 +251,8 @@ INDEX = [
     (">Concordo e desejo continuar</button>", ">I agree and wish to continue</button>"),
 
     # --------------------------------------------- seletor de instituicao
-    ('placeholder="Buscar por sigla, nome, UF ou categoria (ex.: UFMG, UNIEURO, privada, DF)…"',
-     'placeholder="Search by acronym, name, state or category (e.g.: UFMG, UNIEURO, privada, DF)…"'),
+    ('placeholder="Buscar por sigla, nome, UF ou categoria (ex.: UFMG, UEMA, privada, DF)…"',
+     'placeholder="Search by acronym, name, state or category (e.g.: UFMG, UEMA, privada, DF)…"'),
     ('>Escolha a instituição de referência</h2>', '>Choose the reference institution</h2>'),
     ('''            Selecione <strong>uma instituição</strong>, pública ou privada. Ela será usada como
             referência — <span style="color:#E91E63;font-weight:700;">destacada em vermelho</span> — na comparação com
@@ -263,6 +263,7 @@ INDEX = [
     (">Mostrando 400 de ${arr.length.toLocaleString('pt-BR')}. Digite para refinar.</div>",
      ">Showing 400 of ${arr.length.toLocaleString('en-GB')}. Type to narrow down.</div>"),
     ("Nenhuma institui\\u00e7\\u00e3o encontrada.", "No institution found."),
+    ("const MSG_BLOQ = 'Contate o desenvolvedor.';", "const MSG_BLOQ = 'Contact the developer.';"),
 
     # --------------------------------------------- estado e carregamento
     ('<p id="loadingMsg">Carregando metadata...</p>', '<p id="loadingMsg">Loading metadata...</p>'),
@@ -1327,17 +1328,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.10.2 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.10.2 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.10.3 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.10.3 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.10.2</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.10.2</h1>"),
-    ("<div>v2.10.2 — Novembro 2026</div>", "<div>v2.10.2 — November 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.10.3</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.10.3</h1>"),
+    ("<div>v2.10.3 — Novembro 2026</div>", "<div>v2.10.3 — November 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
