@@ -250,7 +250,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><a href="../index.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.10.2</div>
+        <div id="headerVersion">v2.10.3</div>
     </div>
 </div>
 
@@ -389,13 +389,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.10.2 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.10.3 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.10.2';
+const VERSION = '2.10.3';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -1303,6 +1303,12 @@ function urlComRef(hit) {
     u.searchParams.set('ies', (hit.sigla && homonimas === 1) ? hit.sigla : String(hit.ci));
     history.replaceState(null, '', u.toString());
 }
+// Instituições cujo uso como referência está bloqueado (código INEP). Somem
+// da lista do seletor; quem busca por elas, ou chega por ?ies= ou pela
+// referência guardada, recebe só o aviso para contatar o desenvolvedor.
+const IES_BLOQ = new Set([1113]);   // 1113 = UNIEURO
+const MSG_BLOQ = 'Contact the developer.';
+function iesBloq(i) { return !!i && IES_BLOQ.has(i.ci); }
 function aplicarRef(hit) {
     REF_CI = (hit.ci != null) ? hit.ci : null;
     REF_SIGLA = hit.sigla || '';
@@ -1322,16 +1328,23 @@ async function startRefPicker() {
         // código INEP é o único deep-link sem ambiguidade
         const hit = (/^\d+$/.test(iesQS) ? lista.find(i => i.ci === Number(iesQS)) : null)
                  || lista.filter(i => i.sigla === iesQS).sort((a, b) => b.n_cursos - a.n_cursos)[0];
+        if (iesBloq(hit)) {
+            try { localStorage.removeItem(REF_KEY); } catch(e){}
+            const u = new URL(location.href); u.searchParams.delete('ies');
+            history.replaceState(null, '', u.toString());
+            showIesPicker(hit.sigla); return;
+        }
         if (hit) { aplicarRef(hit); lembrarRef(hit.ci); updateRefLabel(); loadMetadata(); return; }
     } else {
         const ci = refLembrada();
         const hit = ci != null ? (IES_PUB.ies || []).find(i => i.ci === ci) : null;
-        if (hit) { aplicarRef(hit); urlComRef(hit); updateRefLabel(); loadMetadata(); return; }
+        if (iesBloq(hit)) { try { localStorage.removeItem(REF_KEY); } catch(e){} }
+        else if (hit) { aplicarRef(hit); urlComRef(hit); updateRefLabel(); loadMetadata(); return; }
     }
     showIesPicker();
 }
 let _iesSel = null;
-function showIesPicker() {
+function showIesPicker(busca) {
     _iesSel = null;
     const overlay = document.createElement('div');
     overlay.id = 'iesPickerOverlay';
@@ -1342,7 +1355,7 @@ function showIesPicker() {
             Select <strong>one institution</strong>, public or private. It will be used as the
             reference — <span style="color:#E91E63;font-weight:700;">highlighted in red</span> — when compared with
             the other programmes in each field.</p>
-        <input id="iesSearch" type="text" placeholder="Search by acronym, name, state or category (e.g.: UFMG, UNIEURO, privada, DF)…"
+        <input id="iesSearch" type="text" placeholder="Search by acronym, name, state or category (e.g.: UFMG, UEMA, privada, DF)…"
             style="width:100%;padding:9px 12px;border:1.5px solid #C8CDD4;border-radius:8px;font-size:14px;margin-bottom:10px;" oninput="filterIes(this.value)">
         <div id="iesList" style="overflow-y:auto;flex:1;min-height:180px;border:1px solid #E0E4E8;border-radius:8px;"></div>
         <div style="text-align:center;margin-top:14px;">
@@ -1351,8 +1364,10 @@ function showIesPicker() {
         </div>
     </div>`;
     document.body.appendChild(overlay);
-    filterIes('');
-    const s = document.getElementById('iesSearch'); if (s) s.focus();
+    const s = document.getElementById('iesSearch');
+    if (s && busca) s.value = busca;
+    filterIes(busca || '');
+    if (s) s.focus();
 }
 function filterIes(q) {
     const list = document.getElementById('iesList');
@@ -1360,11 +1375,16 @@ function filterIes(q) {
     const norm = t => (t||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
     const nq = norm(q).trim();
     // busca por sigla, nome, UF e esfera ("estadual", "federal", "municipal")
-    const arr = (IES_PUB.ies || []).filter(i =>
+    const arr = (IES_PUB.ies || []).filter(i => !iesBloq(i) && (
         !nq || norm(i.sigla).includes(nq) || norm(i.nome).includes(nq)
             || norm(i.uf).includes(nq) || norm(i.ct).includes(nq)
-            || norm((ESFERA_TAG[i.ct] || {}).t).includes(nq));
-    list.innerHTML = arr.slice(0, 400).map(i => {
+            || norm((ESFERA_TAG[i.ct] || {}).t).includes(nq)));
+    // busca que alcança uma IES bloqueada pela sigla ou pelo nome (não pela UF
+    // ou categoria): aviso no topo, no lugar da instituição
+    const bloq = (nq.length >= 3) && (IES_PUB.ies || []).some(i => iesBloq(i) &&
+        (norm(i.sigla).includes(nq) || norm(i.nome).includes(nq)));
+    const aviso = bloq ? `<div style="padding:14px 12px;border-bottom:1px solid #EEF1F4;background:#FFF3E0;color:#BF360C;font-size:13.5px;font-weight:700;text-align:center;">${MSG_BLOQ}</div>` : '';
+    list.innerHTML = aviso + arr.slice(0, 400).map(i => {
         const tag = ESFERA_TAG[i.ct] || {t: '', c: '#7F8C8D'};
         // 7 IES n\u00e3o t\u00eam sigla no INEP \u2014 nessas, o nome \u00e9 o pr\u00f3prio r\u00f3tulo
         const rotulo = i.sigla ? (i.sigla === 'UNB' ? 'UnB' : i.sigla) : capNome(i.nome);
@@ -1376,7 +1396,7 @@ function filterIes(q) {
             <span style="color:#7F8C8D;font-size:11px;white-space:nowrap;">${i.n_cursos} curso${i.n_cursos!==1?'s':''}</span>
         </div>`;
     }).join('') + (arr.length > 400 ? `<div style="padding:10px;color:#7F8C8D;font-size:12px;text-align:center;">Showing 400 of ${arr.length.toLocaleString('en-GB')}. Type to narrow down.</div>` : '')
-      || '<div style="padding:16px;color:#7F8C8D;font-size:13px;text-align:center;">No institution found.</div>';
+      || aviso || '<div style="padding:16px;color:#7F8C8D;font-size:13px;text-align:center;">No institution found.</div>';
     if (_iesSel != null) { const el = list.querySelector(`.ies-opt[data-ci="${_iesSel}"]`); if (el) { el.style.background='#FCE4EC'; } }
 }
 function pickIes(ci) {
