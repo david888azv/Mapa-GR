@@ -580,7 +580,7 @@ function updateSidebarFilters() {
         const r = UF_REGIAO[u] || '?';
         if (byRegion[r]) byRegion[r].push(u);
     });
-    const regionLabels = { N: 'Norte', NE: 'Nordeste', CO: 'Centro-Oeste', SE: 'Sudeste', S: 'Sul' };
+    const regionLabels = { N: 'North', NE: 'Northeast', CO: 'Central-West', SE: 'Southeast', S: 'South' };
     const ufDiv = document.getElementById('ufFilter');
     let ufHtml = '';
     ['N','NE','CO','SE','S'].forEach(r => {

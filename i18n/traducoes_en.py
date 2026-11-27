@@ -23,6 +23,9 @@ objeto do JS.
 """
 
 INDEX = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const regionLabels = { N: 'Norte', NE: 'Nordeste', CO: 'Centro-Oeste', SE: 'Sudeste', S: 'Sul' };",
+     "const regionLabels = { N: 'North', NE: 'Northeast', CO: 'Central-West', SE: 'Southeast', S: 'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)</title>",
@@ -407,6 +410,9 @@ INDEX = [
 
 
 COMPARADOR = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGION_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGION_LABELS = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ('content="MAPA-GR — Comparador Especial de Cursos por UF. Compare até 10 cursos da '
@@ -850,6 +856,9 @@ COMPARADOR = _BLOCOS_COMPARADOR + COMPARADOR
 # literal ao arquivo em vez de virar o caractere.
 # ==========================================================================
 ESTATISTICAS = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGIAO_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGIAO_LABELS = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Estatísticas da Graduação Brasileira</title>",
@@ -1048,6 +1057,9 @@ ESTATISTICAS += [
 # arquivo uma a uma pela contagem.
 # ==========================================================================
 CENSO = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGIAO_LABEL = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGIAO_LABEL = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Censo da Educação Superior 2017-2024</title>",
      "<title>MAPA-GR — Higher Education Census 2017-2024</title>"),
