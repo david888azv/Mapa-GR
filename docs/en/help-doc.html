@@ -6,7 +6,7 @@
      procurados em /Mapa-GR/en/ e nao existiriam la. -->
 <base href="../">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MAPA-GR v2.10.3 — Documentation and Data Sources</title>
+<title>MAPA-GR v2.10.4 — Documentation and Data Sources</title>
 <meta name="description" content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators (CPC, ENADE, IDD, IGC) and INEP public data sources.">
 <meta name="robots" content="index, follow">
 <meta name="author" content="David L. Azevedo">
@@ -90,13 +90,13 @@ a{color:#2563EB;}
 <div class="header">
     <div class="left">
         <a class="brand" href="https://daciencia.org" target="_blank" rel="noopener" title="DA ciência — daciencia.org"><img src="mark-da-ciencia.png" alt="DA ciência" width="232" height="233"></a>
-        <h1><em>MAPA-GR</em> — Documentation v2.10.3</h1>
+        <h1><em>MAPA-GR</em> — Documentation v2.10.4</h1>
     </div>
     <div style="display:flex;align-items:center;gap:14px;">
         <div class="meta">
             <div class="langsel"><a href="../help-doc.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
             <div>Prof. David L. Azevedo</div>
-            <div>v2.10.3 — November 2026</div>
+            <div>v2.10.4 — November 2026</div>
         </div>
         <button onclick="window.close(); if(!window.closed) window.location.href='en/index.html';"
             style="background:var(--accent);color:#fff;border:none;padding:8px 18px;border-radius:6px;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;transition:.2s;box-shadow:0 2px 6px rgba(0,0,0,.3);"
@@ -517,6 +517,7 @@ a{color:#2563EB;}
         <tr><td><strong>v2.10.1</strong></td><td>2026-11-17</td><td><strong>Correções de filtro no painel e legibilidade.</strong> (1) Filtro <strong>Grau</strong>: o INEP só preenche o grau nos ciclos 2017, 2021 e 2025; em 2018, 2022 e 2023 o campo vem vazio, e <strong>33.810 cursos</strong> — Direito, Administração, Medicina, as Engenharias — caíam em “Tecnólogo/Outro”. Marcar só “Bacharelado” em Engenharias devolvia 0 de 7.066 cursos. Sem grau explícito, o grau passa a ser deduzido da área ENADE: sufixo (Licenciatura) ou (Bacharelado), “Tecnologia em…” como tecnólogo e as demais áreas como bacharelado; só “Letras - Inglês”, ambígua, segue em “Outro”. (2) Filtro <strong>Faixa</strong>: nova caixa <strong>Sem conceito</strong> para os 2.939 cursos sem faixa divulgada, que nunca apareciam. E, como as faixas 1 e 2 vêm desmarcadas, um aviso passa a dizer quantos cursos o filtro de Faixa tira do recorte — e quantos deles são da instituição de referência —, com um botão para mostrar todas as faixas; o relatório traz a mesma contagem. No padrão, eram 20 % dos cursos fora das médias sem aviso. (3) <strong>Top 15 IES</strong> e Top 10 do relatório: novo seletor de <strong>mínimo de cursos por IES</strong>, 3 por padrão. Sem mínimo, 12 das 15 primeiras de Exatas tinham de 1 a 4 cursos. (4) Os cartões dos cursos da <strong>instituição de referência</strong> passam a ter fundo branco e texto escuro em negrito; antes era cinza-claro sobre rosa, de leitura difícil. Nenhum dado mudou.</td></tr>
         <tr><td><strong>v2.10.2</strong></td><td>2026-11-17</td><td><strong>Ordenação, escalas de faixa, médias por IES e uso offline.</strong> (1) <strong>Ordenar pelo cabeçalho</strong> do ranking reordena o recorte inteiro, e não só as 500 linhas exibidas; cursos sem valor vão sempre para o fim; na coluna ENADE os cursos com nota contínua (0–5) vêm antes dos de 2025, com o % ≥ padrão (0–100), cada grupo na sua escala — antes os dois se comparavam como um número só. (2) O gráfico <strong>Distribuição por Faixa</strong> separa, em barras empilhadas, a faixa CPC, a faixa ENADE de 2018 (sem CPC) e o Conceito Enade 2025 (modelo novo); quando o recorte mistura escalas, uma nota sob as contagens diz quantos cursos há de cada uma. (3) No <strong>Top 15 IES</strong> e no Top 10 do relatório, cada curso entra uma vez: primeiro a média do curso nos seus ciclos, depois a média dos cursos da IES. Antes um curso avaliado em dois ciclos pesava em dobro, e o número de “cursos” contava avaliações. (4) A <strong>instituição de referência</strong> fica guardada no navegador: quem abre o app instalado não passa mais pelo seletor toda vez (o botão “Trocar instituição de referência” continua). (5) As páginas em <strong>inglês</strong> entram no cache do aplicativo e funcionam offline sem visita prévia. (6) Com <strong>economia de dados</strong> ligada ou rede 2G/3G, o painel não pré-carrega as outras oito áreas (~18 MB); elas vêm quando a aba é aberta. Nenhum dado mudou.</td></tr>
         <tr><td><strong>v2.10.3</strong></td><td>2026-11-19</td><td><strong>Ajuste no seletor de instituição de referência.</strong></td></tr>
+        <tr><td><strong>v2.10.4</strong></td><td>2026-11-27</td><td><strong>Região no módulo Censo.</strong> Os dados por UF do Censo não traziam a região de cada linha. Por isso o gráfico <strong>Matrículas ativas por Região</strong> e a tabela por região, na aba “Por Região / UF”, saíam vazios, assim como a seção “Por região” do relatório, e as caixas do filtro <strong>Região</strong> não alteravam nenhum número. A região passa a ser deduzida da UF ao carregar os dados. Os totais nacionais e os números por UF não mudam. Na versão em inglês, os nomes das regiões nos gráficos, tabelas e relatórios passam a sair em inglês.</td></tr>
     </table>
 
     <h3 style="margin-top:26px;">O que mudou na v2.5.0 (8 de agosto de 2026)</h3>
@@ -638,7 +639,7 @@ a{color:#2563EB;}
 </div>
 
 <div class="contact">
-    <strong>MAPA-GR</strong> v2.10.3 | Prof. David L. Azevedo |
+    <strong>MAPA-GR</strong> v2.10.4 | Prof. David L. Azevedo |
     <a href="mailto:contato@daciencia.org">contato@daciencia.org</a> |
     <a href="https://daciencia.org" target="_blank" rel="noopener">daciencia.org</a>
 </div>

@@ -250,7 +250,7 @@ tr:hover { background: #EEF2F7; }
             <div class="langsel"><a href="../index.html" hreflang="pt-BR" lang="pt-BR">PT</a><span class="cur" aria-current="true">EN</span></div>
         <div>Prof. David L. Azevedo</div>
         <div id="headerDate"></div>
-        <div id="headerVersion">v2.10.3</div>
+        <div id="headerVersion">v2.10.4</div>
     </div>
 </div>
 
@@ -389,13 +389,13 @@ tr:hover { background: #EEF2F7; }
 
 <div class="status-bar">
     <span id="statusLeft">Pronto</span>
-    <span id="statusRight">MAPA-GR v2.10.3 | Prof. David L. Azevedo</span>
+    <span id="statusRight">MAPA-GR v2.10.4 | Prof. David L. Azevedo</span>
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.10.3';
+const VERSION = '2.10.4';
 
 // --- Nome real do curso (Censo INEP) vs. área de avaliação ENADE (`ar`) ---
 // O CPC agrupa por área ENADE; cursos sem exame próprio caem em áreas genéricas
@@ -580,7 +580,7 @@ function updateSidebarFilters() {
         const r = UF_REGIAO[u] || '?';
         if (byRegion[r]) byRegion[r].push(u);
     });
-    const regionLabels = { N: 'Norte', NE: 'Nordeste', CO: 'Centro-Oeste', SE: 'Sudeste', S: 'Sul' };
+    const regionLabels = { N: 'North', NE: 'Northeast', CO: 'Central-West', SE: 'Southeast', S: 'South' };
     const ufDiv = document.getElementById('ufFilter');
     let ufHtml = '';
     ['N','NE','CO','SE','S'].forEach(r => {

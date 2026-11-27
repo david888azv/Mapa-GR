@@ -23,6 +23,9 @@ objeto do JS.
 """
 
 INDEX = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const regionLabels = { N: 'Norte', NE: 'Nordeste', CO: 'Centro-Oeste', SE: 'Sudeste', S: 'Sul' };",
+     "const regionLabels = { N: 'North', NE: 'Northeast', CO: 'Central-West', SE: 'Southeast', S: 'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Análise da Graduação Brasileira (INEP/SINAES)</title>",
@@ -407,6 +410,9 @@ INDEX = [
 
 
 COMPARADOR = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGION_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGION_LABELS = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ('content="MAPA-GR — Comparador Especial de Cursos por UF. Compare até 10 cursos da '
@@ -850,6 +856,9 @@ COMPARADOR = _BLOCOS_COMPARADOR + COMPARADOR
 # literal ao arquivo em vez de virar o caractere.
 # ==========================================================================
 ESTATISTICAS = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGIAO_LABELS = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGIAO_LABELS = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
 
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Estatísticas da Graduação Brasileira</title>",
@@ -1048,6 +1057,9 @@ ESTATISTICAS += [
 # arquivo uma a uma pela contagem.
 # ==========================================================================
 CENSO = [
+    # nomes das regioes nos graficos, tabelas e relatorios (v2.10.4)
+    ("const REGIAO_LABEL = { N:'Norte', NE:'Nordeste', CO:'Centro-Oeste', SE:'Sudeste', S:'Sul' };",
+     "const REGIAO_LABEL = { N:'North', NE:'Northeast', CO:'Central-West', SE:'Southeast', S:'South' };"),
     # ------------------------------------------------------------------ <head>
     ("<title>MAPA-GR — Censo da Educação Superior 2017-2024</title>",
      "<title>MAPA-GR — Higher Education Census 2017-2024</title>"),
@@ -1328,17 +1340,17 @@ CENSO = [
 # gerador). Fatiar prosa em centenas de pares seria ilegivel e quebradico.
 # ==========================================================================
 HELP_DOC = [
-    ("<title>MAPA-GR v2.10.3 — Documentação e Fontes de Dados</title>",
-     "<title>MAPA-GR v2.10.3 — Documentation and Data Sources</title>"),
+    ("<title>MAPA-GR v2.10.4 — Documentação e Fontes de Dados</title>",
+     "<title>MAPA-GR v2.10.4 — Documentation and Data Sources</title>"),
     ('content="Documentação do MAPA-GR: metodologia, glossário dos indicadores do SINAES '
      '(CPC, ENADE, IDD, IGC) e fontes de dados públicas do INEP.">',
      'content="MAPA-GR documentation: methodology, a glossary of the SINAES indicators '
      '(CPC, ENADE, IDD, IGC) and INEP public data sources.">', 3),
     ('<meta property="og:title" content="MAPA-GR — Documentação e Fontes de Dados">',
      '<meta property="og:title" content="MAPA-GR — Documentation and Data Sources">'),
-    ("<h1><em>MAPA-GR</em> — Documentação v2.10.3</h1>",
-     "<h1><em>MAPA-GR</em> — Documentation v2.10.3</h1>"),
-    ("<div>v2.10.3 — Novembro 2026</div>", "<div>v2.10.3 — November 2026</div>"),
+    ("<h1><em>MAPA-GR</em> — Documentação v2.10.4</h1>",
+     "<h1><em>MAPA-GR</em> — Documentation v2.10.4</h1>"),
+    ("<div>v2.10.4 — Novembro 2026</div>", "<div>v2.10.4 — November 2026</div>"),
     ("            ← Voltar\n", "            ← Back\n"),
     ('id="nav-sobre">Sobre</a>', 'id="nav-sobre">About</a>'),
     ('id="nav-areas">Grandes Áreas</a>', 'id="nav-areas">Broad fields</a>'),
