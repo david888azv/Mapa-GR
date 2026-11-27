@@ -338,7 +338,7 @@ table.data-table .neg{color:#C62828;font-weight:600;}
 <div class="toast" id="toast"></div>
 
 <script>
-const VERSION = '2.10.3';
+const VERSION = '2.10.4';
 
 const UF_REGIAO = {
     'AC':'N','AM':'N','AP':'N','PA':'N','RO':'N','RR':'N','TO':'N',
@@ -401,6 +401,10 @@ async function loadAll() {
     try {
         const r = await fetch('dados/censo_superior_consolidado.json');
         DATA = await r.json();
+        // As linhas por UF do JSON nao trazem a regiao. Sem ela, o grafico e a tabela
+        // "por Regiao" saiam vazios e o filtro Regiao nao filtrava nada (v2.10.4).
+        Object.values(DATA.agregacoes_por_ano.por_uf_ga_mod_grau || {}).forEach(rows =>
+            rows.forEach(row => { if (row.regiao == null && row.uf) row.regiao = UF_REGIAO[row.uf]; }));
         ANO_INI = DATA.anos[0];
         ANO_FIM = DATA.anos[DATA.anos.length - 1];
         buildFilters();
